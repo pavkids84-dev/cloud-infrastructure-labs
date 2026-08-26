@@ -24,6 +24,8 @@ The goal is not only to learn Linux commands, but also to understand how Linux s
 - Shell input/output
 - Standard streams and file descriptors
 - Redirection and pipelines
+- Standard output and standard error handling
+- `/dev/null`
 - Environment variables
 - Shell initialization files
 - Vi/Vim
@@ -38,6 +40,16 @@ The goal is not only to learn Linux commands, but also to understand how Linux s
 - Foreground and background execution
 - Process monitoring and states
 - Linux signals and process control
+- systemd service management
+- Service runtime state
+- Boot-time service configuration
+- Service dependencies
+- Basic service troubleshooting
+- RPM package management
+- DNF package management
+- Package inspection and verification
+- Software repositories
+- Package dependencies
 
 ## Labs
 
@@ -102,6 +114,9 @@ Topics:
 - File descriptors
 - Output redirection
 - Error redirection
+- `2>&1`
+- Redirection order
+- `/dev/null`
 - Pipelines
 - Filename expansion
 - Aliases
@@ -209,6 +224,48 @@ Topics:
 - Linux signals
 - Process termination with `kill`
 
+---
+
+### Service Management
+
+[Linux Service Management Lab](./service-management-lab.md)
+
+Topics:
+
+- systemd and `systemctl`
+- Service status inspection
+- Active and inactive runtime states
+- Enabled and disabled boot-time states
+- Service start and stop
+- Service restart and reload
+- Boot-time service configuration
+- Service dependencies
+- Service mask and unmask
+- Basic service troubleshooting
+- systemd journal inspection
+
+---
+
+### Package Management
+
+[Linux Package Management Lab](./package-management-lab.md)
+
+Topics:
+
+- RPM packages
+- Installed package inspection
+- Package file lists
+- Configuration and documentation files
+- RPM package verification
+- DNF package management
+- Package searching
+- Package installation and removal
+- Package updates
+- Dependency management
+- Software repositories
+- Repository inspection
+- Package and service management workflow
+
 ## Key Concepts
 
 ### Linux System Layers
@@ -254,6 +311,27 @@ Linux uses a hierarchical file system starting from the root directory:
 ```
 
 Understanding standard streams and file descriptors is important for command pipelines, logging, automation, and troubleshooting.
+
+Common redirection patterns include:
+
+```text
+command > file
+→ stdout to file
+
+command 2> file
+→ stderr to file
+
+command > file 2>&1
+→ stdout and stderr to the same file
+
+command 2> /dev/null
+→ discard stderr
+
+command > /dev/null 2>&1
+→ discard stdout and stderr
+```
+
+Redirection order matters because shell redirections are processed from left to right.
 
 ### File Search vs Content Search
 
@@ -306,11 +384,12 @@ The shell manages jobs using job IDs, while the operating system identifies proc
 R = Running or Runnable
 S = Interruptible Sleep
 D = Uninterruptible Sleep
+I = Idle Kernel Thread
 T = Stopped
 Z = Zombie
 ```
 
-Process states help identify whether a process is actively running, waiting for an event, stopped, or waiting for its parent process to collect its exit status.
+Process states help identify whether a process is actively running, waiting, idle, stopped, or waiting for its parent process to collect its exit status.
 
 ### Linux Signals
 
@@ -324,6 +403,106 @@ Process states help identify whether a process is actively running, waiting for 
 Signals provide a mechanism for controlling running processes.
 
 `SIGTERM` requests a normal termination, while `SIGKILL` forces a process to terminate.
+
+### Service Management
+
+Linux services are commonly managed through systemd.
+
+```text
+Administrator
+      |
+      | systemctl
+      v
+   systemd
+      |
+      v
+   Service
+      |
+      v
+   Process
+```
+
+Runtime state and boot-time configuration are separate concepts.
+
+```text
+active / inactive
+→ Current runtime state
+
+enabled / disabled
+→ Boot-time configuration
+```
+
+The difference between service commands is important:
+
+```text
+start
+→ Start the service now
+
+stop
+→ Stop the service now
+
+restart
+→ Stop and start the service again
+
+reload
+→ Reload supported service configuration
+
+enable
+→ Configure automatic startup during boot
+
+disable
+→ Remove automatic startup configuration
+
+mask
+→ Prevent the service from being started
+```
+
+### Package Management
+
+Red Hat-based Linux distributions use RPM packages and package managers such as DNF.
+
+```text
+Repository
+    |
+    v
+   DNF
+    |
+    v
+RPM Package
+    |
+    v
+Installed Software
+```
+
+RPM and DNF serve related but different purposes.
+
+```text
+RPM
+→ Direct package inspection and management
+
+DNF
+→ Repository-based package and dependency management
+```
+
+Package installation and service execution are separate operations.
+
+```text
+Install Package
+      |
+      v
+Configure Software
+      |
+      v
+Start Service
+      |
+      v
+Enable at Boot
+      |
+      v
+Verify
+```
+
+Understanding this distinction is important when configuring and troubleshooting Linux servers.
 
 ## Practical Focus
 
@@ -368,6 +547,33 @@ Verification
    |
    v
 Lesson Learned
+```
+
+Linux troubleshooting may involve several system layers:
+
+```text
+Software Problem
+      |
+      v
+Package Installed?
+      |
+      v
+Repository Available?
+      |
+      v
+Configuration Correct?
+      |
+      v
+Service Running?
+      |
+      v
+Process Healthy?
+      |
+      v
+Logs / System State
+      |
+      v
+Root Cause
 ```
 
 As more practical issues are encountered, dedicated troubleshooting records will be added to the repository.
