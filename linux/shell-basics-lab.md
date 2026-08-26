@@ -1,46 +1,6 @@
-# Linux Shell Basics Lab
-
-## Objective
-
-Practice basic Linux shell operations including standard input and output, redirection, file descriptors, filename expansion, pipelines, and aliases.
-
-## Environment
-
-- OS: Rocky Linux
-- Virtualization: VMware
-- Shell: Bash
-
-## Shell Overview
-
-The shell provides an interface between the user and the operating system.
-
-```text
-User
-  |
-  v
-Shell
-  |
-  v
-Kernel
-  |
-  v
-Hardware
-```
-
-The shell interprets commands, executes programs, and provides a user working environment.
-
-## Create the Lab Directory
-
-```bash
-cd ~
-mkdir shell-basic-lab
-cd shell-basic-lab
-pwd
-```
-
 ## Standard Input, Output, and Error
 
-Linux uses standard streams represented by file descriptors:
+Linux processes use three standard streams:
 
 ```text
 0 = stdin  (standard input)
@@ -48,163 +8,304 @@ Linux uses standard streams represented by file descriptors:
 2 = stderr (standard error)
 ```
 
+Understanding these file descriptors makes it possible to control where normal output and error messages are sent.
+
 ## Redirect Standard Output
 
-Redirect command output to a file.
+Redirect standard output to a file:
 
 ```bash
-ls /etc > etc-list.txt
-cat etc-list.txt
+ls /etc > output.txt
 ```
 
-The `>` operator redirects standard output and overwrites the destination file.
+`>` overwrites the destination file.
 
-## Append Standard Output
-
-Append new output to an existing file.
+Append output instead of overwriting it:
 
 ```bash
-date >> etc-list.txt
-tail etc-list.txt
+date >> output.txt
 ```
 
-The `>>` operator appends output without replacing the existing contents.
+`>>` appends new output to the existing file.
+
+## Redirect Standard Error
+
+Redirect only error messages:
+
+```bash
+ls /not-exist 2> error.txt
+```
+
+Here:
+
+```text
+2 = stderr
+```
+
+The normal output remains on the terminal, while error messages are written to `error.txt`.
 
 ## Separate Standard Output and Standard Error
 
-Run a command that produces both normal output and an error.
+Normal output and error output can be stored separately.
 
 ```bash
 ls /etc /not-exist 1> output.txt 2> error.txt
 ```
 
-Verify the results.
+The result is:
 
-```bash
-cat output.txt
-cat error.txt
+```text
+stdout → output.txt
+stderr → error.txt
 ```
 
-- `1>` redirects standard output.
-- `2>` redirects standard error.
+Because `stdout` is file descriptor `1`, the following two commands are equivalent:
+
+```bash
+command > output.txt
+command 1> output.txt
+```
 
 ## Combine Standard Output and Standard Error
 
-Redirect both output streams to the same file.
+Redirect standard output to a file and then send standard error to the same destination:
 
 ```bash
-ls /etc /not-exist > combined.txt 2>&1
-cat combined.txt
+command > combined.log 2>&1
 ```
 
-`2>&1` redirects standard error to the same destination currently used by standard output.
-
-## Filename Expansion
-
-Create test files.
+For example:
 
 ```bash
-touch file1 file2 file3 test1.txt test2.txt
+ls /etc /not-exist > combined.log 2>&1
 ```
 
-Use the `*` wildcard.
+The flow is:
 
-```bash
-ls file*
-ls *.txt
+```text
+stdout ──┐
+         ├──> combined.log
+stderr ──┘
 ```
 
-Use the `?` wildcard.
+`2>&1` means:
 
-```bash
-ls file?
+```text
+Send file descriptor 2 (stderr)
+to the same destination currently used by
+file descriptor 1 (stdout).
 ```
 
-Use a character set.
+This pattern is commonly used when both normal output and errors need to be stored in the same log file.
+
+## Redirect Output to /dev/null
+
+`/dev/null` is a special Linux device that discards anything written to it.
+
+It is useful when command output is not needed.
+
+Discard standard output:
 
 ```bash
-ls [ft]*
+command > /dev/null
 ```
 
-Filename expansion is performed by the shell before the command is executed.
-
-## Pipelines
-
-Use a pipeline to send the output of one command to another command.
+Example:
 
 ```bash
-who | wc -l
+ls /etc > /dev/null
 ```
 
-The output of `who` becomes the input of `wc -l`.
+The command still runs, but its normal output is not displayed.
 
-Inspect processes related to SSH.
+## Discard Only Error Messages
+
+Redirect only standard error to `/dev/null`:
 
 ```bash
-ps -ef | grep ssh
+command 2> /dev/null
 ```
 
-A pipeline connects the standard output of the command on the left to the standard input of the command on the right.
-
-## Execute Multiple Commands
-
-Use a semicolon to execute commands sequentially.
+Example:
 
 ```bash
-date ; uname -a ; whoami
+find / -name "test.conf" 2> /dev/null
 ```
 
-Each command is executed in sequence.
+This keeps normal search results visible while hiding error messages such as permission errors.
 
-## Aliases
+The flow is:
 
-Create a simple alias.
-
-```bash
-alias ll='ls -l'
-ll
+```text
+stdout → Terminal
+stderr → /dev/null
 ```
 
-Create an alias that runs multiple commands.
+## Discard Both Standard Output and Standard Error
+
+Discard both normal output and error messages:
 
 ```bash
-alias sysinfo='uname -a; id; date'
-sysinfo
+command > /dev/null 2>&1
 ```
 
-Display currently defined aliases.
+The flow is:
 
-```bash
-alias
+```text
+stdout ──┐
+         ├──> /dev/null
+stderr ──┘
 ```
 
-Remove the alias.
+Example:
 
 ```bash
-unalias sysinfo
+some-command > /dev/null 2>&1
+```
+
+This is useful when only the command's execution result matters and no output needs to be displayed or stored.
+
+## Bash Shorthand for stdout and stderr
+
+In Bash, the following syntax can also redirect both standard output and standard error:
+
+```bash
+command &> output.log
+```
+
+For example:
+
+```bash
+ls /etc /not-exist &> combined.log
+```
+
+To discard both streams:
+
+```bash
+command &> /dev/null
+```
+
+This is a Bash-specific shorthand for redirecting both `stdout` and `stderr`.
+
+## Redirection Order Matters
+
+The order of redirection operators is important.
+
+This command:
+
+```bash
+command > output.log 2>&1
+```
+
+means:
+
+```text
+1. Redirect stdout to output.log
+2. Redirect stderr to the current stdout destination
+
+Result:
+stdout → output.log
+stderr → output.log
+```
+
+However:
+
+```bash
+command 2>&1 > output.log
+```
+
+is different.
+
+It means:
+
+```text
+1. Redirect stderr to the current stdout destination (terminal)
+2. Redirect stdout to output.log
+
+Result:
+stdout → output.log
+stderr → Terminal
+```
+
+Therefore, when both normal output and errors should go to the same file, the commonly used form is:
+
+```bash
+command > output.log 2>&1
+```
+
+## Common Redirection Patterns
+
+```text
+command > file
+stdout → file
+
+command >> file
+stdout → append to file
+
+command 2> file
+stderr → file
+
+command > file 2>&1
+stdout + stderr → file
+
+command > /dev/null
+stdout → discarded
+
+command 2> /dev/null
+stderr → discarded
+
+command > /dev/null 2>&1
+stdout + stderr → discarded
+```
+
+## Practical Examples
+
+Save both normal output and errors to a log file:
+
+```bash
+./script.sh > script.log 2>&1
+```
+
+Hide permission errors while searching the file system:
+
+```bash
+find / -name "*.conf" 2> /dev/null
+```
+
+Run a command silently:
+
+```bash
+some-command > /dev/null 2>&1
+```
+
+Append both normal output and error messages to an existing log:
+
+```bash
+some-command >> application.log 2>&1
 ```
 
 ## Verification
 
 Verify the following:
 
-- Standard input, output, and error use file descriptors `0`, `1`, and `2`.
-- `>` redirects standard output to a file.
-- `>>` appends standard output to a file.
-- `2>` redirects standard error separately from standard output.
-- `2>&1` sends standard error to the same destination as standard output.
-- `*`, `?`, and `[]` can be used for shell filename expansion.
-- A pipeline connects the output of one command to the input of another.
-- Multiple commands can be executed sequentially using `;`.
-- Aliases can simplify frequently used commands.
+- File descriptor `0` represents standard input.
+- File descriptor `1` represents standard output.
+- File descriptor `2` represents standard error.
+- `>` redirects and overwrites standard output.
+- `>>` appends standard output.
+- `2>` redirects standard error.
+- `2>&1` redirects standard error to the current standard output destination.
+- `/dev/null` discards data written to it.
+- `2> /dev/null` hides only error messages.
+- `> /dev/null 2>&1` discards both standard output and standard error.
+- The order of redirection operators affects the result.
 
 ## What I Learned
 
-- The shell acts as an interface between the user and the Linux operating system.
-- Linux commands communicate through standard input, standard output, and standard error streams.
-- File descriptors allow standard output and error streams to be redirected independently.
-- Redirection is useful for saving command results and error messages to files.
-- Pipelines make it possible to combine small Linux utilities into more powerful command workflows.
-- Filename expansion allows the shell to select files using wildcard patterns.
-- Aliases can improve command-line efficiency by shortening frequently used commands.
-- Understanding shell input and output handling is fundamental for Linux automation, logging, and troubleshooting.
+- Linux treats standard input, standard output, and standard error as separate data streams.
+- File descriptors make it possible to redirect these streams independently.
+- `2>&1` is commonly used to combine normal output and error messages.
+- `/dev/null` is useful when output should intentionally be discarded.
+- Error redirection can make system searches easier to read by hiding expected permission errors.
+- Redirection order matters because each redirection is processed from left to right.
+- Understanding redirection is important for logging, shell scripting, automation, and troubleshooting.
