@@ -1,205 +1,121 @@
-# Linux
+# Cloud Infrastructure Labs
 
-This directory contains hands-on Linux administration labs completed while studying cloud infrastructure.
+A hands-on learning repository for building practical skills in cloud infrastructure, Linux system administration, networking, automation, containers, and infrastructure troubleshooting.
 
-The goal is not only to learn Linux commands, but also to understand how Linux systems behave, verify concepts through hands-on practice, and build troubleshooting skills relevant to cloud infrastructure operations.
+The purpose of this repository is to document not only what I studied, but also what I configured, tested, verified, and troubleshot in practical lab environments.
 
-## Environment
+## Learning Approach
 
-- OS: Rocky Linux
-- Virtualization: VMware
-- Shell: Bash
-- Primary Access Method: SSH
+Each lab focuses on a practical workflow:
 
-## Topics Covered
+```text
+Concept
+   |
+   v
+Hands-on Configuration
+   |
+   v
+Command Execution
+   |
+   v
+Verification
+   |
+   v
+Troubleshooting
+   |
+   v
+Lessons Learned
+```
+
+Rather than simply collecting commands, I use this repository to understand how infrastructure components behave and how to investigate problems when expected results are not produced.
+
+## Current Focus
+
+### Linux
+
+Hands-on Linux administration labs using Rocky Linux and VMware.
+
+[View Linux Labs](./linux/README.md)
+
+Current Linux topics include:
 
 - Linux system architecture
-- Remote administration with SSH
+- SSH remote administration
 - Kernel and system information
 - File and directory management
-- File permissions and ownership concepts
+- File permissions and inodes
 - Symbolic and hard links
 - Shell input/output and pipelines
-- Environment variables and shell initialization
-- Vi/Vim basics
-- Shell scripting and command-line arguments
-
-## Labs
-
-### SSH Remote Administration
-
-[SSH Basic Lab](./ssh-basic-lab.md)
-
-Topics:
-
-- SSH client and `sshd`
-- Remote login
-- User identity
-- UID, GID, and group information
-- Basic remote administration workflow
-
----
-
-### Linux System Information
-
-[Linux System Information Lab](./system-information-lab.md)
-
-Topics:
-
-- Linux kernel information
-- Distribution information
-- CPU information
-- Memory and swap
-- Disk and partition information
-- `/proc` system information
-
----
-
-### Files, Directories, Links, and Permissions
-
-[Linux File, Directory, Link, and Permission Lab](./file-directory-permission-lab.md)
-
-Topics:
-
-- Absolute and relative paths
-- File and directory operations
-- Symbolic links
-- Hard links
-- Inodes
-- Owner, Group, and Other permissions
-- Symbolic and octal permission modes
-- `chmod`
-
----
-
-### Shell Basics
-
-[Linux Shell Basics Lab](./shell-basics-lab.md)
-
-Topics:
-
-- Standard input, output, and error
-- File descriptors
-- Output redirection
-- Error redirection
-- Pipelines
-- Filename expansion
-- Aliases
-
----
-
-### Shell Environment
-
-[Linux Shell Environment Lab](./shell-environment-lab.md)
-
-Topics:
-
-- `/etc/profile`
-- `~/.bash_profile`
-- `~/.bashrc`
 - Environment variables
-- `PATH`
-- Variable inheritance
-- `export`
-- Shell quoting
-- Command substitution
+- Vi/Vim
+- Shell scripting
+- File content searching with `grep`
+- File system searching with `find`
+- Archiving with `tar`
+- Compression with `gzip` and `bzip2`
 
----
+## Lab Environment
 
-### Vi/Vim
+Current primary lab environment:
 
-[Linux Vi Basic Lab](./vi-basic-lab.md)
+- Rocky Linux
+- VMware
+- Bash
+- SSH-based remote administration
 
-Topics:
+The environment will expand as additional infrastructure technologies are introduced.
 
-- Command Mode
-- Insert Mode
-- Last Line Mode
-- Text editing
-- Search and replacement
-- Copy and paste
-- File save and exit operations
-- `.vimrc`
-
----
-
-### Shell Scripting
-
-[Linux Shell Script Basics](./shell-script/README.md)
-
-Topics:
-
-- Shell script structure
-- Shebang
-- Script permissions
-- Script debugging
-- Conditional command execution
-- Positional parameters
-- Command-line arguments
-- `shift`
-
-Example scripts:
-
-- [`basic.sh`](./shell-script/basic.sh)
-- [`args.sh`](./shell-script/args.sh)
-- [`shift.sh`](./shell-script/shift.sh)
-
-## Key Concepts
-
-### Linux System Layers
+## Repository Structure
 
 ```text
-User
-  |
-  v
-Application
-  |
-  v
-Shell
-  |
-  v
-Kernel
-  |
-  v
-Hardware
+cloud-infrastructure-labs/
+├── README.md
+│
+└── linux/
+    ├── README.md
+    ├── ssh-basic-lab.md
+    ├── system-information-lab.md
+    ├── file-directory-permission-lab.md
+    ├── shell-basics-lab.md
+    ├── shell-environment-lab.md
+    ├── vi-basic-lab.md
+    ├── search-archive-compression-lab.md
+    │
+    └── shell-script/
+        ├── README.md
+        ├── basic.sh
+        ├── args.sh
+        └── shift.sh
 ```
 
-The shell provides an interface for users and applications, while the kernel manages system resources such as CPU, memory, processes, devices, networking, and file systems.
+The repository structure will expand as new infrastructure topics are studied and practiced.
 
-### Linux File Structure
+## Planned Areas
 
-Linux uses a hierarchical file system starting from the root directory:
+Future hands-on areas may include:
 
-```text
-/
-├── etc
-├── home
-├── usr
-├── var
-└── ...
-```
-
-### Standard Streams
-
-```text
-0 = stdin
-1 = stdout
-2 = stderr
-```
-
-Understanding standard streams and file descriptors is important for command pipelines, logging, automation, and troubleshooting.
+- Networking
+- Databases
+- Docker
+- Kubernetes
+- AWS
+- Azure
+- KT Cloud
+- Terraform
+- Ansible
+- Infrastructure troubleshooting
 
 ## What I Am Building Toward
 
-These Linux fundamentals provide the foundation for:
+This repository is intended to build practical foundations for:
 
 - Linux server administration
 - Cloud infrastructure operations
 - Infrastructure troubleshooting
-- Shell automation
-- Docker and container environments
-- Kubernetes administration
+- Cloud networking
+- Container infrastructure
+- Infrastructure automation
 - Infrastructure as Code
 - Cloud security
 
-As the course progresses, this directory will continue to include hands-on labs and practical Linux automation examples.
+As my studies progress, I will continue adding hands-on labs, automation scripts, configuration examples, verification results, and troubleshooting records.
