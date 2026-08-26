@@ -34,6 +34,10 @@ The goal is not only to learn Linux commands, but also to understand how Linux s
 - File and directory searching with `find`
 - Archiving with `tar`
 - Compression with `gzip` and `bzip2`
+- Process and job management
+- Foreground and background execution
+- Process monitoring and states
+- Linux signals and process control
 
 ## Labs
 
@@ -185,6 +189,26 @@ Topics:
 - Compression with `gzip`
 - Compression with `bzip2`
 
+---
+
+### Process Management
+
+[Linux Process Management Lab](./process-management-lab.md)
+
+Topics:
+
+- Processes, daemons, and shell jobs
+- Foreground and background execution
+- Job IDs and process IDs
+- Job control with `jobs`, `fg`, and `bg`
+- Process monitoring with `ps`
+- Linux process states
+- Real-time monitoring with `top`
+- Process lookup with `pgrep`
+- Process relationships with `pstree`
+- Linux signals
+- Process termination with `kill`
+
 ## Key Concepts
 
 ### Linux System Layers
@@ -255,27 +279,98 @@ gzip / bzip2
 
 Archiving and compression are related but separate operations.
 
-## Practical Focus
-
-The Linux labs in this directory focus on:
+### Process and Job Management
 
 ```text
-Understand the concept
+Program
+   |
+   v
+Process
+```
+
+A process is a program currently executing in memory.
+
+A shell job can run in different states:
+
+```text
+Foreground
+Background
+Stopped
+```
+
+The shell manages jobs using job IDs, while the operating system identifies processes using process IDs (PIDs).
+
+### Common Process States
+
+```text
+R = Running or Runnable
+S = Interruptible Sleep
+D = Uninterruptible Sleep
+T = Stopped
+Z = Zombie
+```
+
+Process states help identify whether a process is actively running, waiting for an event, stopped, or waiting for its parent process to collect its exit status.
+
+### Linux Signals
+
+```text
+1  = SIGHUP
+2  = SIGINT
+9  = SIGKILL
+15 = SIGTERM
+```
+
+Signals provide a mechanism for controlling running processes.
+
+`SIGTERM` requests a normal termination, while `SIGKILL` forces a process to terminate.
+
+## Practical Focus
+
+The Linux labs in this directory follow a hands-on learning workflow:
+
+```text
+Understand the Concept
         |
         v
-Execute commands
+Execute Commands
         |
         v
-Verify the result
+Verify the Result
         |
         v
-Understand system behavior
+Understand System Behavior
         |
         v
-Apply the knowledge to troubleshooting
+Apply the Knowledge to Troubleshooting
 ```
 
 The goal is to move beyond command memorization and develop practical Linux administration skills.
+
+## Troubleshooting Approach
+
+When investigating Linux system problems, I focus on identifying the problem, inspecting the relevant system state, determining the root cause, applying a solution, and verifying the result.
+
+```text
+Problem
+   |
+   v
+Investigation
+   |
+   v
+Root Cause
+   |
+   v
+Resolution
+   |
+   v
+Verification
+   |
+   v
+Lesson Learned
+```
+
+As more practical issues are encountered, dedicated troubleshooting records will be added to the repository.
 
 ## What I Am Building Toward
 
