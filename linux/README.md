@@ -1,8 +1,8 @@
 # Linux Labs
 
-This directory contains hands-on Linux administration labs completed while studying cloud infrastructure.
+This directory contains hands-on Linux administration and shell programming labs completed while studying cloud infrastructure.
 
-The goal is not only to learn Linux commands, but also to understand how Linux systems behave, verify concepts through hands-on practice, and develop troubleshooting skills relevant to cloud infrastructure operations.
+The goal is not only to learn Linux commands, but also to understand how Linux systems behave, verify concepts through hands-on practice, and develop troubleshooting and automation skills relevant to infrastructure operations.
 
 ## Environment
 
@@ -13,43 +13,166 @@ The goal is not only to learn Linux commands, but also to understand how Linux s
 
 ## Topics Covered
 
+### Linux Fundamentals
+
 - Linux system architecture
-- Remote administration with SSH
-- Kernel and system information
-- File and directory management
+- User space and kernel space
+- Linux kernel information
+- CPU, memory, swap, and disk information
+- `/proc` system information
+
+### Remote Administration
+
+- SSH client and server
+- `sshd`
+- Remote login
+- User identity
+- UID, GID, and groups
+
+### File System
+
 - Absolute and relative paths
-- File permissions
+- File and directory management
+- File types
+- Symbolic links
+- Hard links
 - Inodes
-- Symbolic and hard links
-- Shell input/output
-- Standard streams and file descriptors
-- Redirection and pipelines
-- Standard output and standard error handling
-- `/dev/null`
+- File permissions
+- Owner, Group, and Other
+- Symbolic and octal permission modes
+
+### Shell Fundamentals
+
+- Shell command processing
+- Standard input
+- Standard output
+- Standard error
+- File descriptors
+- Redirection
+- Pipelines
+- Filename expansion
+- Aliases
 - Environment variables
 - Shell initialization files
-- Vi/Vim
-- Shell scripting
-- Command-line arguments
-- File content searching with `grep`
+- Command substitution
+
+### Shell Redirection
+
+```text
+0 = stdin
+1 = stdout
+2 = stderr
+```
+
+Common patterns:
+
+```text
+command > file
+→ Redirect stdout
+
+command >> file
+→ Append stdout
+
+command 2> file
+→ Redirect stderr
+
+command > file 2>&1
+→ Redirect stdout and stderr to the same file
+
+command 2> /dev/null
+→ Discard stderr
+
+command > /dev/null 2>&1
+→ Discard both stdout and stderr
+```
+
+Redirection order matters because shell redirections are processed from left to right.
+
+### Vi/Vim
+
+- Command Mode
+- Insert Mode
+- Last Line Mode
+- Cursor movement
+- Text editing
+- Search and replacement
+- Copy and paste
+- Save and exit operations
+- `.vimrc`
+
+### Shell Programming
+
+- Shell script structure
+- Shebang
+- Script permissions
+- Child shell execution
+- Current shell execution with `source`
+- Shell variable scope
+- Environment variable inheritance
+- Special shell variables
+- Arithmetic expansion
+- Parameter expansion
+- String pattern removal
+- Positional parameters
+- `"$@"` and `"$*"`
+- `shift`
+- Exit status
+- `if`, `elif`, and `else`
+- Numeric comparison
+- String comparison
+- File tests
+- Pattern matching
+- `case`
+- `exit`
+
+### Search and Text Utilities
+
+- `grep`
 - Basic regular expressions
-- File and directory searching with `find`
-- Archiving with `tar`
-- Compression with `gzip` and `bzip2`
-- Process and job management
-- Foreground and background execution
-- Process monitoring and states
-- Linux signals and process control
-- systemd service management
+- `find`
+- File search conditions
+
+### Archive and Compression
+
+- `tar`
+- Archive creation
+- Archive inspection
+- Archive extraction
+- `gzip`
+- `bzip2`
+
+### Process Management
+
+- Processes
+- Daemons
+- Shell jobs
+- Foreground execution
+- Background execution
+- Job control
+- Process states
+- Process monitoring
+- Signals
+- Process termination
+
+### Service Management
+
+- systemd
+- `systemctl`
 - Service runtime state
-- Boot-time service configuration
+- Boot-time configuration
 - Service dependencies
+- Service masking
 - Basic service troubleshooting
-- RPM package management
+
+### Package Management
+
+- RPM packages
+- RPM package inspection
 - DNF package management
-- Package inspection and verification
-- Software repositories
 - Package dependencies
+- Software repositories
+- Package installation and removal
+- Package verification
 
 ## Labs
 
@@ -160,28 +283,30 @@ Topics:
 
 ---
 
-### Shell Scripting
+### Shell Programming
 
-[Linux Shell Script Basics](./shell-script/README.md)
+[Linux Shell Programming Labs](./shell-script/README.md)
 
 Topics:
 
-- Shell script structure
-- Shebang
-- Comments
-- Execute permissions
-- Script debugging
-- Conditional command execution
-- `&&` and `||`
+- Basic shell scripts
+- Shebang and script execution
+- Child shell and current shell execution
+- Variable scope
+- Environment variable inheritance
+- Special variables
+- Arithmetic expansion
+- Parameter expansion
 - Positional parameters
 - Command-line arguments
+- `"$@"` and `"$*"`
 - `shift`
-
-Example scripts:
-
-- [`basic.sh`](./shell-script/basic.sh)
-- [`args.sh`](./shell-script/args.sh)
-- [`shift.sh`](./shell-script/shift.sh)
+- Input validation
+- Conditional statements
+- Numeric comparison
+- File tests
+- `case`
+- Exit status
 
 ---
 
@@ -288,50 +413,255 @@ Hardware
 
 The shell provides an interface between the user and the operating system, while the kernel manages system resources such as CPU, memory, processes, devices, networking, and file systems.
 
-### Linux File System
+### Shell Command Processing
 
-Linux uses a hierarchical file system starting from the root directory:
+The shell does more than simply execute commands.
+
+A simplified command-processing flow is:
 
 ```text
+Read Command
+     |
+     v
+Parse
+     |
+     v
+Expansion and Substitution
+     |
+     v
+Command Lookup
+     |
+     v
+Execution
+```
+
+The shell can act as:
+
+- A command-line interpreter
+- A programming language
+- A user working environment
+
+### Shell Execution Scope
+
+A shell script normally executes through a child shell or interpreter process.
+
+```text
+Parent Shell
+     |
+     v
+Child Shell
+     |
+     v
+Shell Script
+```
+
+Variables created only inside the child shell do not modify the parent shell.
+
+Using:
+
+```bash
+source script.sh
+```
+
+or:
+
+```bash
+. script.sh
+```
+
+executes the script in the current shell.
+
+### Shell Variables
+
+```text
+Local Shell Variable
+→ Available in the current shell
+
+Exported Environment Variable
+→ Inherited by child processes
+```
+
+Example:
+
+```bash
+VAR="value"
+export VAR
+```
+
+### Special Shell Variables
+
+```text
+$$
+→ Current shell PID
+
+$?
+→ Exit status of the previous foreground command
+
+$!
+→ PID of the most recent background process
+```
+
+### Shell Arithmetic
+
+Arithmetic operations can be performed using:
+
+```bash
+(( result = a + b ))
+```
+
+Common operators include:
+
+```text
++
+-
+*
 /
-├── etc
-├── home
-├── usr
-├── var
-├── opt
-└── ...
+%
 ```
 
-### Standard Streams
+### Parameter Expansion
+
+Useful parameter expansion forms include:
 
 ```text
-0 = stdin
-1 = stdout
-2 = stderr
+${var:-word}
+→ Use word if var is unset or null
+
+${var:=word}
+→ Use and assign word if var is unset or null
+
+${var:?word}
+→ Return an error if var is unset or null
+
+${var:+word}
+→ Use word when var has a value
 ```
 
-Understanding standard streams and file descriptors is important for command pipelines, logging, automation, and troubleshooting.
-
-Common redirection patterns include:
+String pattern removal:
 
 ```text
-command > file
-→ stdout to file
+${var#pattern}
+→ Remove shortest matching prefix
 
-command 2> file
-→ stderr to file
+${var##pattern}
+→ Remove longest matching prefix
 
-command > file 2>&1
-→ stdout and stderr to the same file
+${var%pattern}
+→ Remove shortest matching suffix
 
-command 2> /dev/null
-→ discard stderr
-
-command > /dev/null 2>&1
-→ discard stdout and stderr
+${var%%pattern}
+→ Remove longest matching suffix
 ```
 
-Redirection order matters because shell redirections are processed from left to right.
+### Positional Parameters
+
+Shell scripts can receive command-line arguments.
+
+```text
+$0
+→ Script name
+
+$1
+→ First argument
+
+$2
+→ Second argument
+
+$#
+→ Number of arguments
+
+$@
+→ All arguments
+
+$*
+→ All arguments
+```
+
+When quoted:
+
+```text
+"$@"
+→ Preserves each argument separately
+
+"$*"
+→ Combines all arguments into one string
+```
+
+### Conditional Execution
+
+Shell commands return an exit status.
+
+```text
+0
+→ Success
+
+non-zero
+→ Failure
+```
+
+The `if` statement evaluates command success or failure.
+
+```bash
+if command
+then
+    ...
+fi
+```
+
+Conditional expressions can inspect:
+
+- Numeric values
+- Strings
+- File existence
+- File types
+- File permissions
+- Patterns
+- Command exit status
+
+### File Tests
+
+Common file tests include:
+
+```text
+-e
+→ Exists
+
+-f
+→ Regular file
+
+-d
+→ Directory
+
+-L
+→ Symbolic link
+
+-r
+→ Readable
+
+-w
+→ Writable
+
+-x
+→ Executable
+```
+
+### Case Selection
+
+`case` is useful when a value can match several predefined patterns.
+
+```bash
+case "$value" in
+    pattern1)
+        ...
+        ;;
+    pattern2)
+        ...
+        ;;
+    *)
+        ...
+        ;;
+esac
+```
 
 ### File Search vs Content Search
 
@@ -343,7 +673,7 @@ grep
 → Search text inside files or command output
 ```
 
-These tools are commonly used together when investigating Linux systems.
+These tools are commonly used together during Linux investigations.
 
 ### Archive vs Compression
 
@@ -366,8 +696,6 @@ Program
 Process
 ```
 
-A process is a program currently executing in memory.
-
 A shell job can run in different states:
 
 ```text
@@ -376,7 +704,7 @@ Background
 Stopped
 ```
 
-The shell manages jobs using job IDs, while the operating system identifies processes using process IDs (PIDs).
+The shell manages jobs using job IDs, while the operating system identifies processes using process IDs.
 
 ### Common Process States
 
@@ -389,8 +717,6 @@ T = Stopped
 Z = Zombie
 ```
 
-Process states help identify whether a process is actively running, waiting, idle, stopped, or waiting for its parent process to collect its exit status.
-
 ### Linux Signals
 
 ```text
@@ -400,9 +726,7 @@ Process states help identify whether a process is actively running, waiting, idl
 15 = SIGTERM
 ```
 
-Signals provide a mechanism for controlling running processes.
-
-`SIGTERM` requests a normal termination, while `SIGKILL` forces a process to terminate.
+`SIGTERM` requests a normal termination, while `SIGKILL` forces termination.
 
 ### Service Management
 
@@ -432,31 +756,6 @@ enabled / disabled
 → Boot-time configuration
 ```
 
-The difference between service commands is important:
-
-```text
-start
-→ Start the service now
-
-stop
-→ Stop the service now
-
-restart
-→ Stop and start the service again
-
-reload
-→ Reload supported service configuration
-
-enable
-→ Configure automatic startup during boot
-
-disable
-→ Remove automatic startup configuration
-
-mask
-→ Prevent the service from being started
-```
-
 ### Package Management
 
 Red Hat-based Linux distributions use RPM packages and package managers such as DNF.
@@ -484,29 +783,9 @@ DNF
 → Repository-based package and dependency management
 ```
 
-Package installation and service execution are separate operations.
-
-```text
-Install Package
-      |
-      v
-Configure Software
-      |
-      v
-Start Service
-      |
-      v
-Enable at Boot
-      |
-      v
-Verify
-```
-
-Understanding this distinction is important when configuring and troubleshooting Linux servers.
-
 ## Practical Focus
 
-The Linux labs in this directory follow a hands-on learning workflow:
+The labs follow a practical learning workflow.
 
 ```text
 Understand the Concept
@@ -524,17 +803,20 @@ Understand System Behavior
 Apply the Knowledge to Troubleshooting
 ```
 
-The goal is to move beyond command memorization and develop practical Linux administration skills.
+The goal is to move beyond command memorization and develop practical Linux administration and automation skills.
 
 ## Troubleshooting Approach
 
-When investigating Linux system problems, I focus on identifying the problem, inspecting the relevant system state, determining the root cause, applying a solution, and verifying the result.
+Troubleshooting should be evidence-driven.
 
 ```text
 Problem
    |
    v
 Investigation
+   |
+   v
+Evidence
    |
    v
 Root Cause
@@ -549,34 +831,23 @@ Verification
 Lesson Learned
 ```
 
-Linux troubleshooting may involve several system layers:
+Linux troubleshooting may involve several connected layers.
 
 ```text
-Software Problem
-      |
-      v
-Package Installed?
-      |
-      v
-Repository Available?
-      |
-      v
-Configuration Correct?
-      |
-      v
-Service Running?
-      |
-      v
-Process Healthy?
-      |
-      v
-Logs / System State
-      |
-      v
-Root Cause
+Package
+   |
+   v
+Configuration
+   |
+   v
+Service
+   |
+   v
+Process
+   |
+   v
+Logs and System State
 ```
-
-As more practical issues are encountered, dedicated troubleshooting records will be added to the repository.
 
 ## What I Am Building Toward
 
@@ -591,4 +862,4 @@ These Linux fundamentals provide the foundation for:
 - Infrastructure as Code
 - Cloud security
 
-Additional labs will be added as Linux administration topics become more advanced.
+Additional labs will be added as Linux administration and shell programming topics become more advanced.
