@@ -2,9 +2,9 @@
 
 This directory contains hands-on Bash shell programming exercises.
 
-The labs build from basic script execution and command-line arguments to variable scope, parameter expansion, input validation, conditional logic, and file inspection.
+The labs progress from basic script execution to variables, arguments, conditions, loops, input processing, and reusable functions.
 
-The goal is to understand how Linux commands can be combined with shell programming features to create reusable automation scripts.
+The goal is to understand how Linux commands and Bash programming features can be combined to build reusable automation scripts.
 
 ## Environment
 
@@ -24,7 +24,7 @@ The goal is to understand how Linux commands can be combined with shell programm
 - Variable scope
 - Environment variable inheritance
 - Special shell variables
-- Arithmetic expansion
+- Arithmetic expressions
 - String pattern removal
 - Parameter expansion
 - Positional parameters
@@ -43,12 +43,24 @@ The goal is to understand how Linux commands can be combined with shell programm
 - Pattern matching
 - `case`
 - `exit`
+- `for`
+- `while`
+- `until`
+- `break`
+- `continue`
+- `read`
+- Input redirection
+- `IFS`
+- Here documents
+- Bash functions
+- Function arguments
+- Local variables
 
 ## Script Execution
 
 A shell script is a text file interpreted by a shell.
 
-A common Bash script begins with:
+A Bash script commonly begins with:
 
 ```bash
 #!/bin/bash
@@ -64,8 +76,6 @@ chmod +x script.sh
 ```
 
 ## Script Execution Methods
-
-Different execution methods have different behavior.
 
 ```text
 ./script.sh
@@ -102,7 +112,7 @@ Script
 
 Variables created in the child shell do not modify the parent shell.
 
-Using `source` changes the behavior:
+Using `source` changes the behavior.
 
 ```text
 Current Shell
@@ -114,7 +124,7 @@ source script.sh
 Script executes in the same shell
 ```
 
-This distinction is important when loading environment configuration.
+This distinction is important when loading shell environment configuration.
 
 ## Variables and Environment
 
@@ -124,7 +134,7 @@ A variable created in the current shell is not automatically inherited by child 
 VAR="value"
 ```
 
-Exporting the variable makes it part of the environment inherited by child processes.
+Exporting a variable makes it part of the environment inherited by child processes.
 
 ```bash
 export VAR
@@ -138,11 +148,9 @@ Parent Shell
 Child Process
 ```
 
-Changes made by the child process still do not modify the parent process.
+Changes made by a child process do not directly modify the parent process environment.
 
 ## Special Variables
-
-Useful shell special variables include:
 
 ```text
 $$
@@ -165,7 +173,7 @@ non-zero
 → Failure
 ```
 
-## Arithmetic Expansion
+## Arithmetic Expressions
 
 Bash supports integer arithmetic using double parentheses.
 
@@ -206,7 +214,7 @@ ${var-word}
 → Use word only if var is unset
 
 ${var:=word}
-→ Use word and assign it to var if unset or null
+→ Use word and assign it if var is unset or null
 
 ${var:?word}
 → Return an error if var is unset or null
@@ -216,8 +224,6 @@ ${var:+word}
 ```
 
 ## String Pattern Removal
-
-Bash parameter expansion can also remove matching portions of strings.
 
 ```text
 ${var#pattern}
@@ -264,11 +270,7 @@ $1
 
 $2
 → second
-```
 
-Additional parameters:
-
-```text
 $#
 → Number of arguments
 
@@ -279,7 +281,7 @@ $*
 → All arguments
 ```
 
-Arguments greater than nine should use braces.
+Arguments greater than nine use braces.
 
 ```text
 ${10}
@@ -299,7 +301,7 @@ Quoted forms behave differently.
 → Preserves each positional parameter as a separate argument
 ```
 
-Example input:
+Example:
 
 ```bash
 ./script.sh "hello world" linux shell
@@ -319,7 +321,7 @@ linux
 shell
 ```
 
-For processing user-supplied arguments individually, `"$@"` is generally the appropriate form.
+For processing user-supplied arguments individually, `"$@"` preserves argument boundaries.
 
 ## `shift`
 
@@ -344,7 +346,7 @@ $1 = two
 $2 = three
 ```
 
-This is useful when processing an unknown number of arguments one at a time.
+This allows scripts to process positional parameters sequentially.
 
 ## Conditional Execution
 
@@ -383,13 +385,13 @@ fi
 
 ## Numeric Comparison
 
-Using arithmetic expressions:
+Arithmetic expressions can be used directly.
 
 ```bash
 (( a > b ))
 ```
 
-Traditional test operators include:
+Traditional numeric test operators include:
 
 ```text
 -eq
@@ -411,15 +413,6 @@ Traditional test operators include:
 → Greater than or equal
 ```
 
-Example:
-
-```bash
-if (( a > b ))
-then
-    echo "$a is greater than $b"
-fi
-```
-
 ## String Comparison
 
 Example:
@@ -431,7 +424,7 @@ then
 fi
 ```
 
-Pattern matching can also be used:
+Pattern matching can also be used.
 
 ```bash
 if [[ "$name" == l* ]]
@@ -446,7 +439,7 @@ Common file tests include:
 
 ```text
 -e
-→ File or directory exists
+→ Exists
 
 -f
 → Regular file
@@ -496,27 +489,211 @@ esac
 
 The `*` pattern is commonly used as the default case.
 
-## Exit Status
+## Loop Fundamentals
 
-A script can explicitly return an exit status.
+### `for`
 
-```bash
-exit 0
-```
-
-indicates successful completion.
+`for` processes a list of values one at a time.
 
 ```bash
-exit 1
+for value in list
+do
+    echo "$value"
+done
 ```
 
-indicates failure.
-
-The calling shell can inspect the result using:
+A common argument-processing pattern is:
 
 ```bash
-echo $?
+for arg in "$@"
+do
+    echo "$arg"
+done
 ```
+
+### `while`
+
+`while` repeats while its control condition is true.
+
+```bash
+while (( count <= 5 ))
+do
+    echo "$count"
+    (( count = count + 1 ))
+done
+```
+
+### `until`
+
+`until` repeats until its control condition becomes true.
+
+```bash
+until (( count == 6 ))
+do
+    echo "$count"
+    (( count = count + 1 ))
+done
+```
+
+## Loop Flow Control
+
+`break` exits the current loop.
+
+```text
+break
+→ Stop the loop completely
+```
+
+`continue` skips the remaining commands in the current iteration.
+
+```text
+continue
+→ Continue with the next iteration
+```
+
+## Reading Input
+
+`read` stores standard input in variables.
+
+```bash
+read value
+```
+
+A file can be processed line by line.
+
+```bash
+while read line
+do
+    echo "$line"
+done < file
+```
+
+This combines:
+
+```text
+Input Redirection
+       |
+       v
+while
+       |
+       v
+read
+       |
+       v
+Line-by-Line Processing
+```
+
+## Internal Field Separator
+
+`IFS` controls how the shell separates input fields.
+
+Example:
+
+```bash
+IFS=":"
+```
+
+A colon-separated input line can then be divided into separate values.
+
+## Sequential Argument Processing
+
+Arguments can be consumed one at a time using `shift`.
+
+```bash
+while (( $# > 0 ))
+do
+    echo "$1"
+    shift
+done
+```
+
+The loop ends when no positional parameters remain.
+
+## Here Documents
+
+A here document provides multiple lines of standard input directly inside a script.
+
+```bash
+command <<EOF
+input1
+input2
+input3
+EOF
+```
+
+Conceptually:
+
+```text
+Script Text
+    |
+    | stdin
+    v
+Command
+```
+
+## Bash Functions
+
+Functions group reusable shell commands.
+
+Basic structure:
+
+```bash
+function_name()
+{
+    commands
+}
+```
+
+Example:
+
+```bash
+show_hostname()
+{
+    hostname
+}
+```
+
+Call the function:
+
+```bash
+show_hostname
+```
+
+## Function Arguments
+
+Functions can receive positional parameters.
+
+```bash
+show_value()
+{
+    echo "$1"
+}
+
+show_value "linux"
+```
+
+Inside the function:
+
+```text
+$1
+→ First function argument
+```
+
+Function positional parameters are used during the function call without replacing the script's original positional parameters.
+
+## Local Function Variables
+
+Function-specific variables can be declared with `local`.
+
+```bash
+show_info()
+{
+    local label="System Information"
+    echo "$label"
+}
+```
+
+This helps prevent function variables from unintentionally changing variables used elsewhere in the script.
 
 ## Lab Files
 
@@ -550,13 +727,13 @@ Topics:
 
 ### `shift.sh`
 
-Demonstrates sequential command-line argument processing.
+Introduces positional parameter shifting.
 
 Topics:
 
 - Positional parameters
 - `shift`
-- Argument processing
+- Sequential argument processing
 
 ---
 
@@ -586,20 +763,18 @@ source ./execution-scope.sh
 echo "$LAB_VAR"
 ```
 
-The comparison demonstrates whether the variable remains in the current shell.
-
 ---
 
 ### `variables-and-expansion.sh`
 
-Demonstrates shell variables and expansion features.
+Demonstrates variable and parameter expansion features.
 
 Topics:
 
 - Local variables
 - Environment variables
 - Special variables
-- Arithmetic expansion
+- Arithmetic expressions
 - String pattern removal
 - Parameter expansion
 - Default values
@@ -625,8 +800,6 @@ Example:
 ```bash
 ./argument-loop.sh "hello world" linux shell
 ```
-
-The script demonstrates how `"$*"` and `"$@"` handle arguments differently.
 
 ---
 
@@ -694,17 +867,94 @@ Topics:
 - Usage messages
 - Exit status
 
-Examples:
+Example:
 
 ```bash
 ./service-action.sh start
 ```
 
+The script demonstrates input handling only and does not directly control system services.
+
+---
+
+### `argument-for.sh`
+
+Processes command-line arguments with a `for` loop.
+
+Topics:
+
+- `for`
+- `"$@"`
+- Argument validation
+- Exit status
+
+Example:
+
 ```bash
-./service-action.sh status
+./argument-for.sh "hello world" linux shell
 ```
 
-The current script demonstrates input handling only and does not directly control system services.
+---
+
+### `read-lines.sh`
+
+Processes a text file one line at a time.
+
+Topics:
+
+- File validation
+- `while`
+- `read`
+- Input redirection
+- Line-by-line processing
+
+Example:
+
+```bash
+./read-lines.sh servers.txt
+```
+
+---
+
+### `process-arguments.sh`
+
+Processes positional parameters sequentially.
+
+Topics:
+
+- `while`
+- `$#`
+- `$1`
+- `shift`
+- Argument consumption
+
+Example:
+
+```bash
+./process-arguments.sh one two three four
+```
+
+---
+
+### `function-basics.sh`
+
+Demonstrates reusable Bash functions.
+
+Topics:
+
+- Function declaration
+- Function calls
+- Function arguments
+- Script argument scope
+- Function argument scope
+- Local variables
+- Command substitution inside functions
+
+Example:
+
+```bash
+./function-basics.sh script-value
+```
 
 ## Running the Labs
 
@@ -726,7 +976,7 @@ Run with Bash tracing:
 bash -x script-name.sh
 ```
 
-Run inside the current shell when the lab specifically requires it:
+Run inside the current shell when a lab specifically requires it:
 
 ```bash
 source ./script-name.sh
@@ -734,7 +984,7 @@ source ./script-name.sh
 
 ## Verification Approach
 
-Each shell programming lab should follow this pattern:
+Each shell programming lab follows a practical verification cycle.
 
 ```text
 Write Script
@@ -770,6 +1020,9 @@ Check Variables
 Check Conditions
    |
    v
+Check Loop State
+   |
+   v
 Use bash -x
    |
    v
@@ -789,17 +1042,25 @@ Through these labs, I have practiced how Bash can be used as both a command inte
 Key lessons include:
 
 - Shell scripts are interpreted rather than compiled.
-- Script execution can occur in a child shell or the current shell.
+- Scripts can execute through a child shell or inside the current shell.
 - Variables have different scopes depending on how they are defined and exported.
-- Child processes inherit exported environment variables but cannot directly modify the parent process environment.
+- Child processes inherit exported environment variables but do not directly modify the parent environment.
 - Special variables expose process and command execution information.
-- Arithmetic expressions allow integer calculations inside Bash.
+- Arithmetic expressions provide integer calculation and numeric conditions.
 - Parameter expansion provides compact ways to manipulate and validate variables.
 - Positional parameters allow scripts to accept reusable command-line input.
 - `"$@"` preserves individual command-line arguments.
-- `shift` enables sequential argument processing.
-- Exit status is fundamental to Shell control flow.
-- Conditional statements allow scripts to make decisions based on command results, numeric values, strings, files, and user input.
-- `case` provides a clean structure for handling multiple predefined options.
+- `shift` enables sequential positional parameter processing.
+- Exit status is fundamental to shell control flow.
+- Conditional statements allow scripts to make decisions based on commands, values, files, and user input.
+- `case` provides a clear structure for handling predefined options.
+- `for` processes lists of values.
+- `while` and `until` support condition-based repetition.
+- `break` and `continue` control loop execution.
+- `read` allows scripts to process standard input.
+- Input redirection allows files to be processed line by line.
+- Here documents provide multi-line input inside scripts.
+- Functions reduce repeated code and organize scripts into reusable units.
+- Function arguments and local variables provide controlled data handling inside reusable logic.
 
-These fundamentals provide the basis for more advanced shell automation and Linux administration tasks.
+These fundamentals provide the basis for more advanced Linux automation and infrastructure operations.
