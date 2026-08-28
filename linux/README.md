@@ -1,6 +1,6 @@
 # Linux Labs
 
-This directory contains hands-on Linux administration and shell programming labs completed while studying cloud infrastructure.
+This directory contains hands-on Linux administration, shell programming, and text-processing labs completed while studying cloud infrastructure.
 
 The goal is not only to learn Linux commands, but also to understand how Linux systems behave, verify concepts through hands-on practice, and develop troubleshooting and automation skills relevant to infrastructure operations.
 
@@ -44,6 +44,7 @@ The goal is not only to learn Linux commands, but also to understand how Linux s
 ### Shell Fundamentals
 
 - Shell command processing
+- Command parsing
 - Standard input
 - Standard output
 - Standard error
@@ -83,7 +84,7 @@ command 2> /dev/null
 → Discard stderr
 
 command > /dev/null 2>&1
-→ Discard both stdout and stderr
+→ Discard stdout and stderr
 ```
 
 Redirection order matters because shell redirections are processed from left to right.
@@ -110,7 +111,7 @@ Redirection order matters because shell redirections are processed from left to 
 - Shell variable scope
 - Environment variable inheritance
 - Special shell variables
-- Arithmetic expansion
+- Arithmetic expressions
 - Parameter expansion
 - String pattern removal
 - Positional parameters
@@ -124,8 +125,37 @@ Redirection order matters because shell redirections are processed from left to 
 - Pattern matching
 - `case`
 - `exit`
+- `for`
+- `while`
+- `until`
+- `break`
+- `continue`
+- `read`
+- Input redirection
+- Internal Field Separator (`IFS`)
+- Here documents
+- Bash functions
+- Function arguments
+- Local function variables
 
-### Search and Text Utilities
+### Text Processing
+
+- `grep`
+- Extended regular expressions
+- Fixed-string searching
+- `sed`
+- Line addressing
+- Text substitution
+- Line deletion
+- Multiple `sed` operations
+- `awk`
+- Records and fields
+- Field separators
+- Built-in `awk` variables
+- Basic numerical processing
+- Processing Linux command output
+
+### Search and File Discovery
 
 - `grep`
 - Basic regular expressions
@@ -289,24 +319,50 @@ Topics:
 
 Topics:
 
-- Basic shell scripts
-- Shebang and script execution
-- Child shell and current shell execution
+- Basic Bash scripts
+- Script execution methods
+- Child and current shell execution
 - Variable scope
-- Environment variable inheritance
+- Environment inheritance
 - Special variables
-- Arithmetic expansion
+- Arithmetic expressions
 - Parameter expansion
 - Positional parameters
 - Command-line arguments
-- `"$@"` and `"$*"`
-- `shift`
 - Input validation
 - Conditional statements
-- Numeric comparison
 - File tests
 - `case`
 - Exit status
+- `for`, `while`, and `until`
+- `break` and `continue`
+- Line-by-line input processing
+- Argument processing with `shift`
+- Bash functions
+
+---
+
+### Text Processing
+
+[Linux Text Processing Lab](./text-processing-lab.md)
+
+Topics:
+
+- Extended regular expressions
+- Fixed-string searching
+- Text filtering
+- `sed` line selection
+- `sed` substitution
+- `sed` deletion
+- Multiple `sed` actions
+- `awk` records and fields
+- `NR`
+- `NF`
+- `$NF`
+- `FS`
+- Field rearrangement
+- Numerical aggregation
+- Processing Linux command output
 
 ---
 
@@ -415,7 +471,11 @@ The shell provides an interface between the user and the operating system, while
 
 ### Shell Command Processing
 
-The shell does more than simply execute commands.
+The shell acts as:
+
+- A command-line interpreter
+- A programming language
+- A user working environment
 
 A simplified command-processing flow is:
 
@@ -435,15 +495,9 @@ Command Lookup
 Execution
 ```
 
-The shell can act as:
-
-- A command-line interpreter
-- A programming language
-- A user working environment
-
 ### Shell Execution Scope
 
-A shell script normally executes through a child shell or interpreter process.
+A shell script normally executes through a separate shell or interpreter process.
 
 ```text
 Parent Shell
@@ -455,7 +509,7 @@ Child Shell
 Shell Script
 ```
 
-Variables created only inside the child shell do not modify the parent shell.
+Variables created only in the child shell do not modify the parent shell.
 
 Using:
 
@@ -503,7 +557,7 @@ $!
 
 ### Shell Arithmetic
 
-Arithmetic operations can be performed using:
+Integer arithmetic can be performed using double parentheses.
 
 ```bash
 (( result = a + b ))
@@ -534,7 +588,7 @@ ${var:?word}
 → Return an error if var is unset or null
 
 ${var:+word}
-→ Use word when var has a value
+→ Use word when var contains a value
 ```
 
 String pattern removal:
@@ -554,8 +608,6 @@ ${var%%pattern}
 ```
 
 ### Positional Parameters
-
-Shell scripts can receive command-line arguments.
 
 ```text
 $0
@@ -584,7 +636,7 @@ When quoted:
 → Preserves each argument separately
 
 "$*"
-→ Combines all arguments into one string
+→ Treats all arguments as one combined string
 ```
 
 ### Conditional Execution
@@ -608,14 +660,14 @@ then
 fi
 ```
 
-Conditional expressions can inspect:
+Conditions can inspect:
 
 - Numeric values
 - Strings
+- Patterns
 - File existence
 - File types
 - File permissions
-- Patterns
 - Command exit status
 
 ### File Tests
@@ -645,22 +697,151 @@ Common file tests include:
 → Executable
 ```
 
-### Case Selection
+### Loop Control
 
-`case` is useful when a value can match several predefined patterns.
+`for` processes a list of values.
 
 ```bash
-case "$value" in
-    pattern1)
-        ...
-        ;;
-    pattern2)
-        ...
-        ;;
-    *)
-        ...
-        ;;
-esac
+for value in list
+do
+    ...
+done
+```
+
+`while` repeats while a condition is true.
+
+```bash
+while condition
+do
+    ...
+done
+```
+
+`until` repeats until a condition becomes true.
+
+```bash
+until condition
+do
+    ...
+done
+```
+
+Loop flow can be controlled with:
+
+```text
+break
+→ Exit the loop
+
+continue
+→ Skip the current iteration
+```
+
+### Processing Input
+
+`read` stores standard input in shell variables.
+
+```bash
+read variable
+```
+
+A file can be processed line by line.
+
+```bash
+while read line
+do
+    ...
+done < file
+```
+
+Arguments can also be processed sequentially.
+
+```bash
+while (( $# > 0 ))
+do
+    echo "$1"
+    shift
+done
+```
+
+### Bash Functions
+
+Functions group reusable shell commands.
+
+```bash
+function_name()
+{
+    commands
+}
+```
+
+A function can receive its own positional parameters.
+
+```bash
+function_name value
+```
+
+Inside the function:
+
+```text
+$1
+→ First function argument
+```
+
+Function positional parameters are separate from the script's positional parameters during the function call.
+
+Function-local variables can be created using:
+
+```bash
+local variable="value"
+```
+
+### Text Processing
+
+Linux command output and text files can be processed through pipelines.
+
+```text
+Command or File
+      |
+      v
+grep / sed / awk
+      |
+      v
+Filtered or Processed Output
+```
+
+General roles:
+
+```text
+grep
+→ Search for matching lines
+
+sed
+→ Select, transform, or remove text
+
+awk
+→ Process records and fields
+```
+
+### awk Records and Fields
+
+```text
+$0
+→ Entire record
+
+$1, $2, ...
+→ Individual fields
+
+NR
+→ Current record number
+
+NF
+→ Number of fields
+
+$NF
+→ Last field
+
+FS
+→ Input field separator
 ```
 
 ### File Search vs Content Search
@@ -672,8 +853,6 @@ find
 grep
 → Search text inside files or command output
 ```
-
-These tools are commonly used together during Linux investigations.
 
 ### Archive vs Compression
 
@@ -726,7 +905,7 @@ Z = Zombie
 15 = SIGTERM
 ```
 
-`SIGTERM` requests a normal termination, while `SIGKILL` forces termination.
+`SIGTERM` requests normal termination, while `SIGKILL` forces termination.
 
 ### Service Management
 
@@ -772,8 +951,6 @@ RPM Package
     v
 Installed Software
 ```
-
-RPM and DNF serve related but different purposes.
 
 ```text
 RPM
@@ -862,4 +1039,4 @@ These Linux fundamentals provide the foundation for:
 - Infrastructure as Code
 - Cloud security
 
-Additional labs will be added as Linux administration and shell programming topics become more advanced.
+Additional labs will be added as infrastructure topics become more advanced.
