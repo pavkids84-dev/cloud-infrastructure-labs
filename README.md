@@ -18,7 +18,7 @@ Topics include:
 - Environment variables
 - Vi/Vim
 - Shell scripting
-- File searching and text processing fundamentals
+- Text processing with `grep`, `sed`, and `awk`
 - Archive and compression
 - Process management
 - Service management with systemd
@@ -26,6 +26,8 @@ Topics include:
 - Shell variables and parameter expansion
 - Command-line arguments
 - Conditional logic
+- Loop control
+- Bash functions
 - Linux troubleshooting fundamentals
 
 ## Repository Structure
@@ -43,6 +45,7 @@ cloud-infrastructure-labs/
     ├── shell-environment-lab.md
     ├── vi-basic-lab.md
     ├── search-archive-compression-lab.md
+    ├── text-processing-lab.md
     ├── process-management-lab.md
     ├── service-management-lab.md
     ├── package-management-lab.md
@@ -56,7 +59,11 @@ cloud-infrastructure-labs/
         ├── argument-loop.sh
         ├── compare-numbers.sh
         ├── file-check.sh
-        └── service-action.sh
+        ├── service-action.sh
+        ├── argument-for.sh
+        ├── read-lines.sh
+        ├── process-arguments.sh
+        └── function-basics.sh
 ```
 
 ## Learning Approach
@@ -97,7 +104,17 @@ Linux labs are organized under:
 
 [Linux Labs](./linux/README.md)
 
-The Linux section currently covers system fundamentals, shell usage, process and service management, package management, and shell programming.
+The Linux section currently covers:
+
+- System fundamentals
+- Remote administration
+- File and permission management
+- Shell usage
+- Shell programming
+- Text processing
+- Process management
+- Service management
+- Package management
 
 ## Practical Skills Being Developed
 
@@ -109,12 +126,15 @@ Through these labs, I am developing practical skills in:
 - Permission management
 - Shell command processing
 - Input and output redirection
+- Text filtering and transformation
+- Command-line data processing
 - Process inspection and control
 - Service lifecycle management
 - Package and repository management
 - Shell scripting
 - Command-line input validation
-- Basic automation
+- Loop-based automation
+- Reusable Bash functions
 - Troubleshooting
 - Technical documentation
 
