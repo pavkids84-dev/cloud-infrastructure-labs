@@ -2,424 +2,796 @@
 
 ## Objective
 
-Practice Linux package inspection and management using RPM and DNF, understand the role of software repositories, and connect package installation with Linux service management.
+Practice Linux package management and understand how software is installed, inspected, updated, removed, and retrieved from repositories.
+
+The primary hands-on environment for this lab is Rocky Linux using RPM and DNF.
+
+This lab also compares Red Hat-based package management with Debian-based package management and Snap at a conceptual level.
 
 ## Environment
 
 - OS: Rocky Linux
-- Virtualization: VMware
 - Shell: Bash
 - Package Format: RPM
 - Package Manager: DNF
+- Privilege: root or sudo-enabled user
 
 ## Package Management Overview
 
-Red Hat-based Linux distributions use RPM packages and package management tools such as RPM, YUM, and DNF.
+Linux distributions use different package formats and package-management tools.
 
 ```text
-Software Repository
+Red Hat-based Linux
         |
         v
-       DNF
+      RPM
         |
         v
-RPM Packages
+      DNF
         |
         v
-Installed Software
+ Repository
+
+
+Debian-based Linux
+        |
+        v
+       DEB
+        |
+        v
+       APT
+        |
+        v
+ Repository
 ```
 
-RPM provides direct package inspection and management capabilities.
+The package format and package manager have different responsibilities.
 
-DNF uses software repositories to search, install, update, and remove packages.
+```text
+RPM
+→ Directly inspect and manage RPM packages
 
-## List Installed RPM Packages
+DNF
+→ Search repositories, resolve dependencies,
+  download packages, and manage installed software
+```
 
-Display installed RPM packages.
+## Inspect Installed RPM Packages
+
+List all installed RPM packages.
 
 ```bash
 rpm -qa
 ```
 
-Display only the first few results.
+Search the installed package list for a specific keyword.
 
 ```bash
-rpm -qa | head
+rpm -qa | grep openssh
 ```
 
-Search the installed package list.
+## Query a Package
+
+Check whether a package is installed.
 
 ```bash
-rpm -qa | grep ssh
+rpm -q openssh-server
 ```
 
-## Query a Specific Package
+The command returns package information when the package is installed.
 
-Check whether Bash is installed.
+The exit status can also be inspected.
 
 ```bash
-rpm -q bash
+echo $?
 ```
+
+```text
+0
+→ Package query succeeded
+
+non-zero
+→ Package query failed
+```
+
+## Inspect Package Information
 
 Display detailed package information.
 
 ```bash
-rpm -qi bash
+rpm -qi openssh-server
 ```
 
-## List Files Installed by a Package
-
-Display files installed by the Bash package.
-
-```bash
-rpm -ql bash
-```
-
-Display only the first few entries.
-
-```bash
-rpm -ql bash | head
-```
-
-## Inspect Package Configuration Files
-
-Display configuration files associated with the package.
-
-```bash
-rpm -qc bash
-```
-
-## Inspect Package Documentation
-
-Display documentation files associated with the package.
-
-```bash
-rpm -qd bash
-```
-
-Display only the first few results.
-
-```bash
-rpm -qd bash | head
-```
-
-## Inspect an RPM File Before Installation
-
-Information about a local RPM package file can be inspected before installation.
-
-General form:
-
-```bash
-rpm -qip <package-file.rpm>
-```
-
-This differs from:
-
-```bash
-rpm -qi <installed-package>
-```
+Useful information can include:
 
 ```text
-rpm -qi
-→ Inspect an installed package
-
-rpm -qip
-→ Inspect an RPM package file before installation
+Name
+Version
+Release
+Architecture
+Install Date
+Size
+License
+Summary
+Description
 ```
 
-## RPM Package Operations
+## Inspect Package File Lists
 
-RPM supports direct package installation, upgrade, verification, and removal.
-
-Install an RPM package file:
+List files installed by a package.
 
 ```bash
-sudo rpm -i <package-file.rpm>
+rpm -ql openssh-server
 ```
 
-Upgrade a package:
+Limit the output when necessary.
 
 ```bash
-sudo rpm -Uvh <package-file.rpm>
+rpm -ql openssh-server | head
 ```
 
-The options represent:
+## Inspect Configuration Files
+
+List configuration files associated with the package.
+
+```bash
+rpm -qc openssh-server
+```
+
+## Inspect Documentation Files
+
+List documentation files associated with the package.
+
+```bash
+rpm -qd openssh-server
+```
+
+## RPM Query Summary
 
 ```text
--U = upgrade
--v = verbose
--h = display installation progress
+rpm -qa
+→ Query all installed packages
+
+rpm -q PACKAGE
+→ Check whether a package is installed
+
+rpm -qi PACKAGE
+→ Display detailed package information
+
+rpm -ql PACKAGE
+→ List package files
+
+rpm -qc PACKAGE
+→ List configuration files
+
+rpm -qd PACKAGE
+→ List documentation files
 ```
 
-Verify an installed package:
+## RPM Installation and Removal Concepts
 
-```bash
-rpm -V <package-name>
-```
-
-Remove an installed package:
-
-```bash
-sudo rpm -e <package-name>
-```
-
-For normal package installation on a repository-based Rocky Linux system, DNF is generally preferred because it can manage package dependencies.
-
-## Package Dependencies
-
-Software packages may require other packages or libraries.
+RPM supports direct package operations.
 
 ```text
-Package A
-   |
-   v
-Package B
-   |
-   v
-Package C
+-i
+→ Install
+
+-U
+→ Upgrade or install
+
+-F
+→ Freshen an installed package
+
+-e
+→ Erase
 ```
 
-DNF can use repository metadata to identify and install required dependencies.
+Direct RPM operations work with package files themselves.
 
-## Inspect Configured Repositories
+Repository-based package management with DNF is generally more convenient when dependencies must also be resolved.
 
-Display enabled software repositories.
+## DNF Package Management
 
-```bash
-dnf repolist
-```
+DNF manages packages through configured software repositories.
 
-Repositories provide packages and metadata that DNF uses for package management.
+A simplified workflow is:
 
 ```text
-Linux Server
+User Request
      |
-     | DNF
      v
-Repository
+    DNF
      |
-     ├── Packages
-     └── Package Metadata
+     v
+Repository Metadata
+     |
+     v
+Dependency Resolution
+     |
+     v
+RPM Packages
+     |
+     v
+Installed Software
 ```
 
-## Search for a Package
+## Search for Packages
 
-Search for the `tree` utility.
+Search repositories by keyword.
 
 ```bash
-dnf search tree
+dnf search openssh
 ```
 
-Package search is useful when the exact package name is unknown.
-
-## List Installed Packages with DNF
-
-Display installed packages.
+A broader search can also be performed.
 
 ```bash
-dnf list installed
+dnf search all openssh
 ```
 
-Display only the first few entries.
+## Inspect Package Information with DNF
+
+Display package information.
 
 ```bash
-dnf list installed | head
+dnf info openssh-server
 ```
 
-## Install a Package with DNF
+## Install a Package
 
-Check whether the `tree` command is already available.
+Install a package and its required dependencies.
 
 ```bash
-tree --version
+sudo dnf install openssh-server
 ```
 
-Search for the package.
+Automatic confirmation can be used when appropriate.
 
 ```bash
-dnf search tree
-```
-
-Install it.
-
-```bash
-sudo dnf install tree
-```
-
-During installation, review the packages and dependencies that DNF plans to install.
-
-## Verify Package Installation
-
-Verify the package using RPM.
-
-```bash
-rpm -q tree
-```
-
-Verify the installed application.
-
-```bash
-tree --version
-```
-
-This demonstrates how DNF and RPM can be used together.
-
-```text
-DNF
-→ Install and manage packages
-
-RPM
-→ Inspect the installed package
+sudo dnf install -y openssh-server
 ```
 
 ## Remove a Package
 
-Remove the test package.
+Remove an installed package.
 
 ```bash
-sudo dnf remove tree
+sudo dnf remove PACKAGE
 ```
 
-Verify the result.
-
-```bash
-rpm -q tree
-```
-
-The package should no longer be reported as installed.
-
-If the utility is needed for future labs, install it again.
-
-```bash
-sudo dnf install tree
-```
+Package removal should be performed carefully because dependency relationships may affect other software.
 
 ## Update Packages
 
-DNF can update installed packages to available newer versions.
+Check available updates.
+
+```bash
+dnf check-update
+```
+
+Update packages.
 
 ```bash
 sudo dnf update
 ```
 
-Before applying large updates on production systems, the impact of package changes should be reviewed.
+## Inspect Repositories
 
-## Repository Management
-
-DNF repository configuration determines where packages can be retrieved.
-
-Display repositories:
+List enabled repositories.
 
 ```bash
 dnf repolist
 ```
 
-The course material also introduces repository addition using `dnf-config-manager`.
+Typical Rocky Linux repositories can include:
 
-General form:
+```text
+BaseOS
+AppStream
+```
+
+Their general roles are:
+
+```text
+BaseOS
+→ Core operating-system packages
+
+AppStream
+→ Additional applications, runtime components, and modules
+```
+
+## Inspect Repository Configuration
+
+Rocky Linux repository configuration files are stored under:
+
+```text
+/etc/yum.repos.d/
+```
+
+List the repository configuration files.
 
 ```bash
-sudo dnf-config-manager --add-repo=<repository-url>
+ls /etc/yum.repos.d/
 ```
 
-A repository should only be added when its source and purpose are understood.
+Inspect a repository file when needed.
 
-## Package Management and Service Management
+```bash
+cat /etc/yum.repos.d/*.repo
+```
 
-Installing a service package and running that service are separate operations.
+The exact file names and repository definitions depend on the installed Rocky Linux version.
+
+## Repository Concept
+
+A software repository provides packages and package metadata to package managers.
 
 ```text
-Package Installation
-        |
-        v
-Configuration
-        |
-        v
-Service Start
-        |
-        v
-Boot-Time Enablement
-        |
-        v
-Verification
+Repository
+    |
+    ├── Package Metadata
+    ├── Package Versions
+    └── RPM Packages
+             |
+             v
+            DNF
+             |
+             v
+      Installed Software
 ```
 
-For example:
+Repository configuration is important when troubleshooting package-search or package-installation failures.
+
+## Repository Troubleshooting Flow
 
 ```text
-dnf install ...
-→ Install software
-
-systemctl start ...
-→ Start the service now
-
-systemctl enable ...
-→ Configure the service to start during boot
+Package Not Found
+       |
+       v
+Check Package Name
+       |
+       v
+Check Enabled Repositories
+       |
+       v
+dnf repolist
+       |
+       v
+Search Repository
+       |
+       v
+dnf search
 ```
 
-A package being installed does not necessarily mean that its service is currently running.
+## Additional Repositories
 
-## Basic Package Troubleshooting Workflow
+Additional repositories can extend the package selection available to the system.
 
-When software cannot be installed or executed, investigate the package state and repository configuration.
+One example is EPEL.
+
+Check whether the EPEL release package is installed.
+
+```bash
+rpm -q epel-release
+```
+
+If the lab specifically requires EPEL and it is available for the current environment, it can be installed through the package manager.
+
+The important concept is:
+
+```text
+Repository Package
+       |
+       v
+Repository Configuration Added
+       |
+       v
+DNF Can Access Additional Packages
+```
+
+## DNF Repository Cache
+
+DNF stores repository metadata and cached information under:
+
+```text
+/var/cache/dnf/
+```
+
+Inspect the directory.
+
+```bash
+ls /var/cache/dnf/
+```
+
+DNF cache data can be cleared with:
+
+```bash
+sudo dnf clean all
+```
+
+This removes cached DNF data.
+
+It does not remove all installed packages.
+
+## DNF History
+
+DNF records package-management transactions.
+
+List package-management history.
+
+```bash
+dnf history list
+```
+
+The history can help identify:
+
+```text
+Package installations
+Package removals
+Package updates
+Transaction IDs
+```
+
+Inspect a specific transaction.
+
+```bash
+dnf history info TRANSACTION_ID
+```
+
+Example structure:
+
+```bash
+dnf history info 5
+```
+
+The actual transaction ID must be selected from the current system.
+
+## Undo Concept
+
+DNF can provide transaction-based undo functionality.
+
+```bash
+sudo dnf history undo TRANSACTION_ID
+```
+
+This command should not be executed casually on a working system.
+
+The important administrative concept is that package-management history can be used to investigate recent software changes.
+
+```text
+System Problem
+     |
+     v
+Was Software Recently Changed?
+     |
+     v
+dnf history
+     |
+     v
+Inspect Transaction
+```
+
+## Package Groups
+
+DNF can manage groups of related packages.
+
+List available package groups.
+
+```bash
+dnf group list
+```
+
+A package group represents multiple packages associated with a particular purpose.
+
+```text
+Single Package
+→ One software package
+
+Package Group
+→ Collection of related packages
+```
+
+Package groups can be installed with:
+
+```bash
+sudo dnf group install "GROUP_NAME"
+```
+
+The actual group name should be selected from the current system's `dnf group list` output.
+
+## DNF Command Summary
+
+```text
+dnf search KEYWORD
+→ Search repositories
+
+dnf info PACKAGE
+→ Show package information
+
+dnf install PACKAGE
+→ Install package
+
+dnf remove PACKAGE
+→ Remove package
+
+dnf update
+→ Update packages
+
+dnf repolist
+→ List repositories
+
+dnf group list
+→ List package groups
+
+dnf history list
+→ List package transactions
+
+dnf history info ID
+→ Inspect a transaction
+
+dnf clean all
+→ Clear DNF cache
+```
+
+## RPM and DNF Comparison
+
+```text
+RPM
+     |
+     ├── Direct package query
+     ├── Package file inspection
+     └── Direct RPM operations
+
+
+DNF
+     |
+     ├── Repository access
+     ├── Dependency resolution
+     ├── Package search
+     ├── Package installation
+     ├── Package removal
+     ├── Package updates
+     └── Transaction history
+```
+
+## Debian Package Management Comparison
+
+Debian-based systems use a different package format and package-management stack.
+
+```text
+Rocky / RHEL
+RPM
+ |
+DNF
+ |
+/etc/yum.repos.d/
+
+
+Debian / Ubuntu
+DEB
+ |
+APT
+ |
+/etc/apt/sources.list
+/etc/apt/sources.list.d/
+```
+
+The following commands are included for conceptual comparison and are not required to be executed on the Rocky Linux lab system.
+
+### Search for Packages
+
+```bash
+apt-cache search apache2
+```
+
+### Refresh Repository Metadata
+
+```bash
+apt-get update
+```
+
+`apt-get update` refreshes package information from configured repositories.
+
+It does not mean that all installed packages are upgraded.
+
+### Install a Package
+
+```bash
+apt-get install apache2
+```
+
+### Remove a Package
+
+```bash
+apt-get remove apache2
+```
+
+### Inspect Installed DEB Packages
+
+```bash
+dpkg -l
+```
+
+### Inspect Files Provided by a Package
+
+```bash
+dpkg -L PACKAGE
+```
+
+## RPM/DNF and DEB/APT Comparison
+
+```text
+Rocky / RHEL                   Debian / Ubuntu
+
+rpm -qa                        dpkg -l
+rpm -ql PACKAGE                dpkg -L PACKAGE
+dnf search KEYWORD             apt-cache search KEYWORD
+dnf install PACKAGE            apt-get install PACKAGE
+dnf remove PACKAGE             apt-get remove PACKAGE
+```
+
+## Snap Concept
+
+Ubuntu can also use Snap as an application distribution mechanism.
+
+Conceptually:
+
+```text
+Ubuntu
+  |
+  ├── APT
+  |    |
+  |    └── .deb
+  |         |
+  |         └── OS and system packages
+  |
+  └── Snap
+       |
+       └── .snap
+            |
+            └── Applications
+```
+
+Snap packages can include application components and provide features such as:
+
+```text
+Application packaging
+Sandboxing
+Automatic updates
+Revision management
+Rollback
+```
+
+A Snap installation command can have the following form:
+
+```bash
+sudo snap install PACKAGE
+```
+
+The Rocky Linux lab does not require Snap installation.
+
+## APT and Snap Comparison
+
+```text
+APT
+→ Traditional Debian package management
+→ Uses .deb packages
+→ Uses configured software repositories
+
+Snap
+→ Application distribution system
+→ Uses .snap packages
+→ Can bundle more of the application environment
+→ Supports revisions and rollback
+```
+
+## Practical Package Inspection Workflow
+
+A useful package-management investigation sequence is:
+
+```text
+Is the package installed?
+        |
+        v
+rpm -q PACKAGE
+        |
+        v
+What package is it?
+        |
+        v
+rpm -qi PACKAGE
+        |
+        v
+What files did it install?
+        |
+        v
+rpm -ql PACKAGE
+        |
+        v
+Which repositories are available?
+        |
+        v
+dnf repolist
+        |
+        v
+What recent package changes occurred?
+        |
+        v
+dnf history list
+```
+
+## Troubleshooting Example Workflow
+
+When software is missing or fails after a package change:
 
 ```text
 Problem
    |
    v
-Search for Package
+Verify Package
+   |
+   v
+rpm -q
+   |
+   v
+Inspect Package Information
+   |
+   v
+rpm -qi / rpm -ql
    |
    v
 Check Repository
    |
    v
-Check Installation State
-   |
-   v
-Install or Update Package
-   |
-   v
-Verify
-```
-
-Useful commands include:
-
-```bash
-dnf search <keyword>
 dnf repolist
-rpm -q <package>
-rpm -qi <package>
+   |
+   v
+Search Package
+   |
+   v
+dnf search
+   |
+   v
+Inspect Recent Transactions
+   |
+   v
+dnf history
 ```
 
-## Verification
+## Verification Checklist
 
-Verify the following:
-
-- RPM packages are used by Red Hat-based Linux distributions.
-- `rpm -qa` lists installed RPM packages.
-- `rpm -q` checks a specific installed package.
-- `rpm -qi` displays detailed information about an installed package.
-- `rpm -ql` displays files installed by a package.
-- `rpm -qc` displays package configuration files.
-- `rpm -qd` displays package documentation files.
-- `rpm -qip` can inspect a local RPM file before installation.
-- RPM supports direct installation, upgrade, verification, and removal.
-- DNF manages packages using software repositories.
-- `dnf search` searches for packages by keyword.
-- `dnf list installed` displays installed packages.
-- `dnf install` installs packages and required dependencies.
-- `dnf remove` removes packages.
-- `dnf update` updates installed packages.
-- `dnf repolist` displays configured repositories.
-- Package installation and service execution are separate system administration tasks.
+- Installed RPM packages were inspected.
+- A specific package was queried.
+- Package details were inspected.
+- Package file lists were inspected.
+- Package configuration files were identified.
+- DNF package searching was practiced.
+- Enabled repositories were inspected.
+- Repository configuration files were located.
+- DNF cache location was inspected.
+- DNF transaction history was inspected.
+- Package groups were inspected.
+- RPM and DNF responsibilities were compared.
+- Debian APT and dpkg were compared conceptually with RPM and DNF.
+- Snap was compared conceptually with traditional package management.
 
 ## What I Learned
 
-- Linux software is commonly distributed and managed as packages.
-- RPM provides detailed package inspection and direct package management capabilities.
+- RPM is the package format and low-level package-management tool used by Rocky Linux.
 - DNF provides repository-based package management and dependency resolution.
-- Software repositories contain packages and metadata used by package managers.
-- RPM and DNF complement each other: DNF is useful for repository-based management, while RPM is useful for detailed package inspection and verification.
-- Package installation does not automatically represent the runtime state of a service.
-- Package management, service management, and process management represent different layers of Linux administration.
-- Understanding package and repository management is fundamental for configuring and maintaining Linux servers.
+- `rpm -q` checks whether a package is installed.
+- `rpm -qi` displays detailed package information.
+- `rpm -ql` lists files installed by a package.
+- `rpm -qc` identifies package configuration files.
+- `rpm -qd` identifies package documentation files.
+- DNF searches configured repositories for available packages.
+- Rocky Linux repository configuration is stored under `/etc/yum.repos.d/`.
+- BaseOS and AppStream provide different categories of Rocky Linux packages.
+- `dnf repolist` helps verify repository availability.
+- DNF caches repository information under `/var/cache/dnf/`.
+- `dnf history` provides evidence of previous package-management transactions.
+- Package groups provide collections of related software.
+- Debian-based systems use DEB packages with tools such as dpkg and APT.
+- `apt-get update` refreshes repository package information rather than upgrading all installed software.
+- Snap is an application distribution mechanism that differs from traditional system package management.
+- Package troubleshooting should combine package inspection, repository inspection, and transaction history rather than relying on a single command.
