@@ -2,112 +2,198 @@
 
 ## Objective
 
-Practice Linux service management with `systemd` and `systemctl`, including service status inspection, runtime control, boot-time configuration, dependency inspection, and basic troubleshooting.
+Practice Linux service management with systemd and `systemctl`.
+
+The goal of this lab is to understand service runtime state, boot-time configuration, unit types, default targets, service dependencies, masking, socket activation, and basic service troubleshooting.
 
 ## Environment
 
 - OS: Rocky Linux
-- Virtualization: VMware
+- Init System: systemd
 - Shell: Bash
-- Service Manager: systemd
-- Test Service: sshd
+- Privilege: root or sudo-enabled user
 
-## Service Management Overview
+## systemd Overview
 
-Linux services are background processes that provide system or application functionality.
+Modern Rocky Linux systems use systemd to manage system services and other operating-system resources.
 
-`systemd` manages services and other system components, while `systemctl` is used to interact with systemd.
-
-```text
-Administrator
-      |
-      | systemctl
-      v
-   systemd
-      |
-      v
-   Service
-      |
-      v
-   Process
-```
-
-## Check Service Status
-
-Check the SSH service.
-
-```bash
-systemctl status sshd
-```
-
-Important service states include:
+systemd manages objects called units.
 
 ```text
-loaded
-active
-inactive
-enabled
-disabled
-static
+systemd
+   |
+   ├── Service Units
+   ├── Socket Units
+   ├── Target Units
+   ├── Mount Units
+   ├── Timer Units
+   ├── Path Units
+   ├── Device Units
+   ├── Swap Units
+   └── Other Unit Types
 ```
 
-`active` and `inactive` describe the current runtime state.
+`systemctl` is the primary command used to inspect and control systemd units.
 
-`enabled` and `disabled` describe whether a service is configured to start automatically during system boot.
+## Unit Types
 
-These concepts are different.
+Common systemd unit types include:
 
 ```text
-active / inactive
-→ Current runtime state
+.service
+→ Service or daemon
 
-enabled / disabled
-→ Boot-time configuration
+.socket
+→ Socket used for socket-based activation
+
+.target
+→ Group of units representing a system state or goal
+
+.mount
+→ Filesystem mount
+
+.automount
+→ Automatic filesystem mount
+
+.timer
+→ Time-based activation
+
+.path
+→ Path-based activation
+
+.device
+→ Device representation
+
+.swap
+→ Swap resource
+
+.slice
+→ Resource-management group
+
+.scope
+→ Externally created process group
 ```
 
-## Check Runtime State
-
-Check whether the SSH service is currently active.
-
-```bash
-systemctl is-active sshd
-```
-
-A typical result is:
+The most important unit types for this lab are:
 
 ```text
-active
+.service
+.socket
+.target
 ```
-
-## Check Boot-Time Configuration
-
-Check whether SSH is configured to start automatically during boot.
-
-```bash
-systemctl is-enabled sshd
-```
-
-A typical result may be:
-
-```text
-enabled
-```
-
-Runtime state and boot-time configuration should be checked separately.
 
 ## List Service Units
 
-Display service unit files.
+List loaded service units.
+
+```bash
+systemctl --type=service
+```
+
+An equivalent form can be used:
+
+```bash
+systemctl -t service
+```
+
+Inspect all service unit files.
 
 ```bash
 systemctl list-unit-files --type=service
 ```
 
-This command can be used to inspect the boot-time configuration state of available services.
+## Understanding Service Status
+
+Inspect an individual service.
+
+```bash
+systemctl status sshd
+```
+
+Typical status information can include:
+
+```text
+Loaded
+Active
+Main PID
+Tasks
+Memory
+CGroup
+Recent log messages
+```
+
+A service status can contain states such as:
+
+```text
+loaded
+active
+inactive
+running
+exited
+waiting
+enabled
+disabled
+static
+```
+
+## LOAD, ACTIVE, and SUB
+
+Service listings can include the following fields:
+
+```text
+LOAD
+→ Whether the unit definition was successfully loaded
+
+ACTIVE
+→ High-level activation state
+
+SUB
+→ More detailed unit-specific state
+```
+
+Example concept:
+
+```text
+LOAD    loaded
+ACTIVE  active
+SUB     running
+```
+
+This indicates that the unit is loaded and currently running.
+
+## Active Does Not Always Mean Running
+
+A unit can be:
+
+```text
+active (running)
+```
+
+when a process remains active.
+
+Some units can also appear as:
+
+```text
+active (exited)
+```
+
+This can occur when a unit successfully completes its required initialization work and no long-running process remains.
+
+Therefore:
+
+```text
+active
+```
+
+should not always be interpreted as exactly the same thing as:
+
+```text
+running
+```
 
 ## Start a Service
 
-Start the SSH service.
+Start a service immediately.
 
 ```bash
 sudo systemctl start sshd
@@ -121,249 +207,648 @@ systemctl status sshd
 
 ## Stop a Service
 
-When using the VMware local console, stop the SSH service.
+Stop the service.
 
 ```bash
 sudo systemctl stop sshd
 ```
 
-Verify the result.
+Verify the state.
 
 ```bash
 systemctl status sshd
 ```
 
-The service should no longer be active.
-
-> Do not stop `sshd` while relying on the same SSH connection for access to the server. Use the VMware console for this test.
-
-Start the service again.
-
-```bash
-sudo systemctl start sshd
-```
-
-Verify the result.
-
-```bash
-systemctl status sshd
-```
+When practicing on an SSH service, perform disruptive tests from a local VM console rather than the remote SSH session being tested.
 
 ## Restart a Service
 
-Restart the SSH service.
+Restart a service.
 
 ```bash
 sudo systemctl restart sshd
 ```
 
-Verify the result.
+Verify:
 
 ```bash
 systemctl status sshd
 ```
 
-`restart` stops and starts the service again.
-
 ## Reload a Service
 
-Some services support reloading their configuration without a complete restart.
-
-General form:
+Some services can reload configuration without a full restart.
 
 ```bash
-sudo systemctl reload <service>
+sudo systemctl reload SERVICE
 ```
 
-Reload support depends on the service.
-
-`restart` and `reload` serve different purposes.
+Conceptually:
 
 ```text
 restart
-→ Stop and start the service again
+→ Stop and start the service process
 
 reload
-→ Ask the running service to reload its configuration
+→ Ask the service to reload configuration without a full restart
 ```
 
-## Enable a Service
+Not every service supports reload.
 
-Configure a service to start automatically during system boot.
+## Runtime State vs Boot Configuration
+
+Current service state and boot-time configuration are separate concepts.
+
+```text
+Runtime State
+─────────────
+active
+inactive
+
+
+Boot Configuration
+──────────────────
+enabled
+disabled
+```
+
+A service can therefore be:
+
+```text
+active + enabled
+active + disabled
+inactive + enabled
+inactive + disabled
+```
+
+## Check Runtime State
+
+Inspect current status.
 
 ```bash
-sudo systemctl enable sshd
+systemctl status sshd
 ```
 
-Check the result.
+## Check Boot-Time Configuration
+
+Check whether the service is enabled.
 
 ```bash
 systemctl is-enabled sshd
 ```
 
-`enable` does not mean the same thing as `start`.
+## Enable a Service
 
-```text
-start
-→ Start the service now
+Configure the service to start automatically during boot.
 
-enable
-→ Configure the service to start during boot
+```bash
+sudo systemctl enable sshd
+```
+
+Verify:
+
+```bash
+systemctl is-enabled sshd
 ```
 
 ## Disable a Service
 
-Remove the boot-time automatic start configuration.
+Remove automatic boot-time activation.
 
 ```bash
 sudo systemctl disable sshd
 ```
 
-Check the result.
+Verify:
 
 ```bash
 systemctl is-enabled sshd
 ```
 
-`disable` does not necessarily stop a currently running service.
+### Important Difference
 
 ```text
-stop
-→ Stop the service now
+systemctl start
+→ Start now
 
-disable
-→ Prevent automatic start during boot
+systemctl enable
+→ Configure automatic activation at boot
+
+
+systemctl stop
+→ Stop now
+
+systemctl disable
+→ Remove automatic activation at boot
 ```
 
-If SSH must remain enabled on the lab system, restore the original configuration after the test.
+`enable` does not necessarily mean the service is currently running.
+
+`start` does not necessarily mean the service will automatically start after reboot.
+
+## Enable and Start Together
+
+systemd provides the `--now` option.
 
 ```bash
-sudo systemctl enable sshd
+sudo systemctl enable --now UNIT
 ```
+
+Conceptually, this combines:
+
+```bash
+systemctl enable UNIT
+systemctl start UNIT
+```
+
+into one operation.
+
+## Mask a Service
+
+Masking blocks a unit from being started.
+
+```bash
+sudo systemctl mask SERVICE
+```
+
+Check its state.
+
+```bash
+systemctl status SERVICE
+```
+
+Attempting to start a masked unit should fail.
+
+```bash
+sudo systemctl start SERVICE
+```
+
+## Unmask a Service
+
+Remove the mask.
+
+```bash
+sudo systemctl unmask SERVICE
+```
+
+The service can then be started again.
+
+```bash
+sudo systemctl start SERVICE
+```
+
+## Disable vs Mask
+
+```text
+disable
+→ Prevent automatic startup at boot
+→ Manual start is still possible
+
+mask
+→ Block the unit from being started
+→ The unit must be unmasked before normal start
+```
+
+Masking is therefore stronger than disabling.
+
+## Verify Service Recovery
+
+After unmasking and starting:
+
+```bash
+systemctl status SERVICE
+```
+
+Confirm that the unit returned to the expected state.
+
+## Inspect Unit Files
+
+List installed unit files.
+
+```bash
+systemctl list-unit-files
+```
+
+Limit the output to services.
+
+```bash
+systemctl list-unit-files --type=service
+```
+
+This helps distinguish installed unit definitions from units currently loaded in memory.
 
 ## Inspect Service Dependencies
 
-Display dependencies related to the SSH service.
+View unit dependencies.
 
 ```bash
-systemctl list-dependencies sshd
+systemctl list-dependencies sshd.service
 ```
 
-Services may depend on other system units and resources.
+A systemd service can depend on or interact with other units.
 
-The dependency view helps identify relationships between system components.
-
-## Mask and Unmask a Service
-
-A masked service is prevented from being started.
-
-General form:
-
-```bash
-sudo systemctl mask <service>
-```
-
-Remove the mask:
-
-```bash
-sudo systemctl unmask <service>
-```
-
-Masking is stronger than disabling.
+Conceptually:
 
 ```text
-disable
-→ Disable automatic startup during boot
-
-mask
-→ Prevent the service from being started
+Service
+   |
+   ├── Required Units
+   ├── Related Targets
+   └── Other Dependencies
 ```
 
-Do not mask `sshd` during a remote SSH session.
+Dependency inspection can be useful during troubleshooting when a service does not start as expected.
 
-## Basic Service Troubleshooting
+## Default Target
 
-When a service is not working as expected, begin by checking its status.
+systemd uses targets to represent system operating states or goals.
+
+Check the system's default boot target.
 
 ```bash
-systemctl status sshd
+systemctl get-default
 ```
 
-Check whether it is currently active.
-
-```bash
-systemctl is-active sshd
-```
-
-Check whether it is configured to start during boot.
-
-```bash
-systemctl is-enabled sshd
-```
-
-If additional information is required, inspect the systemd journal.
-
-```bash
-journalctl -u sshd -n 30
-```
-
-A basic troubleshooting workflow is:
+A server-oriented environment can use:
 
 ```text
-Problem
+multi-user.target
+```
+
+A graphical environment can use:
+
+```text
+graphical.target
+```
+
+## Inspect the Default Target Link
+
+Check the default target symbolic link.
+
+```bash
+ls -l /etc/systemd/system/default.target
+```
+
+Conceptually:
+
+```text
+System Boot
+    |
+    v
+default.target
+    |
+    v
+Configured Target
+    |
+    v
+Required Units
+```
+
+## Runlevel and Target Concept
+
+Traditional Linux systems used numeric runlevels.
+
+systemd uses targets for similar system-state purposes.
+
+A common conceptual relationship is:
+
+```text
+Traditional Runlevel        systemd Target
+
+3                           multi-user.target
+
+5                           graphical.target
+```
+
+Targets are systemd units and should not be treated as merely renamed runlevel numbers.
+
+## Change the Default Target
+
+The default target can be changed with:
+
+```bash
+sudo systemctl set-default TARGET
+```
+
+Example form:
+
+```bash
+sudo systemctl set-default multi-user.target
+```
+
+Do not change the default target unnecessarily on a working system.
+
+## Isolate a Target
+
+systemd can switch the current system state toward a target using:
+
+```bash
+sudo systemctl isolate TARGET
+```
+
+This can stop units that are not required by the selected target.
+
+Because it can significantly change the current system state, it should be used carefully.
+
+## Socket Units
+
+A `.socket` unit represents a communication socket managed by systemd.
+
+Socket activation allows systemd to wait for a request and activate the associated service when required.
+
+Conceptually:
+
+```text
+Client Request
+      |
+      v
+.socket Unit
+      |
+      v
+Associated Service
+```
+
+This is different from requiring every service process to remain permanently running.
+
+## Inspect Socket Units
+
+List socket units.
+
+```bash
+systemctl list-units --type=socket
+```
+
+List installed socket unit files.
+
+```bash
+systemctl list-unit-files --type=socket
+```
+
+## Cockpit Socket Activation
+
+Cockpit is a web-based Linux administration interface.
+
+If Cockpit is installed, its socket unit can be inspected.
+
+```bash
+systemctl status cockpit.socket
+```
+
+If the unit exists and the lab environment permits it, the socket can be enabled and started together.
+
+```bash
+sudo systemctl enable --now cockpit.socket
+```
+
+Verify:
+
+```bash
+systemctl status cockpit.socket
+```
+
+The important concept is socket activation:
+
+```text
+Web Client
+    |
+    v
+cockpit.socket
+    |
+    v
+Cockpit Service Functionality
+```
+
+Cockpit commonly uses TCP port 9090, but this lab focuses on the systemd unit relationship rather than web-interface configuration.
+
+## Service Management Workflow
+
+A basic service-management workflow is:
+
+```text
+Inspect
    |
    v
-Check Service Status
+systemctl status
    |
    v
-Inspect Runtime State
+Determine Current State
    |
-   v
-Inspect Logs
-   |
-   v
-Identify Root Cause
-   |
-   v
-Apply Resolution
-   |
-   v
-Restart or Start Service
+   +───────────────+
+   |               |
+   v               v
+start/stop       enable/disable
+Runtime           Boot Policy
    |
    v
 Verify
 ```
 
-## Verification
+## Troubleshooting Workflow
 
-Verify the following:
+When a service does not start:
 
-- `systemd` manages Linux services and other system components.
-- `systemctl` is used to control and inspect systemd services.
-- `systemctl status` displays service status information.
-- `active` and `inactive` describe the current runtime state.
-- `enabled` and `disabled` describe boot-time configuration.
-- `start` starts a service immediately.
-- `stop` stops a running service.
-- `restart` stops and starts a service again.
-- `reload` requests a supported service to reload its configuration.
-- `enable` configures a service for automatic startup during boot.
-- `disable` removes automatic startup configuration.
-- `start` and `enable` have different purposes.
-- `stop` and `disable` have different purposes.
-- `list-dependencies` displays relationships between system units.
-- `mask` prevents a service from being started.
-- Service status and logs can be used together during troubleshooting.
+```text
+Service Problem
+      |
+      v
+Check Status
+      |
+      v
+systemctl status SERVICE
+      |
+      v
+Check Runtime State
+      |
+      v
+Check Enabled / Disabled State
+      |
+      v
+systemctl is-enabled SERVICE
+      |
+      v
+Check Whether Unit Is Masked
+      |
+      v
+Inspect Dependencies
+      |
+      v
+systemctl list-dependencies SERVICE
+      |
+      v
+Correct the Cause
+      |
+      v
+Start or Restart
+      |
+      v
+Verify
+```
+
+## Practical SSH Service Inspection
+
+Inspect the SSH service.
+
+```bash
+systemctl status sshd
+```
+
+Check boot-time configuration.
+
+```bash
+systemctl is-enabled sshd
+```
+
+Inspect the process when the service is running.
+
+```bash
+ps -ef | grep sshd
+```
+
+Package information can also be checked.
+
+```bash
+rpm -q openssh-server
+```
+
+This demonstrates the relationship:
+
+```text
+Package
+   |
+   v
+Unit File
+   |
+   v
+Service
+   |
+   v
+Process
+```
+
+## Practical crond Inspection
+
+Inspect the command scheduler service.
+
+```bash
+systemctl status crond
+```
+
+Check whether it is enabled.
+
+```bash
+systemctl is-enabled crond
+```
+
+The status output can be used to distinguish:
+
+```text
+Current runtime state
+Boot-time configuration
+```
+
+## Service State Verification
+
+After any administrative change, verify the result instead of assuming the command succeeded.
+
+Example:
+
+```bash
+sudo systemctl start SERVICE
+systemctl status SERVICE
+```
+
+For boot configuration:
+
+```bash
+sudo systemctl enable SERVICE
+systemctl is-enabled SERVICE
+```
+
+For masking:
+
+```bash
+sudo systemctl mask SERVICE
+systemctl status SERVICE
+```
+
+For recovery:
+
+```bash
+sudo systemctl unmask SERVICE
+sudo systemctl start SERVICE
+systemctl status SERVICE
+```
+
+## Runtime and Boot-State Comparison
+
+```text
+Command                    Primary Purpose
+
+systemctl start             Start now
+systemctl stop              Stop now
+systemctl restart           Restart now
+systemctl reload            Reload configuration
+
+systemctl enable            Enable at boot
+systemctl disable           Disable at boot
+systemctl is-enabled        Inspect boot configuration
+
+systemctl mask              Block start
+systemctl unmask            Remove start block
+```
+
+## Unit Relationship
+
+```text
+systemd
+   |
+   v
+Units
+   |
+   +-------------------+-------------------+
+   |                   |                   |
+   v                   v                   v
+.service             .socket             .target
+   |                   |                   |
+   v                   v                   v
+Service Process    Activation Point    System Goal
+```
+
+## Verification Checklist
+
+- Loaded service units were listed.
+- Installed service unit files were inspected.
+- A service status was inspected.
+- Runtime and boot-time states were distinguished.
+- Service start and stop behavior was reviewed.
+- Restart and reload concepts were compared.
+- Enable and disable behavior was reviewed.
+- Mask and unmask behavior was reviewed.
+- Service dependencies were inspected.
+- The default systemd target was inspected.
+- The `default.target` symbolic link was inspected.
+- Common systemd unit types were identified.
+- Socket units were inspected.
+- Cockpit socket activation was reviewed where available.
+- Administrative changes were followed by explicit verification.
 
 ## What I Learned
 
-- Linux services are commonly managed through systemd.
-- Service runtime state and boot-time configuration are separate concepts.
-- A service can be active while disabled or inactive while enabled.
-- `start`, `stop`, and `restart` control the current runtime state.
-- `enable` and `disable` control automatic startup behavior.
-- `mask` provides stronger protection against starting a service than `disable`.
-- Service dependencies help explain relationships between system components.
-- Checking service status is one of the first steps when troubleshooting a Linux server.
-- Service logs provide additional evidence when status information alone is not enough to identify a failure.
-- Understanding service management is fundamental to operating Linux servers and cloud infrastructure.
+- systemd manages services and other resources as units.
+- `.service` is only one of several systemd unit types.
+- `.socket` units can support socket-based service activation.
+- `.target` units group other units into system operating states or goals.
+- `systemctl status` provides current unit-state information.
+- `active` and `enabled` describe different aspects of a service.
+- `start` and `stop` control the current runtime state.
+- `enable` and `disable` control boot-time activation.
+- A service can be active but disabled, or inactive but enabled.
+- `mask` prevents a unit from being started and is stronger than `disable`.
+- `unmask` removes the start restriction.
+- `restart` and `reload` perform different service-management operations.
+- Unit dependencies can be inspected with `systemctl list-dependencies`.
+- `systemctl get-default` identifies the default boot target.
+- `/etc/systemd/system/default.target` links the system to its default target.
+- systemd targets provide a modern replacement for many traditional runlevel use cases.
+- Cockpit can use a socket unit for on-demand activation.
+- Service management should always include verification after configuration changes.
