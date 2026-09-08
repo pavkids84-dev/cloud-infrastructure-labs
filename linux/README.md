@@ -1,1042 +1,700 @@
-# Linux Labs
+# Linux Infrastructure Labs
 
-This directory contains hands-on Linux administration, shell programming, and text-processing labs completed while studying cloud infrastructure.
+Hands-on Linux administration labs focused on building practical infrastructure fundamentals with Rocky Linux and Bash.
 
-The goal is not only to learn Linux commands, but also to understand how Linux systems behave, verify concepts through hands-on practice, and develop troubleshooting and automation skills relevant to infrastructure operations.
+This directory documents my progression from basic Linux operations to system administration topics such as user management, package management, service control, job scheduling, storage, filesystems, and LVM.
+
+The labs are designed around a simple workflow:
+
+```text
+Learn
+  ↓
+Practice
+  ↓
+Verify
+  ↓
+Troubleshoot
+  ↓
+Document
+```
+
+Rather than recording commands only, each lab focuses on understanding what changed in the system and how to verify the result.
+
+---
 
 ## Environment
 
 - OS: Rocky Linux
 - Virtualization: VMware
 - Shell: Bash
-- Primary Access Method: SSH
+- Init System: systemd
+- Package Manager: DNF / RPM
+- Primary Goal: Cloud Infrastructure Fundamentals
 
-## Topics Covered
+---
 
-### Linux Fundamentals
+## Learning Path
 
-- Linux system architecture
-- User space and kernel space
-- Linux kernel information
-- CPU, memory, swap, and disk information
-- `/proc` system information
+```text
+Linux Fundamentals
+        |
+        v
+Files and Permissions
+        |
+        v
+Shell and Environment
+        |
+        v
+Text Processing
+        |
+        v
+Shell Scripting
+        |
+        v
+Processes and Services
+        |
+        v
+Users and Packages
+        |
+        v
+Time and Job Scheduling
+        |
+        v
+Storage and Partitions
+        |
+        v
+Filesystems
+        |
+        v
+LVM
+```
 
-### Remote Administration
+---
 
-- SSH client and server
-- `sshd`
-- Remote login
-- User identity
-- UID, GID, and groups
+## Lab Index
 
-### File System
+### 1. System Fundamentals
 
-- Absolute and relative paths
-- File and directory management
-- File types
-- Symbolic links
-- Hard links
-- Inodes
-- File permissions
-- Owner, Group, and Other
-- Symbolic and octal permission modes
+#### [System Information Lab](./system-information-lab.md)
 
-### Shell Fundamentals
+Practice inspecting the Linux system environment.
 
-- Shell command processing
-- Command parsing
-- Standard input
-- Standard output
-- Standard error
-- File descriptors
+Topics:
+
+- Operating-system information
+- Kernel information
+- Hostname
+- CPU and memory information
+- System architecture
+- Basic system inspection
+
+---
+
+### 2. Files, Directories, and Permissions
+
+#### [File and Directory Permission Lab](./file-directory-permission-lab.md)
+
+Practice Linux file ownership and permission management.
+
+Topics:
+
+- File and directory permissions
+- Read, write, and execute permissions
+- Symbolic and octal permission notation
+- `chmod`
+- `chown`
+- `chgrp`
+- Special permission concepts
+- Permission verification
+
+---
+
+### 3. vi Editor
+
+#### [vi Basic Lab](./vi-basic-lab.md)
+
+Practice basic text editing with `vi`.
+
+Topics:
+
+- Normal mode
+- Insert mode
+- Command mode
+- Navigation
+- Editing
+- Search
+- Save and quit operations
+
+---
+
+### 4. Shell Fundamentals
+
+#### [Shell Basics Lab](./shell-basics-lab.md)
+
+Practice fundamental Bash shell behavior.
+
+Topics:
+
+- Shell commands
+- Standard input and output
 - Redirection
 - Pipelines
-- Filename expansion
-- Aliases
+- Command execution
+- Basic shell behavior
+
+---
+
+### 5. Shell Environment
+
+#### [Shell Environment Lab](./shell-environment-lab.md)
+
+Practice shell variables and environment management.
+
+Topics:
+
+- Shell variables
 - Environment variables
-- Shell initialization files
-- Command substitution
+- `export`
+- Parent and child processes
+- Variable expansion
+- Shell configuration
+- Command environment
 
-### Shell Redirection
+---
 
-```text
-0 = stdin
-1 = stdout
-2 = stderr
-```
+### 6. Search, Archive, and Compression
 
-Common patterns:
+#### [Search, Archive, and Compression Lab](./search-archive-compression-lab.md)
 
-```text
-command > file
-→ Redirect stdout
+Practice locating files and managing archives.
 
-command >> file
-→ Append stdout
+Topics:
 
-command 2> file
-→ Redirect stderr
+- `find`
+- File search conditions
+- `tar`
+- Archive creation
+- Archive extraction
+- Compression
+- Archive verification
 
-command > file 2>&1
-→ Redirect stdout and stderr to the same file
+---
 
-command 2> /dev/null
-→ Discard stderr
+### 7. Text Processing
 
-command > /dev/null 2>&1
-→ Discard stdout and stderr
-```
+#### [Text Processing Lab](./text-processing-lab.md)
 
-Redirection order matters because shell redirections are processed from left to right.
+Practice Linux text-processing tools.
 
-### Vi/Vim
-
-- Command Mode
-- Insert Mode
-- Last Line Mode
-- Cursor movement
-- Text editing
-- Search and replacement
-- Copy and paste
-- Save and exit operations
-- `.vimrc`
-
-### Shell Programming
-
-- Shell script structure
-- Shebang
-- Script permissions
-- Child shell execution
-- Current shell execution with `source`
-- Shell variable scope
-- Environment variable inheritance
-- Special shell variables
-- Arithmetic expressions
-- Parameter expansion
-- String pattern removal
-- Positional parameters
-- `"$@"` and `"$*"`
-- `shift`
-- Exit status
-- `if`, `elif`, and `else`
-- Numeric comparison
-- String comparison
-- File tests
-- Pattern matching
-- `case`
-- `exit`
-- `for`
-- `while`
-- `until`
-- `break`
-- `continue`
-- `read`
-- Input redirection
-- Internal Field Separator (`IFS`)
-- Here documents
-- Bash functions
-- Function arguments
-- Local function variables
-
-### Text Processing
+Topics:
 
 - `grep`
-- Extended regular expressions
-- Fixed-string searching
+- Regular-expression matching
 - `sed`
-- Line addressing
-- Text substitution
-- Line deletion
-- Multiple `sed` operations
 - `awk`
 - Records and fields
 - Field separators
-- Built-in `awk` variables
-- Basic numerical processing
-- Processing Linux command output
-
-### Search and File Discovery
-
-- `grep`
-- Basic regular expressions
-- `find`
-- File search conditions
-
-### Archive and Compression
-
-- `tar`
-- Archive creation
-- Archive inspection
-- Archive extraction
-- `gzip`
-- `bzip2`
-
-### Process Management
-
-- Processes
-- Daemons
-- Shell jobs
-- Foreground execution
-- Background execution
-- Job control
-- Process states
-- Process monitoring
-- Signals
-- Process termination
-
-### Service Management
-
-- systemd
-- `systemctl`
-- Service runtime state
-- Boot-time configuration
-- Service dependencies
-- Service masking
-- Basic service troubleshooting
-
-### Package Management
-
-- RPM packages
-- RPM package inspection
-- DNF package management
-- Package dependencies
-- Software repositories
-- Package installation and removal
-- Package verification
-
-## Labs
-
-### SSH Remote Administration
-
-[SSH Basic Lab](./ssh-basic-lab.md)
-
-Topics:
-
-- SSH client and `sshd`
-- Remote login
-- User identity
-- UID, GID, and group information
-- Basic remote administration workflow
-
----
-
-### Linux System Information
-
-[Linux System Information Lab](./system-information-lab.md)
-
-Topics:
-
-- Linux kernel information
-- Distribution information
-- CPU information
-- Memory and swap
-- Disk and partition information
-- `/proc` system information
-
----
-
-### Files, Directories, Links, and Permissions
-
-[Linux File, Directory, Link, and Permission Lab](./file-directory-permission-lab.md)
-
-Topics:
-
-- Absolute and relative paths
-- File and directory operations
-- File creation, copying, moving, and removal
-- Symbolic links
-- Hard links
-- Inodes
-- Owner, Group, and Other permissions
-- Symbolic permission modes
-- Octal permission modes
-- `chmod`
-
----
-
-### Shell Basics
-
-[Linux Shell Basics Lab](./shell-basics-lab.md)
-
-Topics:
-
-- Shell command processing
-- Standard input
-- Standard output
-- Standard error
-- File descriptors
-- Output redirection
-- Error redirection
-- `2>&1`
-- Redirection order
-- `/dev/null`
 - Pipelines
-- Filename expansion
-- Aliases
+- Text filtering and transformation
 
 ---
 
-### Shell Environment
+### 8. Bash Shell Scripting
 
-[Linux Shell Environment Lab](./shell-environment-lab.md)
+#### [Shell Script Labs](./shell-script/README.md)
 
-Topics:
-
-- `/etc/profile`
-- `~/.bash_profile`
-- `~/.bashrc`
-- Environment variables
-- `HOME`
-- `PATH`
-- Variable inheritance
-- `export`
-- Shell quoting
-- Command substitution
-
----
-
-### Vi/Vim
-
-[Linux Vi Basic Lab](./vi-basic-lab.md)
+Practice Bash scripting from basic syntax to reusable functions.
 
 Topics:
 
-- Command Mode
-- Insert Mode
-- Last Line Mode
-- Cursor movement
-- Text editing
-- Search and replacement
-- Copy and paste
-- Save and exit operations
-- `.vimrc`
-
----
-
-### Shell Programming
-
-[Linux Shell Programming Labs](./shell-script/README.md)
-
-Topics:
-
-- Basic Bash scripts
-- Script execution methods
-- Child and current shell execution
-- Variable scope
-- Environment inheritance
-- Special variables
-- Arithmetic expressions
-- Parameter expansion
+- Variables
+- Arguments
 - Positional parameters
-- Command-line arguments
-- Input validation
+- Exit status
 - Conditional statements
 - File tests
 - `case`
-- Exit status
-- `for`, `while`, and `until`
-- `break` and `continue`
-- Line-by-line input processing
-- Argument processing with `shift`
-- Bash functions
+- `for`
+- `while`
+- `until`
+- `shift`
+- `read`
+- Functions
+- Local variables
+- Here documents
+- Process arguments
+- Execution scope
+
+Shell script examples are stored under:
+
+```text
+linux/shell-script/
+```
 
 ---
 
-### Text Processing
+### 9. Process Management
 
-[Linux Text Processing Lab](./text-processing-lab.md)
+#### [Process Management Lab](./process-management-lab.md)
+
+Practice inspecting and controlling Linux processes.
 
 Topics:
 
-- Extended regular expressions
-- Fixed-string searching
-- Text filtering
-- `sed` line selection
-- `sed` substitution
-- `sed` deletion
-- Multiple `sed` actions
-- `awk` records and fields
-- `NR`
-- `NF`
-- `$NF`
-- `FS`
-- Field rearrangement
-- Numerical aggregation
-- Processing Linux command output
+- Process inspection
+- PID
+- Parent and child processes
+- `ps`
+- `pgrep`
+- Background processes
+- Foreground and background jobs
+- Signals
+- Process termination
+- Job control
 
 ---
 
-### Search, Archive, and Compression
+### 10. Service Management
 
-[Linux Search, Archive, and Compression Lab](./search-archive-compression-lab.md)
+#### [Service Management Lab](./service-management-lab.md)
+
+Practice systemd service and unit management.
 
 Topics:
 
-- File content searching with `grep`
-- `grep` options
-- Basic regular expressions
-- Beginning and end-of-line matching
-- File and directory searching with `find`
-- Search conditions
-- File type filtering
-- File ownership and modification-time searches
-- Archive creation with `tar`
-- Archive inspection and extraction
-- Compression with `gzip`
-- Compression with `bzip2`
+- systemd
+- systemd units
+- `.service`
+- `.socket`
+- `.target`
+- `systemctl status`
+- `start`
+- `stop`
+- `restart`
+- `reload`
+- `enable`
+- `disable`
+- `mask`
+- `unmask`
+- Runtime state vs boot configuration
+- Default targets
+- Unit dependencies
+- Socket activation
 
 ---
 
-### Process Management
+### 11. SSH Fundamentals
 
-[Linux Process Management Lab](./process-management-lab.md)
+#### [SSH Basic Lab](./ssh-basic-lab.md)
+
+Practice basic remote Linux access with SSH.
 
 Topics:
 
-- Processes, daemons, and shell jobs
-- Foreground and background execution
-- Job IDs and process IDs
-- Job control with `jobs`, `fg`, and `bg`
-- Process monitoring with `ps`
-- Linux process states
-- Real-time monitoring with `top`
-- Process lookup with `pgrep`
-- Process relationships with `pstree`
-- Linux signals
-- Process termination with `kill`
+- SSH client and server concepts
+- Remote login
+- SSH service inspection
+- Connection verification
+- Basic SSH operations
 
 ---
 
-### Service Management
+### 12. Package Management
 
-[Linux Service Management Lab](./service-management-lab.md)
+#### [Package Management Lab](./package-management-lab.md)
 
-Topics:
-
-- systemd and `systemctl`
-- Service status inspection
-- Active and inactive runtime states
-- Enabled and disabled boot-time states
-- Service start and stop
-- Service restart and reload
-- Boot-time service configuration
-- Service dependencies
-- Service mask and unmask
-- Basic service troubleshooting
-- systemd journal inspection
-
----
-
-### Package Management
-
-[Linux Package Management Lab](./package-management-lab.md)
+Practice software and repository management on Rocky Linux.
 
 Topics:
 
 - RPM packages
-- Installed package inspection
-- Package file lists
-- Configuration and documentation files
-- RPM package verification
-- DNF package management
-- Package searching
+- `rpm -q`
+- `rpm -qi`
+- `rpm -ql`
+- `rpm -qc`
+- `rpm -qd`
+- DNF
+- Package search
 - Package installation and removal
-- Package updates
-- Dependency management
-- Software repositories
 - Repository inspection
-- Package and service management workflow
+- `/etc/yum.repos.d/`
+- DNF cache
+- DNF transaction history
+- Package groups
+- RPM/DNF and DEB/APT comparison
+- Snap concepts
 
-## Key Concepts
+---
 
-### Linux System Layers
+### 13. User and Group Management
 
-```text
-User
-  |
-  v
-Application
-  |
-  v
-Shell
-  |
-  v
-Kernel
-  |
-  v
-Hardware
-```
+#### [User Management Lab](./user-management-lab.md)
 
-The shell provides an interface between the user and the operating system, while the kernel manages system resources such as CPU, memory, processes, devices, networking, and file systems.
+Practice Linux account lifecycle management.
 
-### Shell Command Processing
+Topics:
 
-The shell acts as:
+- UID and GID
+- Primary and supplementary groups
+- `/etc/passwd`
+- `/etc/shadow`
+- `/etc/group`
+- `/etc/gshadow`
+- `useradd`
+- `usermod`
+- `userdel`
+- `groupadd`
+- Password management
+- Password aging with `chage`
+- Account lock and unlock
+- `su`
+- `sudo`
+- Authentication and authorization
+- Login information
 
-- A command-line interpreter
-- A programming language
-- A user working environment
+---
 
-A simplified command-processing flow is:
+### 14. Time and Job Scheduling
 
-```text
-Read Command
-     |
-     v
-Parse
-     |
-     v
-Expansion and Substitution
-     |
-     v
-Command Lookup
-     |
-     v
-Execution
-```
+#### [Time and Job Scheduling Lab](./job-scheduling-lab.md)
 
-### Shell Execution Scope
+Practice Linux time synchronization and scheduled job management.
 
-A shell script normally executes through a separate shell or interpreter process.
+Topics:
 
-```text
-Parent Shell
-     |
-     v
-Child Shell
-     |
-     v
-Shell Script
-```
+- `timedatectl`
+- Time zones
+- NTP
+- Chrony
+- `chronyd`
+- `chronyc`
+- `at`
+- `batch`
+- `atq`
+- `atrm`
+- `cron`
+- `crond`
+- `/etc/crontab`
+- User crontabs
+- Anacron
+- `/etc/anacrontab`
+- Scheduling access control
 
-Variables created only in the child shell do not modify the parent shell.
+---
 
-Using:
+### 15. Storage and Partition Management
 
-```bash
-source script.sh
-```
+#### [Storage Management Lab](./storage-management-lab.md)
 
-or:
+Practice block-device and partition administration.
 
-```bash
-. script.sh
-```
+Topics:
 
-executes the script in the current shell.
+- `lsblk`
+- Disk and partition device names
+- SCSI disk rescanning
+- `sg3_utils`
+- MBR
+- GPT
+- `fdisk`
+- `parted`
+- Partition creation
+- Partition-table inspection
+- Storage-change verification
 
-### Shell Variables
-
-```text
-Local Shell Variable
-→ Available in the current shell
-
-Exported Environment Variable
-→ Inherited by child processes
-```
-
-Example:
-
-```bash
-VAR="value"
-export VAR
-```
-
-### Special Shell Variables
+The core storage relationship is:
 
 ```text
-$$
-→ Current shell PID
-
-$?
-→ Exit status of the previous foreground command
-
-$!
-→ PID of the most recent background process
+Disk
+  ↓
+Partition
 ```
 
-### Shell Arithmetic
+---
 
-Integer arithmetic can be performed using double parentheses.
+### 16. Filesystem Management
 
-```bash
-(( result = a + b ))
-```
+#### [Filesystem Management Lab](./filesystem-management-lab.md)
 
-Common operators include:
+Practice creating, mounting, inspecting, and repairing Linux filesystems.
+
+Topics:
+
+- ext4
+- XFS
+- Filesystem structure
+- Superblocks
+- Inodes
+- `stat`
+- `mkfs`
+- `mount`
+- `umount`
+- `df`
+- `/etc/fstab`
+- Mount options
+- UUID-based filesystem identification
+- `/etc/mtab`
+- XFS allocation groups
+- `xfs_info`
+- `xfs_repair`
+- Filesystem failure and recovery
+
+The storage workflow becomes:
 
 ```text
-+
--
-*
-/
-%
+Disk
+  ↓
+Partition
+  ↓
+Filesystem
+  ↓
+Mount Point
+  ↓
+Files
 ```
 
-### Parameter Expansion
+---
 
-Useful parameter expansion forms include:
+### 17. Logical Volume Management
+
+#### [LVM Management Lab](./lvm-management-lab.md)
+
+Practice flexible Linux storage management with LVM.
+
+Topics:
+
+- Physical Volume (PV)
+- Volume Group (VG)
+- Logical Volume (LV)
+- Physical Extent (PE)
+- Logical Extent (LE)
+- `pvcreate`
+- `vgcreate`
+- `lvcreate`
+- `vgextend`
+- `lvextend`
+- `resize2fs`
+- `e2fsck`
+- `lvreduce`
+- `lvresize`
+- Online filesystem growth
+- Offline filesystem shrinking
+- LVM snapshots
+- Snapshot-based backup workflow
+
+The LVM storage stack is:
 
 ```text
-${var:-word}
-→ Use word if var is unset or null
-
-${var:=word}
-→ Use and assign word if var is unset or null
-
-${var:?word}
-→ Return an error if var is unset or null
-
-${var:+word}
-→ Use word when var contains a value
+Physical Disk
+      ↓
+Physical Volume
+      ↓
+Volume Group
+      ↓
+Logical Volume
+      ↓
+Filesystem
+      ↓
+Mount Point
 ```
 
-String pattern removal:
+---
+
+## Linux Administration Progression
+
+The labs build on one another rather than being isolated command exercises.
+
+### System Administration
 
 ```text
-${var#pattern}
-→ Remove shortest matching prefix
-
-${var##pattern}
-→ Remove longest matching prefix
-
-${var%pattern}
-→ Remove shortest matching suffix
-
-${var%%pattern}
-→ Remove longest matching suffix
+Users
+Packages
+Processes
+Services
+Scheduling
 ```
 
-### Positional Parameters
+### Storage Administration
 
 ```text
-$0
-→ Script name
-
-$1
-→ First argument
-
-$2
-→ Second argument
-
-$#
-→ Number of arguments
-
-$@
-→ All arguments
-
-$*
-→ All arguments
+Disk
+  ↓
+Partition
+  ↓
+LVM
+  ↓
+Filesystem
+  ↓
+Mount
 ```
 
-When quoted:
+### Troubleshooting Approach
+
+Across the labs, I use the following troubleshooting process:
 
 ```text
-"$@"
-→ Preserves each argument separately
-
-"$*"
-→ Treats all arguments as one combined string
+1. Identify the symptom
+2. Inspect the current state
+3. Collect command output as evidence
+4. Identify the affected system layer
+5. Apply a controlled change
+6. Verify the result
 ```
 
-### Conditional Execution
+Examples include:
 
-Shell commands return an exit status.
+- Verifying process state after starting or terminating a process
+- Distinguishing service runtime state from boot configuration
+- Inspecting package history when software changes occur
+- Checking system time and daemon state when scheduled jobs fail
+- Identifying the correct block device before storage changes
+- Diagnosing filesystem mount failures
+- Repairing a disposable XFS filesystem and verifying recovery
+- Checking each LVM layer when added storage is not visible to a filesystem
+
+---
+
+## Repository Structure
 
 ```text
-0
-→ Success
-
-non-zero
-→ Failure
+linux/
+├── README.md
+├── file-directory-permission-lab.md
+├── filesystem-management-lab.md
+├── job-scheduling-lab.md
+├── lvm-management-lab.md
+├── package-management-lab.md
+├── process-management-lab.md
+├── search-archive-compression-lab.md
+├── service-management-lab.md
+├── shell-basics-lab.md
+├── shell-environment-lab.md
+├── ssh-basic-lab.md
+├── storage-management-lab.md
+├── system-information-lab.md
+├── text-processing-lab.md
+├── user-management-lab.md
+├── vi-basic-lab.md
+└── shell-script/
+    ├── README.md
+    ├── args.sh
+    ├── argument-for.sh
+    ├── argument-loop.sh
+    ├── basic.sh
+    ├── compare-numbers.sh
+    ├── execution-scope.sh
+    ├── file-check.sh
+    ├── function-basics.sh
+    ├── process-arguments.sh
+    ├── read-lines.sh
+    ├── service-action.sh
+    ├── shift.sh
+    └── variables-and-expansion.sh
 ```
 
-The `if` statement evaluates command success or failure.
+---
 
-```bash
-if command
-then
-    ...
-fi
-```
+## Documentation Principles
 
-Conditions can inspect:
+Each lab follows several documentation principles.
 
-- Numeric values
-- Strings
-- Patterns
-- File existence
-- File types
-- File permissions
-- Command exit status
+### 1. Commands Must Be Verified
 
-### File Tests
+A successful command is not assumed to mean that the intended system state was achieved.
 
-Common file tests include:
+Examples:
 
 ```text
--e
-→ Exists
+Create
+→ Verify
 
--f
-→ Regular file
+Modify
+→ Verify
 
--d
-→ Directory
-
--L
-→ Symbolic link
-
--r
-→ Readable
-
--w
-→ Writable
-
--x
-→ Executable
+Repair
+→ Verify
 ```
 
-### Loop Control
+### 2. System Layers Must Be Distinguished
 
-`for` processes a list of values.
-
-```bash
-for value in list
-do
-    ...
-done
-```
-
-`while` repeats while a condition is true.
-
-```bash
-while condition
-do
-    ...
-done
-```
-
-`until` repeats until a condition becomes true.
-
-```bash
-until condition
-do
-    ...
-done
-```
-
-Loop flow can be controlled with:
+For example:
 
 ```text
-break
-→ Exit the loop
-
-continue
-→ Skip the current iteration
+Disk
+≠ Partition
+≠ Logical Volume
+≠ Filesystem
+≠ Mount Point
 ```
 
-### Processing Input
+Understanding which layer is being modified is critical for infrastructure troubleshooting.
 
-`read` stores standard input in shell variables.
+### 3. Real Environment Values Should Not Be Fabricated
 
-```bash
-read variable
-```
-
-A file can be processed line by line.
-
-```bash
-while read line
-do
-    ...
-done < file
-```
-
-Arguments can also be processed sequentially.
-
-```bash
-while (( $# > 0 ))
-do
-    echo "$1"
-    shift
-done
-```
-
-### Bash Functions
-
-Functions group reusable shell commands.
-
-```bash
-function_name()
-{
-    commands
-}
-```
-
-A function can receive its own positional parameters.
-
-```bash
-function_name value
-```
-
-Inside the function:
+Values such as:
 
 ```text
-$1
-→ First function argument
+PID
+UID
+GID
+UUID
+Disk name
+Filesystem size
+Package version
+Service output
 ```
 
-Function positional parameters are separate from the script's positional parameters during the function call.
+should be recorded from the actual lab environment when documenting execution results.
 
-Function-local variables can be created using:
+### 4. Destructive Operations Use Disposable Resources
 
-```bash
-local variable="value"
-```
+Commands that can modify or destroy storage are practiced only on dedicated lab devices.
 
-### Text Processing
-
-Linux command output and text files can be processed through pipelines.
+Examples include:
 
 ```text
-Command or File
-      |
-      v
-grep / sed / awk
-      |
-      v
-Filtered or Processed Output
+fdisk
+parted
+mkfs
+dd
+xfs_repair
+pvcreate
+lvreduce
 ```
 
-General roles:
+### 5. Troubleshooting Is Part of the Lab
+
+Failures are treated as useful evidence rather than simply avoided.
+
+The goal is to understand:
 
 ```text
-grep
-→ Search for matching lines
-
-sed
-→ Select, transform, or remove text
-
-awk
-→ Process records and fields
+What failed?
+Why did it fail?
+What evidence supports the cause?
+How was it corrected?
+How was recovery verified?
 ```
 
-### awk Records and Fields
+---
+
+## Current Focus
+
+The current Linux study path is progressing from foundational administration toward infrastructure operations.
+
+Current areas include:
 
 ```text
-$0
-→ Entire record
-
-$1, $2, ...
-→ Individual fields
-
-NR
-→ Current record number
-
-NF
-→ Number of fields
-
-$NF
-→ Last field
-
-FS
-→ Input field separator
+Linux fundamentals
+Bash scripting
+Process management
+System services
+User administration
+Package management
+Scheduled operations
+Storage administration
+Filesystem management
+Logical Volume Management
 ```
 
-### File Search vs Content Search
-
-```text
-find
-→ Locate files and directories
-
-grep
-→ Search text inside files or command output
-```
-
-### Archive vs Compression
-
-```text
-tar
-→ Combine files and directories into an archive
-
-gzip / bzip2
-→ Compress files
-```
-
-Archiving and compression are related but separate operations.
-
-### Process and Job Management
-
-```text
-Program
-   |
-   v
-Process
-```
-
-A shell job can run in different states:
-
-```text
-Foreground
-Background
-Stopped
-```
-
-The shell manages jobs using job IDs, while the operating system identifies processes using process IDs.
-
-### Common Process States
-
-```text
-R = Running or Runnable
-S = Interruptible Sleep
-D = Uninterruptible Sleep
-I = Idle Kernel Thread
-T = Stopped
-Z = Zombie
-```
-
-### Linux Signals
-
-```text
-1  = SIGHUP
-2  = SIGINT
-9  = SIGKILL
-15 = SIGTERM
-```
-
-`SIGTERM` requests normal termination, while `SIGKILL` forces termination.
-
-### Service Management
-
-Linux services are commonly managed through systemd.
-
-```text
-Administrator
-      |
-      | systemctl
-      v
-   systemd
-      |
-      v
-   Service
-      |
-      v
-   Process
-```
-
-Runtime state and boot-time configuration are separate concepts.
-
-```text
-active / inactive
-→ Current runtime state
-
-enabled / disabled
-→ Boot-time configuration
-```
-
-### Package Management
-
-Red Hat-based Linux distributions use RPM packages and package managers such as DNF.
-
-```text
-Repository
-    |
-    v
-   DNF
-    |
-    v
-RPM Package
-    |
-    v
-Installed Software
-```
-
-```text
-RPM
-→ Direct package inspection and management
-
-DNF
-→ Repository-based package and dependency management
-```
-
-## Practical Focus
-
-The labs follow a practical learning workflow.
-
-```text
-Understand the Concept
-        |
-        v
-Execute Commands
-        |
-        v
-Verify the Result
-        |
-        v
-Understand System Behavior
-        |
-        v
-Apply the Knowledge to Troubleshooting
-```
-
-The goal is to move beyond command memorization and develop practical Linux administration and automation skills.
-
-## Troubleshooting Approach
-
-Troubleshooting should be evidence-driven.
-
-```text
-Problem
-   |
-   v
-Investigation
-   |
-   v
-Evidence
-   |
-   v
-Root Cause
-   |
-   v
-Resolution
-   |
-   v
-Verification
-   |
-   v
-Lesson Learned
-```
-
-Linux troubleshooting may involve several connected layers.
-
-```text
-Package
-   |
-   v
-Configuration
-   |
-   v
-Service
-   |
-   v
-Process
-   |
-   v
-Logs and System State
-```
-
-## What I Am Building Toward
-
-These Linux fundamentals provide the foundation for:
-
-- Linux server administration
-- Cloud infrastructure operations
-- Infrastructure troubleshooting
-- Shell automation
-- Docker and container environments
-- Kubernetes administration
-- Infrastructure as Code
-- Cloud security
-
-Additional labs will be added as infrastructure topics become more advanced.
+These fundamentals will provide the base for later infrastructure topics such as advanced storage, networking, system security, containers, and cloud infrastructure.
