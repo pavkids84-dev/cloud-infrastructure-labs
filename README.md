@@ -1,10 +1,10 @@
-# Linux Infrastructure Labs
+# Cloud Infrastructure Labs
 
-Hands-on Linux administration labs focused on building practical infrastructure fundamentals with Rocky Linux and Bash.
+Hands-on infrastructure labs documenting my progress in Linux system administration, Bash scripting, troubleshooting, and cloud infrastructure fundamentals.
 
-This directory documents my progression from basic Linux operations to system administration topics such as user management, package management, service control, job scheduling, storage, filesystems, and LVM.
+This repository focuses on learning infrastructure concepts through direct practice rather than command memorization.
 
-The labs are designed around a simple workflow:
+The main workflow used throughout the repository is:
 
 ```text
 Learn
@@ -18,22 +18,11 @@ Troubleshoot
 Document
 ```
 
-Rather than recording commands only, each lab focuses on understanding what changed in the system and how to verify the result.
+## Current Focus
 
----
+The current focus is Linux infrastructure administration using Rocky Linux and Bash.
 
-## Environment
-
-- OS: Rocky Linux
-- Virtualization: VMware
-- Shell: Bash
-- Init System: systemd
-- Package Manager: DNF / RPM
-- Primary Goal: Cloud Infrastructure Fundamentals
-
----
-
-## Learning Path
+Topics covered so far include:
 
 ```text
 Linux Fundamentals
@@ -42,13 +31,13 @@ Linux Fundamentals
 Files and Permissions
         |
         v
-Shell and Environment
+Shell Environment
         |
         v
 Text Processing
         |
         v
-Shell Scripting
+Bash Scripting
         |
         v
 Processes and Services
@@ -66,452 +55,104 @@ Storage and Partitions
 Filesystems
         |
         v
-LVM
+Logical Volume Management
 ```
 
----
+## Environment
 
-## Lab Index
+- OS: Rocky Linux
+- Virtualization: VMware
+- Shell: Bash
+- Init System: systemd
+- Package Management: RPM / DNF
+- Primary Area: Linux Infrastructure
+- Learning Style: Hands-on labs and troubleshooting
 
-### 1. System Fundamentals
-
-#### [System Information Lab](./system-information-lab.md)
-
-Practice inspecting the Linux system environment.
-
-Topics:
-
-- Operating-system information
-- Kernel information
-- Hostname
-- CPU and memory information
-- System architecture
-- Basic system inspection
-
----
-
-### 2. Files, Directories, and Permissions
-
-#### [File and Directory Permission Lab](./file-directory-permission-lab.md)
-
-Practice Linux file ownership and permission management.
-
-Topics:
-
-- File and directory permissions
-- Read, write, and execute permissions
-- Symbolic and octal permission notation
-- `chmod`
-- `chown`
-- `chgrp`
-- Special permission concepts
-- Permission verification
-
----
-
-### 3. vi Editor
-
-#### [vi Basic Lab](./vi-basic-lab.md)
-
-Practice basic text editing with `vi`.
-
-Topics:
-
-- Normal mode
-- Insert mode
-- Command mode
-- Navigation
-- Editing
-- Search
-- Save and quit operations
-
----
-
-### 4. Shell Fundamentals
-
-#### [Shell Basics Lab](./shell-basics-lab.md)
-
-Practice fundamental Bash shell behavior.
-
-Topics:
-
-- Shell commands
-- Standard input and output
-- Redirection
-- Pipelines
-- Command execution
-- Basic shell behavior
-
----
-
-### 5. Shell Environment
-
-#### [Shell Environment Lab](./shell-environment-lab.md)
-
-Practice shell variables and environment management.
-
-Topics:
-
-- Shell variables
-- Environment variables
-- `export`
-- Parent and child processes
-- Variable expansion
-- Shell configuration
-- Command environment
-
----
-
-### 6. Search, Archive, and Compression
-
-#### [Search, Archive, and Compression Lab](./search-archive-compression-lab.md)
-
-Practice locating files and managing archives.
-
-Topics:
-
-- `find`
-- File search conditions
-- `tar`
-- Archive creation
-- Archive extraction
-- Compression
-- Archive verification
-
----
-
-### 7. Text Processing
-
-#### [Text Processing Lab](./text-processing-lab.md)
-
-Practice Linux text-processing tools.
-
-Topics:
-
-- `grep`
-- Regular-expression matching
-- `sed`
-- `awk`
-- Records and fields
-- Field separators
-- Pipelines
-- Text filtering and transformation
-
----
-
-### 8. Bash Shell Scripting
-
-#### [Shell Script Labs](./shell-script/README.md)
-
-Practice Bash scripting from basic syntax to reusable functions.
-
-Topics:
-
-- Variables
-- Arguments
-- Positional parameters
-- Exit status
-- Conditional statements
-- File tests
-- `case`
-- `for`
-- `while`
-- `until`
-- `shift`
-- `read`
-- Functions
-- Local variables
-- Here documents
-- Process arguments
-- Execution scope
-
-Shell script examples are stored under:
+## Repository Structure
 
 ```text
-linux/shell-script/
+cloud-infrastructure-labs/
+├── README.md
+└── linux/
+    ├── README.md
+    ├── file-directory-permission-lab.md
+    ├── filesystem-management-lab.md
+    ├── job-scheduling-lab.md
+    ├── lvm-management-lab.md
+    ├── package-management-lab.md
+    ├── process-management-lab.md
+    ├── search-archive-compression-lab.md
+    ├── service-management-lab.md
+    ├── shell-basics-lab.md
+    ├── shell-environment-lab.md
+    ├── ssh-basic-lab.md
+    ├── storage-management-lab.md
+    ├── system-information-lab.md
+    ├── text-processing-lab.md
+    ├── user-management-lab.md
+    ├── vi-basic-lab.md
+    └── shell-script/
+        ├── README.md
+        ├── args.sh
+        ├── argument-for.sh
+        ├── argument-loop.sh
+        ├── basic.sh
+        ├── compare-numbers.sh
+        ├── execution-scope.sh
+        ├── file-check.sh
+        ├── function-basics.sh
+        ├── process-arguments.sh
+        ├── read-lines.sh
+        ├── service-action.sh
+        ├── shift.sh
+        └── variables-and-expansion.sh
 ```
 
----
+## Linux Infrastructure Labs
 
-### 9. Process Management
+Detailed Linux lab documentation is available here:
 
-#### [Process Management Lab](./process-management-lab.md)
+[Linux Infrastructure Labs](./linux/README.md)
 
-Practice inspecting and controlling Linux processes.
+The Linux section currently covers four major areas.
 
-Topics:
-
-- Process inspection
-- PID
-- Parent and child processes
-- `ps`
-- `pgrep`
-- Background processes
-- Foreground and background jobs
-- Signals
-- Process termination
-- Job control
-
----
-
-### 10. Service Management
-
-#### [Service Management Lab](./service-management-lab.md)
-
-Practice systemd service and unit management.
-
-Topics:
-
-- systemd
-- systemd units
-- `.service`
-- `.socket`
-- `.target`
-- `systemctl status`
-- `start`
-- `stop`
-- `restart`
-- `reload`
-- `enable`
-- `disable`
-- `mask`
-- `unmask`
-- Runtime state vs boot configuration
-- Default targets
-- Unit dependencies
-- Socket activation
-
----
-
-### 11. SSH Fundamentals
-
-#### [SSH Basic Lab](./ssh-basic-lab.md)
-
-Practice basic remote Linux access with SSH.
-
-Topics:
-
-- SSH client and server concepts
-- Remote login
-- SSH service inspection
-- Connection verification
-- Basic SSH operations
-
----
-
-### 12. Package Management
-
-#### [Package Management Lab](./package-management-lab.md)
-
-Practice software and repository management on Rocky Linux.
-
-Topics:
-
-- RPM packages
-- `rpm -q`
-- `rpm -qi`
-- `rpm -ql`
-- `rpm -qc`
-- `rpm -qd`
-- DNF
-- Package search
-- Package installation and removal
-- Repository inspection
-- `/etc/yum.repos.d/`
-- DNF cache
-- DNF transaction history
-- Package groups
-- RPM/DNF and DEB/APT comparison
-- Snap concepts
-
----
-
-### 13. User and Group Management
-
-#### [User Management Lab](./user-management-lab.md)
-
-Practice Linux account lifecycle management.
-
-Topics:
-
-- UID and GID
-- Primary and supplementary groups
-- `/etc/passwd`
-- `/etc/shadow`
-- `/etc/group`
-- `/etc/gshadow`
-- `useradd`
-- `usermod`
-- `userdel`
-- `groupadd`
-- Password management
-- Password aging with `chage`
-- Account lock and unlock
-- `su`
-- `sudo`
-- Authentication and authorization
-- Login information
-
----
-
-### 14. Time and Job Scheduling
-
-#### [Time and Job Scheduling Lab](./job-scheduling-lab.md)
-
-Practice Linux time synchronization and scheduled job management.
-
-Topics:
-
-- `timedatectl`
-- Time zones
-- NTP
-- Chrony
-- `chronyd`
-- `chronyc`
-- `at`
-- `batch`
-- `atq`
-- `atrm`
-- `cron`
-- `crond`
-- `/etc/crontab`
-- User crontabs
-- Anacron
-- `/etc/anacrontab`
-- Scheduling access control
-
----
-
-### 15. Storage and Partition Management
-
-#### [Storage Management Lab](./storage-management-lab.md)
-
-Practice block-device and partition administration.
-
-Topics:
-
-- `lsblk`
-- Disk and partition device names
-- SCSI disk rescanning
-- `sg3_utils`
-- MBR
-- GPT
-- `fdisk`
-- `parted`
-- Partition creation
-- Partition-table inspection
-- Storage-change verification
-
-The core storage relationship is:
+### Linux Fundamentals
 
 ```text
-Disk
-  ↓
-Partition
+System Information
+File and Directory Permissions
+vi Editor
+Shell Basics
+Shell Environment
+Search and Archives
+Text Processing
 ```
 
----
-
-### 16. Filesystem Management
-
-#### [Filesystem Management Lab](./filesystem-management-lab.md)
-
-Practice creating, mounting, inspecting, and repairing Linux filesystems.
-
-Topics:
-
-- ext4
-- XFS
-- Filesystem structure
-- Superblocks
-- Inodes
-- `stat`
-- `mkfs`
-- `mount`
-- `umount`
-- `df`
-- `/etc/fstab`
-- Mount options
-- UUID-based filesystem identification
-- `/etc/mtab`
-- XFS allocation groups
-- `xfs_info`
-- `xfs_repair`
-- Filesystem failure and recovery
-
-The storage workflow becomes:
+### Bash Automation
 
 ```text
-Disk
-  ↓
-Partition
-  ↓
-Filesystem
-  ↓
-Mount Point
-  ↓
-Files
+Variables
+Arguments
+Positional Parameters
+Exit Status
+Conditions
+File Tests
+Loops
+Input Processing
+Functions
+Execution Scope
 ```
 
----
-
-### 17. Logical Volume Management
-
-#### [LVM Management Lab](./lvm-management-lab.md)
-
-Practice flexible Linux storage management with LVM.
-
-Topics:
-
-- Physical Volume (PV)
-- Volume Group (VG)
-- Logical Volume (LV)
-- Physical Extent (PE)
-- Logical Extent (LE)
-- `pvcreate`
-- `vgcreate`
-- `lvcreate`
-- `vgextend`
-- `lvextend`
-- `resize2fs`
-- `e2fsck`
-- `lvreduce`
-- `lvresize`
-- Online filesystem growth
-- Offline filesystem shrinking
-- LVM snapshots
-- Snapshot-based backup workflow
-
-The LVM storage stack is:
+### Linux Administration
 
 ```text
-Physical Disk
-      ↓
-Physical Volume
-      ↓
-Volume Group
-      ↓
-Logical Volume
-      ↓
-Filesystem
-      ↓
-Mount Point
-```
-
----
-
-## Linux Administration Progression
-
-The labs build on one another rather than being isolated command exercises.
-
-### System Administration
-
-```text
-Users
-Packages
 Processes
-Services
-Scheduling
+systemd Services
+SSH
+Package Management
+Users and Groups
+Time Synchronization
+Job Scheduling
 ```
 
 ### Storage Administration
@@ -525,130 +166,214 @@ LVM
   ↓
 Filesystem
   ↓
-Mount
+Mount Point
 ```
 
-### Troubleshooting Approach
+The storage labs include:
 
-Across the labs, I use the following troubleshooting process:
+```text
+Block-device inspection
+MBR and GPT
+fdisk and parted
+ext4 and XFS
+Mount management
+/etc/fstab
+XFS repair
+PV / VG / LV
+LVM expansion
+LVM shrinking
+LVM snapshots
+```
+
+## Bash Shell Scripting
+
+Bash scripting exercises are organized under:
+
+```text
+linux/shell-script/
+```
+
+Detailed documentation:
+
+[Shell Script Labs](./linux/shell-script/README.md)
+
+The scripting exercises progress from basic syntax to reusable administration logic.
+
+```text
+Basic Script
+    ↓
+Variables
+    ↓
+Arguments
+    ↓
+Conditions
+    ↓
+Loops
+    ↓
+File Processing
+    ↓
+Functions
+    ↓
+Process and Service Logic
+```
+
+## Troubleshooting Approach
+
+The repository emphasizes troubleshooting as part of system administration.
+
+The general process is:
 
 ```text
 1. Identify the symptom
 2. Inspect the current state
-3. Collect command output as evidence
-4. Identify the affected system layer
+3. Collect evidence
+4. Determine the affected layer
 5. Apply a controlled change
 6. Verify the result
 ```
 
-Examples include:
+Examples practiced in the labs include:
 
-- Verifying process state after starting or terminating a process
+- Inspecting processes by PID and process name
 - Distinguishing service runtime state from boot configuration
-- Inspecting package history when software changes occur
-- Checking system time and daemon state when scheduled jobs fail
-- Identifying the correct block device before storage changes
+- Investigating package and repository state
+- Inspecting package transaction history
+- Checking account and group configuration
+- Verifying scheduled-job services and system time
+- Detecting newly attached disks
+- Creating and verifying partitions
 - Diagnosing filesystem mount failures
-- Repairing a disposable XFS filesystem and verifying recovery
-- Checking each LVM layer when added storage is not visible to a filesystem
+- Repairing a disposable XFS filesystem
+- Extending LVM storage layer by layer
+- Safely shrinking an ext filesystem and Logical Volume
+- Creating an LVM snapshot for backup
 
----
+## Verification-First Documentation
 
-## Repository Structure
+Commands are not considered complete simply because they execute without an obvious error.
 
-```text
-linux/
-├── README.md
-├── file-directory-permission-lab.md
-├── filesystem-management-lab.md
-├── job-scheduling-lab.md
-├── lvm-management-lab.md
-├── package-management-lab.md
-├── process-management-lab.md
-├── search-archive-compression-lab.md
-├── service-management-lab.md
-├── shell-basics-lab.md
-├── shell-environment-lab.md
-├── ssh-basic-lab.md
-├── storage-management-lab.md
-├── system-information-lab.md
-├── text-processing-lab.md
-├── user-management-lab.md
-├── vi-basic-lab.md
-└── shell-script/
-    ├── README.md
-    ├── args.sh
-    ├── argument-for.sh
-    ├── argument-loop.sh
-    ├── basic.sh
-    ├── compare-numbers.sh
-    ├── execution-scope.sh
-    ├── file-check.sh
-    ├── function-basics.sh
-    ├── process-arguments.sh
-    ├── read-lines.sh
-    ├── service-action.sh
-    ├── shift.sh
-    └── variables-and-expansion.sh
-```
-
----
-
-## Documentation Principles
-
-Each lab follows several documentation principles.
-
-### 1. Commands Must Be Verified
-
-A successful command is not assumed to mean that the intended system state was achieved.
-
-Examples:
+Changes are followed by verification.
 
 ```text
 Create
-→ Verify
+  ↓
+Verify
 
 Modify
-→ Verify
+  ↓
+Verify
+
+Stop
+  ↓
+Verify
+
+Start
+  ↓
+Verify
 
 Repair
-→ Verify
+  ↓
+Verify
 ```
 
-### 2. System Layers Must Be Distinguished
+Examples include:
+
+```bash
+systemctl status
+```
+
+```bash
+lsblk
+```
+
+```bash
+df -hT
+```
+
+```bash
+id
+```
+
+```bash
+rpm -q
+```
+
+The exact verification command depends on the system layer being changed.
+
+## Infrastructure Layer Awareness
+
+A major goal of these labs is to understand which infrastructure layer is being modified.
 
 For example:
 
 ```text
-Disk
-≠ Partition
-≠ Logical Volume
-≠ Filesystem
-≠ Mount Point
+Physical Disk
+      ↓
+Partition
+      ↓
+Physical Volume
+      ↓
+Volume Group
+      ↓
+Logical Volume
+      ↓
+Filesystem
+      ↓
+Mount Point
 ```
 
-Understanding which layer is being modified is critical for infrastructure troubleshooting.
+A change at one layer does not automatically mean that every higher layer has changed.
 
-### 3. Real Environment Values Should Not Be Fabricated
+The same principle applies to other Linux administration areas.
 
-Values such as:
+```text
+Package
+≠ Service
+≠ Process
+```
+
+```text
+User
+≠ Group
+≠ Permission
+```
+
+```text
+Service Active State
+≠ Service Boot Configuration
+```
+
+Understanding these boundaries helps make troubleshooting more systematic.
+
+## Documentation Principles
+
+### Hands-On First
+
+Labs are based on direct practice in a Rocky Linux virtual machine.
+
+### Verify Every Change
+
+System state is checked after configuration changes.
+
+### Do Not Fabricate Runtime Values
+
+Values such as the following should come from the actual lab environment:
 
 ```text
 PID
 UID
 GID
 UUID
-Disk name
-Filesystem size
-Package version
-Service output
+Disk names
+Filesystem sizes
+Package versions
+Service states
+Command output
 ```
 
-should be recorded from the actual lab environment when documenting execution results.
+### Use Disposable Resources for Destructive Labs
 
-### 4. Destructive Operations Use Disposable Resources
-
-Commands that can modify or destroy storage are practiced only on dedicated lab devices.
+Potentially destructive commands are practiced only with dedicated lab resources.
 
 Examples include:
 
@@ -662,39 +387,34 @@ pvcreate
 lvreduce
 ```
 
-### 5. Troubleshooting Is Part of the Lab
+### Understand Failures
 
-Failures are treated as useful evidence rather than simply avoided.
+Errors are documented when they help explain system behavior.
 
-The goal is to understand:
+The goal is not only to make a command succeed, but to understand:
 
 ```text
-What failed?
 Why did it fail?
-What evidence supports the cause?
-How was it corrected?
-How was recovery verified?
+What evidence showed the cause?
+What layer was affected?
+How was the issue corrected?
+How was the recovery verified?
 ```
 
----
+## Learning Direction
 
-## Current Focus
+These Linux labs provide the operating-system foundation required for broader infrastructure and cloud engineering work.
 
-The current Linux study path is progressing from foundational administration toward infrastructure operations.
-
-Current areas include:
+The current progression is:
 
 ```text
-Linux fundamentals
-Bash scripting
-Process management
-System services
-User administration
-Package management
-Scheduled operations
-Storage administration
-Filesystem management
-Logical Volume Management
+Linux Administration
+        ↓
+Shell Automation
+        ↓
+Infrastructure Troubleshooting
+        ↓
+Storage and System Operations
 ```
 
-These fundamentals will provide the base for later infrastructure topics such as advanced storage, networking, system security, containers, and cloud infrastructure.
+The repository will continue to evolve as additional infrastructure topics are practiced and documented.
