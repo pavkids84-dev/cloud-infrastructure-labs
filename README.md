@@ -1,8 +1,8 @@
 # Cloud Infrastructure Labs
 
-Hands-on infrastructure labs documenting my progress in Linux system administration, Bash scripting, troubleshooting, and cloud infrastructure fundamentals.
+Hands-on infrastructure labs documenting my progress in Linux system administration, Bash automation, troubleshooting, system security, networking, and cloud infrastructure fundamentals.
 
-This repository focuses on learning infrastructure concepts through direct practice rather than command memorization.
+This repository focuses on understanding infrastructure through direct practice rather than command memorization.
 
 The main workflow used throughout the repository is:
 
@@ -22,40 +22,32 @@ Document
 
 The current focus is Linux infrastructure administration using Rocky Linux and Bash.
 
-Topics covered so far include:
+The labs have progressed from Linux fundamentals into system operations, storage, recovery, observability, security, and networking.
 
 ```text
 Linux Fundamentals
-        |
-        v
-Files and Permissions
-        |
-        v
-Shell Environment
-        |
-        v
-Text Processing
-        |
-        v
-Bash Scripting
-        |
-        v
+        ↓
+Shell and Bash Automation
+        ↓
 Processes and Services
-        |
-        v
-Users and Packages
-        |
-        v
-Time and Job Scheduling
-        |
-        v
-Storage and Partitions
-        |
-        v
-Filesystems
-        |
-        v
-Logical Volume Management
+        ↓
+Users, Packages, and Scheduling
+        ↓
+Storage and Filesystems
+        ↓
+LVM and RAID
+        ↓
+Memory and Swap
+        ↓
+Boot and Kernel
+        ↓
+Backup and Recovery
+        ↓
+Logging and Troubleshooting
+        ↓
+Firewall and SELinux
+        ↓
+Network Administration
 ```
 
 ## Environment
@@ -65,8 +57,11 @@ Logical Volume Management
 - Shell: Bash
 - Init System: systemd
 - Package Management: RPM / DNF
+- Network Management: NetworkManager / nmcli
+- Firewall Management: firewalld
+- Security: SELinux
 - Primary Area: Linux Infrastructure
-- Learning Style: Hands-on labs and troubleshooting
+- Learning Style: Hands-on labs, verification, and troubleshooting
 
 ## Repository Structure
 
@@ -75,13 +70,21 @@ cloud-infrastructure-labs/
 ├── README.md
 └── linux/
     ├── README.md
+    ├── backup-recovery-lab.md
+    ├── boot-kernel-management-lab.md
     ├── file-directory-permission-lab.md
     ├── filesystem-management-lab.md
+    ├── firewall-management-lab.md
     ├── job-scheduling-lab.md
+    ├── log-management-lab.md
     ├── lvm-management-lab.md
+    ├── memory-swap-management-lab.md
+    ├── network-management-lab.md
     ├── package-management-lab.md
     ├── process-management-lab.md
+    ├── raid-management-lab.md
     ├── search-archive-compression-lab.md
+    ├── selinux-management-lab.md
     ├── service-management-lab.md
     ├── shell-basics-lab.md
     ├── shell-environment-lab.md
@@ -114,15 +117,16 @@ Detailed Linux lab documentation is available here:
 
 [Linux Infrastructure Labs](./linux/README.md)
 
-The Linux section currently covers four major areas.
+The Linux labs currently cover the following major areas.
 
 ### Linux Fundamentals
 
 ```text
 System Information
-File and Directory Permissions
+Files and Directories
+Permissions
 vi Editor
-Shell Basics
+Shell Fundamentals
 Shell Environment
 Search and Archives
 Text Processing
@@ -141,16 +145,21 @@ Loops
 Input Processing
 Functions
 Execution Scope
+Process and Service Logic
 ```
 
-### Linux Administration
+Detailed Bash documentation:
+
+[Shell Script Labs](./linux/shell-script/README.md)
+
+### System Administration
 
 ```text
-Processes
+Process Management
 systemd Services
-SSH
+SSH Fundamentals
 Package Management
-Users and Groups
+User and Group Management
 Time Synchronization
 Job Scheduling
 ```
@@ -162,17 +171,20 @@ Disk
   ↓
 Partition
   ↓
-LVM
+RAID / LVM
   ↓
 Filesystem
   ↓
 Mount Point
+  ↓
+Data
 ```
 
-The storage labs include:
+Topics include:
 
 ```text
 Block-device inspection
+SCSI rescanning
 MBR and GPT
 fdisk and parted
 ext4 and XFS
@@ -180,79 +192,357 @@ Mount management
 /etc/fstab
 XFS repair
 PV / VG / LV
-LVM expansion
-LVM shrinking
+LVM expansion and shrinking
 LVM snapshots
+Software RAID
+RAID failure and rebuild
 ```
 
-## Bash Shell Scripting
-
-Bash scripting exercises are organized under:
+### System Operations and Recovery
 
 ```text
-linux/shell-script/
+Memory and Swap
+Boot Process
+GRUB2
+Kernel Management
+Kernel Parameters
+Kernel Modules
+Backup and Restore
+rsync
 ```
 
-Detailed documentation:
-
-[Shell Script Labs](./linux/shell-script/README.md)
-
-The scripting exercises progress from basic syntax to reusable administration logic.
+### Logging and Observability
 
 ```text
-Basic Script
-    ↓
-Variables
-    ↓
-Arguments
-    ↓
-Conditions
-    ↓
-Loops
-    ↓
-File Processing
-    ↓
-Functions
-    ↓
-Process and Service Logic
+rsyslog
+systemd-journald
+journalctl
+Log Filtering
+Persistent Journals
+logrotate
 ```
+
+### Security Administration
+
+```text
+firewalld
+Firewall Zones
+Runtime and Permanent Rules
+Service and Port Rules
+SELinux
+Security Contexts
+SELinux Booleans
+File Context Management
+```
+
+### Network Administration
+
+```text
+NetworkManager
+nmcli
+Network Interfaces
+Connection Profiles
+IPv4 Addressing
+Routing
+Default Gateway
+DNS
+Socket Inspection
+Listening Ports
+```
+
+## Lab Index
+
+### Fundamentals
+
+- [System Information](./linux/system-information-lab.md)
+- [File and Directory Permissions](./linux/file-directory-permission-lab.md)
+- [vi Editor](./linux/vi-basic-lab.md)
+- [Shell Basics](./linux/shell-basics-lab.md)
+- [Shell Environment](./linux/shell-environment-lab.md)
+- [Search, Archive, and Compression](./linux/search-archive-compression-lab.md)
+- [Text Processing](./linux/text-processing-lab.md)
+- [Bash Shell Scripting](./linux/shell-script/README.md)
+
+### System Administration
+
+- [Process Management](./linux/process-management-lab.md)
+- [Service Management](./linux/service-management-lab.md)
+- [SSH Fundamentals](./linux/ssh-basic-lab.md)
+- [Package Management](./linux/package-management-lab.md)
+- [User and Group Management](./linux/user-management-lab.md)
+- [Time and Job Scheduling](./linux/job-scheduling-lab.md)
+
+### Storage and System Operations
+
+- [Storage and Partition Management](./linux/storage-management-lab.md)
+- [Filesystem Management](./linux/filesystem-management-lab.md)
+- [Logical Volume Management](./linux/lvm-management-lab.md)
+- [RAID Management](./linux/raid-management-lab.md)
+- [Memory and Swap Management](./linux/memory-swap-management-lab.md)
+- [Boot and Kernel Management](./linux/boot-kernel-management-lab.md)
+- [Backup and Recovery](./linux/backup-recovery-lab.md)
+
+### Logging, Security, and Networking
+
+- [Log Management](./linux/log-management-lab.md)
+- [Firewall Management](./linux/firewall-management-lab.md)
+- [SELinux Management](./linux/selinux-management-lab.md)
+- [Network Management](./linux/network-management-lab.md)
 
 ## Troubleshooting Approach
 
-The repository emphasizes troubleshooting as part of system administration.
+Troubleshooting is treated as part of system administration rather than as a separate activity.
 
-The general process is:
+The general workflow is:
 
 ```text
 1. Identify the symptom
 2. Inspect the current state
 3. Collect evidence
-4. Determine the affected layer
-5. Apply a controlled change
-6. Verify the result
+4. Identify the affected system layer
+5. Form a cause hypothesis
+6. Apply a controlled change
+7. Verify recovery
 ```
 
-Examples practiced in the labs include:
+The goal is not simply to make a command succeed.
 
-- Inspecting processes by PID and process name
-- Distinguishing service runtime state from boot configuration
-- Investigating package and repository state
-- Inspecting package transaction history
-- Checking account and group configuration
-- Verifying scheduled-job services and system time
-- Detecting newly attached disks
-- Creating and verifying partitions
-- Diagnosing filesystem mount failures
-- Repairing a disposable XFS filesystem
-- Extending LVM storage layer by layer
-- Safely shrinking an ext filesystem and Logical Volume
-- Creating an LVM snapshot for backup
+The goal is to answer:
+
+```text
+What failed?
+Why did it fail?
+What evidence supports the cause?
+Which system layer is affected?
+What is the smallest safe change?
+How can recovery be verified?
+```
+
+## Troubleshooting Examples
+
+### Service
+
+```text
+Service failure
+    ↓
+systemctl status
+    ↓
+Runtime / enable / mask state
+    ↓
+Controlled recovery
+    ↓
+Verification
+```
+
+### Storage
+
+```text
+Storage not available
+    ↓
+Block device
+    ↓
+Partition
+    ↓
+LVM / RAID
+    ↓
+Filesystem
+    ↓
+Mount
+```
+
+### LVM
+
+```text
+Disk capacity increased
+    ↓
+PV
+    ↓
+VG
+    ↓
+LV
+    ↓
+Filesystem
+    ↓
+df verification
+```
+
+A change at one storage layer does not automatically update every higher layer.
+
+### RAID
+
+```text
+Degraded array
+    ↓
+Identify failed member
+    ↓
+Fail
+    ↓
+Remove
+    ↓
+Add replacement
+    ↓
+Monitor rebuild
+    ↓
+Verify array state
+```
+
+### Memory
+
+```text
+Memory pressure
+    ↓
+free
+    ↓
+vmstat
+    ↓
+top
+    ↓
+pmap
+```
+
+The investigation moves from system-wide memory state toward individual processes.
+
+### Boot
+
+```text
+Boot failure
+    ↓
+Firmware
+    ↓
+GRUB2
+    ↓
+Kernel
+    ↓
+systemd
+    ↓
+Target / Service
+```
+
+The failure should first be localized to a boot layer.
+
+### Backup
+
+```text
+Create backup
+    ↓
+Inspect backup
+    ↓
+Restore test
+    ↓
+Verify recovered data
+```
+
+A completed backup command alone does not prove that data is recoverable.
+
+### Logging
+
+```text
+Incident
+   ↓
+Identify time range
+   ↓
+Filter by severity
+   ↓
+Filter by process or service
+   ↓
+Inspect evidence
+```
+
+### Firewall
+
+```text
+Remote connection failure
+        ↓
+Application running?
+        ↓
+Port listening?
+        ↓
+Correct firewalld zone?
+        ↓
+Service / port allowed?
+        ↓
+Remote verification
+```
+
+### SELinux
+
+```text
+Application access denied
+        ↓
+DAC permissions
+        ↓
+SELinux mode
+        ↓
+Process context
+        ↓
+File context
+        ↓
+Boolean / policy
+        ↓
+Logs
+        ↓
+Verify in Enforcing mode
+```
+
+### Network
+
+```text
+Network failure
+    ↓
+Device
+    ↓
+IP Address
+    ↓
+Subnet
+    ↓
+Route
+    ↓
+Gateway
+    ↓
+DNS
+    ↓
+Listening Socket
+    ↓
+Firewall
+    ↓
+Application
+```
+
+## Runtime vs Persistent Configuration
+
+A recurring theme across the labs is the distinction between current state and persistent configuration.
+
+```text
+systemctl start
+≠
+systemctl enable
+```
+
+```text
+sysctl -w
+≠
+persistent sysctl configuration
+```
+
+```text
+firewall-cmd --add-service
+≠
+firewall-cmd --permanent --add-service
+```
+
+```text
+ip addr add
+≠
+NetworkManager connection configuration
+```
+
+Understanding this distinction prevents changes that appear to work temporarily but disappear after a restart or reload.
 
 ## Verification-First Documentation
 
-Commands are not considered complete simply because they execute without an obvious error.
+Commands are not considered complete simply because they return without an obvious error.
 
-Changes are followed by verification.
+Every change should be followed by verification.
 
 ```text
 Create
@@ -274,12 +564,18 @@ Verify
 Repair
   ↓
 Verify
+
+Restore
+  ↓
+Verify
 ```
+
+The exact verification command depends on the system layer.
 
 Examples include:
 
 ```bash
-systemctl status
+systemctl status SERVICE
 ```
 
 ```bash
@@ -291,27 +587,45 @@ df -hT
 ```
 
 ```bash
-id
+cat /proc/mdstat
 ```
 
 ```bash
-rpm -q
+free -h
 ```
 
-The exact verification command depends on the system layer being changed.
+```bash
+ip addr
+```
+
+```bash
+ip route
+```
+
+```bash
+ss -nlp
+```
+
+```bash
+firewall-cmd --list-all
+```
+
+```bash
+getenforce
+```
 
 ## Infrastructure Layer Awareness
 
 A major goal of these labs is to understand which infrastructure layer is being modified.
 
-For example:
+For storage:
 
 ```text
 Physical Disk
       ↓
 Partition
       ↓
-Physical Volume
+RAID or Physical Volume
       ↓
 Volume Group
       ↓
@@ -322,28 +636,39 @@ Filesystem
 Mount Point
 ```
 
-A change at one layer does not automatically mean that every higher layer has changed.
-
-The same principle applies to other Linux administration areas.
+For network services:
 
 ```text
-Package
-≠ Service
-≠ Process
+Application
+      ↓
+Process / Service
+      ↓
+Listening Socket
+      ↓
+SELinux Policy
+      ↓
+Firewall
+      ↓
+Network
 ```
+
+For network connectivity:
 
 ```text
-User
-≠ Group
-≠ Permission
+Interface
+      ↓
+IP Address
+      ↓
+Routing
+      ↓
+Gateway
+      ↓
+DNS
+      ↓
+Remote Service
 ```
 
-```text
-Service Active State
-≠ Service Boot Configuration
-```
-
-Understanding these boundaries helps make troubleshooting more systematic.
+Understanding these boundaries makes troubleshooting more systematic.
 
 ## Documentation Principles
 
@@ -355,6 +680,10 @@ Labs are based on direct practice in a Rocky Linux virtual machine.
 
 System state is checked after configuration changes.
 
+### Collect Evidence Before Changing the System
+
+Troubleshooting begins with inspection rather than immediately restarting services or modifying configuration.
+
 ### Do Not Fabricate Runtime Values
 
 Values such as the following should come from the actual lab environment:
@@ -365,6 +694,9 @@ UID
 GID
 UUID
 Disk names
+Interface names
+IP addresses
+Kernel versions
 Filesystem sizes
 Package versions
 Service states
@@ -373,7 +705,7 @@ Command output
 
 ### Use Disposable Resources for Destructive Labs
 
-Potentially destructive commands are practiced only with dedicated lab resources.
+Potentially destructive operations are practiced only on dedicated lab resources.
 
 Examples include:
 
@@ -381,40 +713,54 @@ Examples include:
 fdisk
 parted
 mkfs
-dd
 xfs_repair
 pvcreate
 lvreduce
+mdadm member failure tests
+mkswap
+GRUB configuration changes
+route changes
+firewall changes
 ```
 
 ### Understand Failures
 
-Errors are documented when they help explain system behavior.
-
-The goal is not only to make a command succeed, but to understand:
+Errors are treated as useful evidence.
 
 ```text
-Why did it fail?
-What evidence showed the cause?
-What layer was affected?
-How was the issue corrected?
-How was the recovery verified?
+Symptom
+   ↓
+Evidence
+   ↓
+Root Cause
+   ↓
+Resolution
+   ↓
+Verification
 ```
 
 ## Learning Direction
 
-These Linux labs provide the operating-system foundation required for broader infrastructure and cloud engineering work.
+These labs are building the Linux operating-system foundation required for cloud infrastructure engineering.
 
 The current progression is:
 
 ```text
-Linux Administration
+Linux Fundamentals
         ↓
-Shell Automation
+System Administration
         ↓
-Infrastructure Troubleshooting
+Bash Automation
         ↓
 Storage and System Operations
+        ↓
+Logging and Troubleshooting
+        ↓
+Linux Security
+        ↓
+Network Administration
+        ↓
+Cloud Infrastructure
 ```
 
-The repository will continue to evolve as additional infrastructure topics are practiced and documented.
+Future labs will continue connecting Linux administration skills to cloud infrastructure, automation, and infrastructure troubleshooting.
