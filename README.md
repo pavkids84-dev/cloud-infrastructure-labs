@@ -1,8 +1,8 @@
 # Cloud Infrastructure Labs
 
-Hands-on infrastructure labs documenting my progress in Linux system administration, Bash automation, troubleshooting, system security, networking, and cloud infrastructure fundamentals.
+Hands-on infrastructure labs documenting my progress in Linux system administration, Bash automation, storage, recovery, observability, security, networking, and infrastructure troubleshooting.
 
-This repository focuses on understanding infrastructure through direct practice rather than command memorization.
+This repository focuses on understanding how infrastructure components work together through direct practice, verification, controlled failure, and recovery rather than simple command memorization.
 
 The main workflow used throughout the repository is:
 
@@ -22,7 +22,7 @@ Document
 
 The current focus is Linux infrastructure administration using Rocky Linux and Bash.
 
-The labs have progressed from Linux fundamentals into system operations, storage, recovery, observability, security, and networking.
+The Linux study path has progressed from basic operating-system usage into system operations, storage, recovery, observability, security, networking, network redundancy, remote file sharing, and troubleshooting methodology.
 
 ```text
 Linux Fundamentals
@@ -43,11 +43,19 @@ Boot and Kernel
         ↓
 Backup and Recovery
         ↓
-Logging and Troubleshooting
+Logging and Observability
         ↓
 Firewall and SELinux
         ↓
 Network Administration
+        ↓
+SSH
+        ↓
+Network Teaming
+        ↓
+NFS
+        ↓
+Infrastructure Troubleshooting
 ```
 
 ## Environment
@@ -60,8 +68,10 @@ Network Administration
 - Network Management: NetworkManager / nmcli
 - Firewall Management: firewalld
 - Security: SELinux
+- Remote Access: OpenSSH
+- Network File Sharing: NFS
 - Primary Area: Linux Infrastructure
-- Learning Style: Hands-on labs, verification, and troubleshooting
+- Learning Style: Hands-on labs, verification, troubleshooting, and recovery
 
 ## Repository Structure
 
@@ -80,6 +90,8 @@ cloud-infrastructure-labs/
     ├── lvm-management-lab.md
     ├── memory-swap-management-lab.md
     ├── network-management-lab.md
+    ├── network-teaming-lab.md
+    ├── nfs-management-lab.md
     ├── package-management-lab.md
     ├── process-management-lab.md
     ├── raid-management-lab.md
@@ -157,7 +169,7 @@ Detailed Bash documentation:
 ```text
 Process Management
 systemd Services
-SSH Fundamentals
+SSH
 Package Management
 User and Group Management
 Time Synchronization
@@ -195,7 +207,7 @@ PV / VG / LV
 LVM expansion and shrinking
 LVM snapshots
 Software RAID
-RAID failure and rebuild
+RAID member failure and rebuild
 ```
 
 ### System Operations and Recovery
@@ -209,6 +221,9 @@ Kernel Parameters
 Kernel Modules
 Backup and Restore
 rsync
+Emergency and Rescue Targets
+Installation-Media Rescue
+chroot-based Recovery
 ```
 
 ### Logging and Observability
@@ -250,6 +265,20 @@ Socket Inspection
 Listening Ports
 ```
 
+### Network Services and Redundancy
+
+```text
+OpenSSH
+Password and Public-Key Authentication
+SCP
+SFTP
+Network Teaming
+Active-Backup Failover
+NFS Server and Client
+NFS Exports
+Remote Filesystem Mounting
+```
+
 ## Lab Index
 
 ### Fundamentals
@@ -267,7 +296,7 @@ Listening Ports
 
 - [Process Management](./linux/process-management-lab.md)
 - [Service Management](./linux/service-management-lab.md)
-- [SSH Fundamentals](./linux/ssh-basic-lab.md)
+- [SSH Fundamentals and Remote Access](./linux/ssh-basic-lab.md)
 - [Package Management](./linux/package-management-lab.md)
 - [User and Group Management](./linux/user-management-lab.md)
 - [Time and Job Scheduling](./linux/job-scheduling-lab.md)
@@ -288,34 +317,117 @@ Listening Ports
 - [Firewall Management](./linux/firewall-management-lab.md)
 - [SELinux Management](./linux/selinux-management-lab.md)
 - [Network Management](./linux/network-management-lab.md)
+- [Network Teaming](./linux/network-teaming-lab.md)
+- [NFS Management](./linux/nfs-management-lab.md)
 
-## Troubleshooting Approach
+## Troubleshooting Philosophy
 
-Troubleshooting is treated as part of system administration rather than as a separate activity.
+Troubleshooting is treated as part of every infrastructure lab rather than as a separate topic.
 
 The general workflow is:
 
 ```text
-1. Identify the symptom
-2. Inspect the current state
-3. Collect evidence
-4. Identify the affected system layer
-5. Form a cause hypothesis
-6. Apply a controlled change
-7. Verify recovery
+Symptom
+   ↓
+Scope
+   ↓
+Evidence
+   ↓
+Possible Causes
+   ↓
+Prioritize Hypotheses
+   ↓
+Controlled Change
+   ↓
+Verification
+   ↓
+Documentation
 ```
 
-The goal is not simply to make a command succeed.
+The first objective is not to change the system.
 
-The goal is to answer:
+The first objective is to understand:
 
 ```text
-What failed?
-Why did it fail?
-What evidence supports the cause?
-Which system layer is affected?
-What is the smallest safe change?
-How can recovery be verified?
+What exactly is failing?
+Who or what is affected?
+When did the problem begin?
+What changed recently?
+What evidence exists?
+Which infrastructure layer is involved?
+```
+
+## Scope Before Cause
+
+A symptom should first be scoped.
+
+```text
+One user?
+    ↓
+Client or account issue
+
+
+One server?
+    ↓
+System-specific issue
+
+
+One service?
+    ↓
+Application or service issue
+
+
+Multiple systems?
+    ↓
+Shared infrastructure issue
+```
+
+The symptom itself is not the root cause.
+
+For example:
+
+```text
+"SSH does not work"
+```
+
+is a symptom.
+
+Possible causes include:
+
+```text
+Network failure
+Routing failure
+Firewall rule
+sshd failure
+Authentication configuration
+User account or key configuration
+```
+
+## Evidence Before Changes
+
+Useful evidence can include:
+
+```text
+Error messages
+System state
+Service state
+Socket state
+Filesystem state
+Network state
+Logs
+Recent configuration changes
+```
+
+Changes should normally be applied one at a time so that the effect of each change remains observable.
+
+```text
+Hypothesis
+    ↓
+One Controlled Change
+    ↓
+Observe Result
+    ↓
+Accept or Reject Hypothesis
 ```
 
 ## Troubleshooting Examples
@@ -323,13 +435,17 @@ How can recovery be verified?
 ### Service
 
 ```text
-Service failure
+Service Failure
     ↓
 systemctl status
     ↓
-Runtime / enable / mask state
+Runtime / Enabled / Masked State
     ↓
-Controlled recovery
+Dependencies
+    ↓
+Logs
+    ↓
+Controlled Recovery
     ↓
 Verification
 ```
@@ -337,13 +453,13 @@ Verification
 ### Storage
 
 ```text
-Storage not available
+Storage Failure
     ↓
-Block device
+Block Device
     ↓
 Partition
     ↓
-LVM / RAID
+RAID / LVM
     ↓
 Filesystem
     ↓
@@ -353,7 +469,7 @@ Mount
 ### LVM
 
 ```text
-Disk capacity increased
+Disk Capacity Changed
     ↓
 PV
     ↓
@@ -363,33 +479,33 @@ LV
     ↓
 Filesystem
     ↓
-df verification
+df
 ```
 
-A change at one storage layer does not automatically update every higher layer.
+A change in one storage layer does not automatically update every higher layer.
 
 ### RAID
 
 ```text
-Degraded array
+Degraded Array
     ↓
-Identify failed member
+Identify Failed Member
     ↓
 Fail
     ↓
 Remove
     ↓
-Add replacement
+Add Replacement
     ↓
-Monitor rebuild
+Monitor Rebuild
     ↓
-Verify array state
+Verify Array State
 ```
 
 ### Memory
 
 ```text
-Memory pressure
+Memory Pressure
     ↓
 free
     ↓
@@ -400,12 +516,12 @@ top
 pmap
 ```
 
-The investigation moves from system-wide memory state toward individual processes.
+The investigation moves from system-wide resource state toward individual processes.
 
 ### Boot
 
 ```text
-Boot failure
+Boot Failure
     ↓
 Firmware
     ↓
@@ -415,79 +531,99 @@ Kernel
     ↓
 systemd
     ↓
-Target / Service
+Target
+    ↓
+Service
 ```
 
-The failure should first be localized to a boot layer.
+When normal boot is unavailable, recovery can move into:
+
+```text
+Emergency / Rescue Target
+```
+
+or:
+
+```text
+Installation Media
+    ↓
+Rescue Environment
+    ↓
+/mnt/sysroot
+    ↓
+chroot
+    ↓
+Repair
+```
 
 ### Backup
 
 ```text
-Create backup
+Create Backup
     ↓
-Inspect backup
+Inspect Backup
     ↓
-Restore test
+Restore
     ↓
-Verify recovered data
+Verify Recovered Data
 ```
 
-A completed backup command alone does not prove that data is recoverable.
+A successful backup command does not prove that data can actually be restored.
 
 ### Logging
 
 ```text
 Incident
    ↓
-Identify time range
+Identify Time Range
    ↓
-Filter by severity
+Filter Severity
    ↓
-Filter by process or service
+Filter Process / Service
    ↓
-Inspect evidence
+Inspect Evidence
 ```
 
 ### Firewall
 
 ```text
-Remote connection failure
+Remote Connection Failure
         ↓
-Application running?
+Application Running?
         ↓
-Port listening?
+Port Listening?
         ↓
-Correct firewalld zone?
+Correct Zone?
         ↓
-Service / port allowed?
+Required Rule Present?
         ↓
-Remote verification
+Remote Verification
 ```
 
 ### SELinux
 
 ```text
-Application access denied
-        ↓
-DAC permissions
-        ↓
-SELinux mode
-        ↓
-Process context
-        ↓
-File context
-        ↓
-Boolean / policy
-        ↓
+Access Denied
+    ↓
+DAC Permissions
+    ↓
+SELinux Mode
+    ↓
+Process Context
+    ↓
+File Context
+    ↓
+Boolean / Policy
+    ↓
 Logs
-        ↓
-Verify in Enforcing mode
+    ↓
+Verify in Enforcing Mode
 ```
 
 ### Network
 
 ```text
-Network failure
+Network Failure
     ↓
 Device
     ↓
@@ -508,41 +644,129 @@ Firewall
 Application
 ```
 
+### SSH
+
+```text
+SSH Failure
+    ↓
+Network
+    ↓
+Route
+    ↓
+Firewall
+    ↓
+Listening Socket
+    ↓
+sshd
+    ↓
+Authentication Method
+    ↓
+User / Key
+    ↓
+Logs
+```
+
+### Network Teaming
+
+```text
+Team Failure
+    ↓
+Connection Profiles
+    ↓
+Physical Devices
+    ↓
+Team Runner
+    ↓
+Active Port
+    ↓
+Controlled Link Failure
+    ↓
+Failover Verification
+```
+
+### NFS
+
+```text
+NFS Mount Failure
+    ↓
+Client Network
+    ↓
+Server Reachability
+    ↓
+nfs-server
+    ↓
+/etc/exports
+    ↓
+exportfs
+    ↓
+Firewall
+    ↓
+showmount
+    ↓
+Client Mount
+    ↓
+Verification
+```
+
 ## Runtime vs Persistent Configuration
 
-A recurring theme across the labs is the distinction between current state and persistent configuration.
+A recurring theme across the labs is the distinction between current runtime state and persistent configuration.
+
+### Services
 
 ```text
 systemctl start
-≠
+!=
 systemctl enable
 ```
 
+### Kernel Parameters
+
 ```text
 sysctl -w
-≠
+!=
 persistent sysctl configuration
 ```
 
+### Firewall
+
 ```text
 firewall-cmd --add-service
-≠
+!=
 firewall-cmd --permanent --add-service
 ```
 
+### Networking
+
 ```text
 ip addr add
-≠
+!=
 NetworkManager connection configuration
 ```
 
-Understanding this distinction prevents changes that appear to work temporarily but disappear after a restart or reload.
+### Filesystems
+
+```text
+mount
+!=
+/etc/fstab
+```
+
+### NFS
+
+```text
+mount -t nfs
+!=
+persistent NFS entry in /etc/fstab
+```
+
+Understanding this distinction prevents changes that work temporarily but disappear after a reload or reboot.
 
 ## Verification-First Documentation
 
 Commands are not considered complete simply because they return without an obvious error.
 
-Every change should be followed by verification.
+Every important change should be independently verified.
 
 ```text
 Create
@@ -568,9 +792,11 @@ Verify
 Restore
   ↓
 Verify
-```
 
-The exact verification command depends on the system layer.
+Failover
+  ↓
+Verify
+```
 
 Examples include:
 
@@ -614,11 +840,25 @@ firewall-cmd --list-all
 getenforce
 ```
 
+```bash
+teamdctl team0 state
+```
+
+```bash
+exportfs
+```
+
+```bash
+showmount -e SERVER
+```
+
+The exact verification command depends on the infrastructure layer.
+
 ## Infrastructure Layer Awareness
 
-A major goal of these labs is to understand which infrastructure layer is being modified.
+A major goal of these labs is to identify the exact layer being inspected or changed.
 
-For storage:
+### Storage
 
 ```text
 Physical Disk
@@ -636,7 +876,7 @@ Filesystem
 Mount Point
 ```
 
-For network services:
+### Network Application
 
 ```text
 Application
@@ -645,17 +885,17 @@ Process / Service
       ↓
 Listening Socket
       ↓
-SELinux Policy
+SELinux
       ↓
 Firewall
       ↓
 Network
 ```
 
-For network connectivity:
+### Network Connectivity
 
 ```text
-Interface
+Network Device
       ↓
 IP Address
       ↓
@@ -668,13 +908,71 @@ DNS
 Remote Service
 ```
 
+### NFS
+
+```text
+Server Storage
+      ↓
+Filesystem Permissions
+      ↓
+SELinux
+      ↓
+NFS Export
+      ↓
+NFS Service
+      ↓
+Firewall
+      ↓
+Network
+      ↓
+Client Mount
+```
+
 Understanding these boundaries makes troubleshooting more systematic.
+
+## Recovery Environments
+
+Some failures cannot be repaired from the normal operating environment.
+
+Examples include:
+
+```text
+GRUB failure
+Boot configuration failure
+Invalid /etc/fstab entry
+Root filesystem problems
+Filesystem corruption
+```
+
+A recovery workflow can use:
+
+```text
+GRUB
+  ↓
+emergency.target / rescue.target
+```
+
+or:
+
+```text
+Installation Media
+      ↓
+Rescue Mode
+      ↓
+Installed System mounted under /mnt/sysroot
+      ↓
+chroot /mnt/sysroot
+      ↓
+Repair
+```
+
+Recovery commands must be selected according to the actual boot mode, filesystem type, and failure condition.
 
 ## Documentation Principles
 
 ### Hands-On First
 
-Labs are based on direct practice in a Rocky Linux virtual machine.
+Labs are based on direct practice or reproducible study workflows in a Rocky Linux virtual-machine environment.
 
 ### Verify Every Change
 
@@ -684,9 +982,13 @@ System state is checked after configuration changes.
 
 Troubleshooting begins with inspection rather than immediately restarting services or modifying configuration.
 
+### Change One Variable at a Time
+
+Applying multiple unrelated changes at once makes it difficult to identify the actual cause.
+
 ### Do Not Fabricate Runtime Values
 
-Values such as the following should come from the actual lab environment:
+Values such as the following must come from the actual lab environment:
 
 ```text
 PID
@@ -696,16 +998,20 @@ UUID
 Disk names
 Interface names
 IP addresses
+Gateway addresses
 Kernel versions
 Filesystem sizes
 Package versions
 Service states
+RAID states
+Active team ports
+SSH fingerprints
 Command output
 ```
 
 ### Use Disposable Resources for Destructive Labs
 
-Potentially destructive operations are practiced only on dedicated lab resources.
+Potentially destructive or connectivity-breaking operations are practiced only on dedicated lab resources.
 
 Examples include:
 
@@ -721,6 +1027,8 @@ mkswap
 GRUB configuration changes
 route changes
 firewall changes
+network-interface disconnect tests
+NFS export tests
 ```
 
 ### Understand Failures
@@ -739,9 +1047,13 @@ Resolution
 Verification
 ```
 
+### Document the Result
+
+A resolved incident should record enough information to make a similar future failure easier to diagnose.
+
 ## Learning Direction
 
-These labs are building the Linux operating-system foundation required for cloud infrastructure engineering.
+These labs build the Linux operating-system foundation required for cloud infrastructure engineering.
 
 The current progression is:
 
@@ -754,13 +1066,17 @@ Bash Automation
         ↓
 Storage and System Operations
         ↓
-Logging and Troubleshooting
+Logging and Observability
         ↓
 Linux Security
         ↓
 Network Administration
         ↓
+Network Services and Redundancy
+        ↓
+Infrastructure Troubleshooting
+        ↓
 Cloud Infrastructure
 ```
 
-Future labs will continue connecting Linux administration skills to cloud infrastructure, automation, and infrastructure troubleshooting.
+Future labs will connect these Linux fundamentals to cloud platforms, infrastructure automation, containers, monitoring, and cloud security.
