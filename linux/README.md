@@ -1,1007 +1,1004 @@
-# Linux Infrastructure Labs
+# Linux Administration Labs
 
-Hands-on Linux administration labs focused on building practical infrastructure fundamentals with Rocky Linux and Bash.
+This directory documents my Linux system administration studies and hands-on infrastructure labs.
 
-This directory documents my progression from basic Linux operations into system administration, storage, recovery, observability, security, networking, network services, redundancy, and troubleshooting.
+The learning path progresses from Linux fundamentals into system administration, storage, security, networking, network services, and operational troubleshooting.
 
-The labs follow a consistent workflow:
+The objective is not only to know Linux commands.
+
+The objective is to understand:
 
 ```text
-Learn
-  ↓
-Practice
-  ↓
-Verify
-  ↓
-Troubleshoot
-  ↓
-Document
+System State
+    ↓
+Configuration
+    ↓
+Service Behavior
+    ↓
+Evidence
+    ↓
+Troubleshooting
+    ↓
+Recovery
 ```
 
-Rather than recording commands only, each lab focuses on understanding what changed, which system layer was affected, how the result can be verified, and how failures can be diagnosed systematically.
+---
+
+# Scope
+
+This directory focuses on:
+
+```text
+Linux Operating-System Administration
+Linux Service Management
+Linux Storage
+Linux Security
+Linux Network Configuration
+Linux Network Services
+Linux Troubleshooting
+```
+
+General networking theory is documented separately under:
+
+```text
+../network/
+```
+
+The distinction is:
+
+```text
+network/
+→ Protocol and networking fundamentals
+
+linux/
+→ Linux implementation and administration
+```
 
 ---
 
-## Environment
+# Directory Structure
 
-- OS: Rocky Linux
-- Virtualization: VMware
-- Shell: Bash
-- Init System: systemd
-- Package Manager: DNF / RPM
-- Network Manager: NetworkManager
-- Firewall: firewalld
-- Security: SELinux
-- Remote Access: OpenSSH
-- Network File Sharing: NFS
-- Primary Goal: Cloud Infrastructure Fundamentals
+```text
+linux/
+├── README.md
+├── system-information-lab.md
+├── file-directory-permission-lab.md
+├── vi-basic-lab.md
+├── shell-basics-lab.md
+├── shell-environment-lab.md
+├── search-archive-compression-lab.md
+├── text-processing-lab.md
+├── shell-script/
+│   └── README.md
+├── process-management-lab.md
+├── service-management-lab.md
+├── ssh-basic-lab.md
+├── package-management-lab.md
+├── user-management-lab.md
+├── job-scheduling-lab.md
+├── storage-management-lab.md
+├── filesystem-management-lab.md
+├── lvm-management-lab.md
+├── raid-management-lab.md
+├── memory-swap-management-lab.md
+├── boot-kernel-management-lab.md
+├── backup-recovery-lab.md
+├── log-management-lab.md
+├── firewall-management-lab.md
+├── selinux-management-lab.md
+├── network-management-lab.md
+├── network-teaming-lab.md
+├── nfs-management-lab.md
+├── linux-bridge-lab.md
+├── autofs-management-lab.md
+├── samba-cifs-management-lab.md
+├── apache-httpd-management-lab.md
+├── dns-bind-unbound-management-lab.md
+└── host-network-security-hardening-lab.md
+```
 
 ---
 
-## Learning Path
+# Learning Roadmap
 
 ```text
 Linux Fundamentals
-        ↓
-Files and Permissions
-        ↓
-Shell and Environment
-        ↓
-Text Processing
-        ↓
-Bash Scripting
-        ↓
+      ↓
+Shell and Text Processing
+      ↓
 Processes and Services
-        ↓
-Users and Packages
-        ↓
-Time and Job Scheduling
-        ↓
-Storage and Partitions
-        ↓
-Filesystems
-        ↓
-LVM
-        ↓
-RAID
-        ↓
-Memory and Swap
-        ↓
-Boot and Kernel
-        ↓
-Backup and Recovery
-        ↓
-Log Management
-        ↓
-Firewall
-        ↓
-SELinux
-        ↓
-Network Management
-        ↓
-OpenSSH
-        ↓
-Network Teaming
-        ↓
-NFS
-        ↓
-Troubleshooting and Recovery
+      ↓
+Packages and Users
+      ↓
+Storage and Filesystems
+      ↓
+LVM and RAID
+      ↓
+Memory and Boot
+      ↓
+Backup and Logs
+      ↓
+Firewall and SELinux
+      ↓
+Linux Networking
+      ↓
+Remote Access
+      ↓
+Network File Services
+      ↓
+Web and DNS Services
+      ↓
+Host Security Hardening
+      ↓
+Troubleshooting and Operations
 ```
 
 ---
 
-# Lab Index
+# 1. System Fundamentals
 
-## 1. System Fundamentals
-
-### [System Information Lab](./system-information-lab.md)
-
-Practice inspecting the Linux system environment.
-
-Topics:
-
-- Operating-system information
-- Kernel information
-- Hostname
-- CPU and memory information
-- System architecture
-- Basic system inspection
-
----
-
-## 2. Files, Directories, and Permissions
-
-### [File and Directory Permission Lab](./file-directory-permission-lab.md)
-
-Practice Linux file ownership and permission management.
-
-Topics:
-
-- File and directory permissions
-- Read, write, and execute permissions
-- Symbolic and octal notation
-- `chmod`
-- `chown`
-- `chgrp`
-- Special permissions
-- Permission verification
-
----
-
-## 3. vi Editor
-
-### [vi Basic Lab](./vi-basic-lab.md)
-
-Practice basic text editing with `vi`.
-
-Topics:
-
-- Normal mode
-- Insert mode
-- Command mode
-- Navigation
-- Editing
-- Search
-- Save and quit operations
-
----
-
-## 4. Shell Fundamentals
-
-### [Shell Basics Lab](./shell-basics-lab.md)
-
-Practice fundamental Bash shell behavior.
-
-Topics:
-
-- Shell commands
-- Standard input and output
-- Redirection
-- Pipelines
-- Command execution
-- Basic shell behavior
-
----
-
-## 5. Shell Environment
-
-### [Shell Environment Lab](./shell-environment-lab.md)
-
-Practice shell variables and environment management.
-
-Topics:
-
-- Shell variables
-- Environment variables
-- `export`
-- Parent and child processes
-- Variable expansion
-- Shell configuration
-- Command environment
-
----
-
-## 6. Search, Archive, and Compression
-
-### [Search, Archive, and Compression Lab](./search-archive-compression-lab.md)
-
-Practice locating files and managing archives.
-
-Topics:
-
-- `find`
-- File search conditions
-- `tar`
-- Archive creation
-- Archive extraction
-- Compression
-- Archive verification
-
----
-
-## 7. Text Processing
-
-### [Text Processing Lab](./text-processing-lab.md)
-
-Practice Linux text-processing tools.
-
-Topics:
-
-- `grep`
-- Regular expressions
-- `sed`
-- `awk`
-- Records and fields
-- Field separators
-- Pipelines
-- Text filtering
-- Text transformation
-
----
-
-## 8. Bash Shell Scripting
-
-### [Shell Script Labs](./shell-script/README.md)
-
-Practice Bash scripting from basic syntax to reusable administration logic.
-
-Topics:
-
-- Variables
-- Arguments
-- Positional parameters
-- Exit status
-- Conditional statements
-- File tests
-- `case`
-- `for`
-- `while`
-- `until`
-- `shift`
-- `read`
-- Functions
-- Local variables
-- Here documents
-- Process arguments
-- Execution scope
-
-Shell scripts are stored under:
+File:
 
 ```text
-linux/shell-script/
+system-information-lab.md
 ```
 
----
-
-## 9. Process Management
-
-### [Process Management Lab](./process-management-lab.md)
-
-Practice inspecting and controlling Linux processes.
-
-Topics:
-
-- Process inspection
-- PID
-- Parent and child processes
-- `ps`
-- `pgrep`
-- Background processes
-- Foreground and background jobs
-- Signals
-- Process termination
-- Job control
-
----
-
-## 10. Service Management
-
-### [Service Management Lab](./service-management-lab.md)
-
-Practice systemd service and unit management.
-
-Topics:
-
-- systemd
-- Units
-- `.service`
-- `.socket`
-- `.target`
-- `systemctl status`
-- `start`
-- `stop`
-- `restart`
-- `reload`
-- `enable`
-- `disable`
-- `mask`
-- `unmask`
-- Runtime state vs boot configuration
-- Default targets
-- Unit dependencies
-- Socket activation
-- Service troubleshooting
-
----
-
-## 11. SSH Fundamentals and Remote Access
-
-### [SSH Fundamentals and Remote Access Lab](./ssh-basic-lab.md)
-
-Practice OpenSSH service administration, authentication, remote access, and secure file transfer.
-
-Topics:
-
-- OpenSSH packages
-- SSH client and server roles
-- `sshd`
-- Remote login
-- Password authentication
-- Public-key authentication
-- `ssh-keygen`
-- `ssh-copy-id`
-- `authorized_keys`
-- `/etc/ssh/sshd_config`
-- `PermitRootLogin`
-- `PubkeyAuthentication`
-- `PasswordAuthentication`
-- SCP
-- SFTP
-- SSH troubleshooting
-
-End-to-end SSH model:
+Topics include:
 
 ```text
-Network
-   ↓
-Route
-   ↓
-Firewall
-   ↓
-Listening Socket
-   ↓
-sshd
-   ↓
-Authentication
-   ↓
-User Session
+Linux System Information
+Kernel Information
+Hostname
+CPU
+Memory
+Storage
+OS Release
+Basic System Inspection
 ```
 
----
-
-## 12. Package Management
-
-### [Package Management Lab](./package-management-lab.md)
-
-Practice software and repository management on Rocky Linux.
-
-Topics:
-
-- RPM packages
-- `rpm`
-- DNF
-- Package search
-- Package installation
-- Package removal
-- Repository inspection
-- `/etc/yum.repos.d/`
-- DNF cache
-- Transaction history
-- Package groups
-- Repository troubleshooting
-- RPM/DNF and DEB/APT comparison
+The goal is to establish a reliable system baseline before changing configuration.
 
 ---
 
-## 13. User and Group Management
+# 2. Files and Permissions
 
-### [User Management Lab](./user-management-lab.md)
-
-Practice Linux account lifecycle management.
-
-Topics:
-
-- UID and GID
-- Primary and supplementary groups
-- `/etc/passwd`
-- `/etc/shadow`
-- `/etc/group`
-- `/etc/gshadow`
-- `useradd`
-- `usermod`
-- `userdel`
-- `groupadd`
-- Password management
-- Password aging with `chage`
-- Account lock and unlock
-- `su`
-- `sudo`
-- Authentication
-- Authorization
-- Login information
-
----
-
-## 14. Time and Job Scheduling
-
-### [Time and Job Scheduling Lab](./job-scheduling-lab.md)
-
-Practice Linux time synchronization and scheduled-job management.
-
-Topics:
-
-- `timedatectl`
-- Time zones
-- NTP
-- Chrony
-- `chronyd`
-- `chronyc`
-- `at`
-- `batch`
-- `atq`
-- `atrm`
-- Cron
-- `crond`
-- `/etc/crontab`
-- User crontabs
-- Anacron
-- Scheduling access control
-- Scheduling troubleshooting
-
----
-
-## 15. Storage and Partition Management
-
-### [Storage Management Lab](./storage-management-lab.md)
-
-Practice block-device and partition administration.
-
-Topics:
-
-- `lsblk`
-- Disk and partition device names
-- SCSI disk rescanning
-- `sg3_utils`
-- MBR
-- GPT
-- `fdisk`
-- `parted`
-- Partition creation
-- Partition-table inspection
-- Newly attached disk troubleshooting
-- Storage-change verification
-
-Core relationship:
+File:
 
 ```text
-Disk
-  ↓
-Partition
+file-directory-permission-lab.md
 ```
 
----
-
-## 16. Filesystem Management
-
-### [Filesystem Management Lab](./filesystem-management-lab.md)
-
-Practice creating, mounting, inspecting, and repairing Linux filesystems.
-
-Topics:
-
-- ext4
-- XFS
-- Filesystem structure
-- Superblocks
-- Inodes
-- `stat`
-- `mkfs`
-- `mount`
-- `umount`
-- `df`
-- `/etc/fstab`
-- Mount options
-- UUID-based identification
-- `/etc/mtab`
-- XFS allocation groups
-- `xfs_info`
-- `xfs_repair`
-- Filesystem failure and recovery
-
-Storage relationship:
+Topics include:
 
 ```text
-Disk
-  ↓
-Partition
-  ↓
-Filesystem
-  ↓
-Mount Point
-  ↓
 Files
+Directories
+Ownership
+Groups
+Read Permission
+Write Permission
+Execute Permission
+chmod
+chown
+chgrp
+Special Permissions
 ```
+
+A key principle is that filesystem permissions should be understood in terms of:
+
+```text
+Owner
+Group
+Others
+```
+
+and:
+
+```text
+File Permission
+Directory Permission
+```
+
+which have different operational effects.
 
 ---
 
-## 17. Logical Volume Management
+# 3. vi
 
-### [LVM Management Lab](./lvm-management-lab.md)
-
-Practice flexible Linux storage management with LVM.
-
-Topics:
-
-- Physical Volume
-- Volume Group
-- Logical Volume
-- Physical Extent
-- Logical Extent
-- `pvcreate`
-- `vgcreate`
-- `lvcreate`
-- `vgextend`
-- `lvextend`
-- `resize2fs`
-- `e2fsck`
-- `lvreduce`
-- `lvresize`
-- Online filesystem growth
-- Offline filesystem shrinking
-- LVM snapshots
-- Snapshot-based backup workflow
-- LVM layer troubleshooting
-
-Storage stack:
+File:
 
 ```text
-Physical Disk
-      ↓
-Physical Volume
-      ↓
-Volume Group
-      ↓
-Logical Volume
-      ↓
-Filesystem
-      ↓
-Mount Point
+vi-basic-lab.md
 ```
+
+Topics include:
+
+```text
+vi Modes
+Navigation
+Insertion
+Deletion
+Search
+Save
+Quit
+Editing Configuration Files
+```
+
+Configuration editing is treated as part of system administration rather than as an isolated editor exercise.
 
 ---
 
-## 18. RAID Management
+# 4. Shell Fundamentals
 
-### [RAID Management Lab](./raid-management-lab.md)
-
-Practice Linux software RAID concepts, creation, inspection, failure simulation, and recovery.
-
-Topics:
-
-- RAID 0
-- RAID 1
-- RAID 5
-- RAID 6
-- RAID 10
-- Striping
-- Mirroring
-- Parity
-- `mdadm`
-- `/proc/mdstat`
-- RAID array inspection
-- Failed-member handling
-- Member removal
-- Replacement-device addition
-- Rebuild monitoring
-- RAID vs backup
-
-RAID recovery workflow:
+File:
 
 ```text
-Detect Degradation
-       ↓
-Identify Failed Member
-       ↓
-Fail Member
-       ↓
-Remove Member
-       ↓
-Add Replacement
-       ↓
-Monitor Rebuild
-       ↓
-Verify Array
+shell-basics-lab.md
 ```
+
+Topics include:
+
+```text
+Shell
+Commands
+Arguments
+Metacharacters
+Pipelines
+Redirection
+Quoting
+Command Substitution
+Variables
+```
+
+The shell is treated as the administrator interface to Linux services and processes.
 
 ---
 
-## 19. Memory and Swap Management
+# 5. Shell Environment
 
-### [Memory and Swap Management Lab](./memory-swap-management-lab.md)
-
-Practice Linux memory inspection and swap administration.
-
-Topics:
-
-- Physical memory information
-- Virtual memory concepts
-- `free`
-- `vmstat`
-- `/proc/meminfo`
-- `top`
-- VIRT and RES
-- `pmap`
-- Swap partitions
-- Swap files
-- `mkswap`
-- `swapon`
-- `swapoff`
-- `/etc/fstab`
-- `swappiness`
-- Swap-file permissions
-- Memory troubleshooting
-
-Investigation workflow:
+File:
 
 ```text
-free
-  ↓
-vmstat
-  ↓
+shell-environment-lab.md
+```
+
+Topics include:
+
+```text
+Shell Variables
+Environment Variables
+export
+PATH
+Aliases
+Startup Files
+Parent and Child Shells
+```
+
+A key concept is:
+
+```text
+Shell Variable
+!=
+Exported Environment Variable
+```
+
+Child processes inherit exported environment variables, not arbitrary unexported parent-shell variables.
+
+---
+
+# 6. Search, Archive, and Compression
+
+File:
+
+```text
+search-archive-compression-lab.md
+```
+
+Topics include:
+
+```text
+find
+locate
+tar
+gzip
+bzip2
+xz
+Archive Creation
+Archive Extraction
+Compression
+```
+
+The focus is on safe data inspection and repeatable archive operations.
+
+---
+
+# 7. Text Processing
+
+File:
+
+```text
+text-processing-lab.md
+```
+
+Topics include:
+
+```text
+grep
+Regular Expressions
+cut
+sort
+uniq
+tr
+sed
+awk
+Text Pipelines
+```
+
+These tools form the foundation for Linux log analysis and automation.
+
+---
+
+# 8. Bash Scripting
+
+Directory:
+
+```text
+shell-script/
+```
+
+Detailed roadmap:
+
+[Shell Script Labs](shell-script/README.md)
+
+Topics include:
+
+```text
+Shell Scripts
+Variables
+Arguments
+Conditionals
+Loops
+Functions
+Input
+Debugging
+Utilities
+Automation
+```
+
+Bash scripting is used to automate repetitive infrastructure operations and diagnostics.
+
+---
+
+# 9. Process Management
+
+File:
+
+```text
+process-management-lab.md
+```
+
+Topics include:
+
+```text
+Processes
+PID
+Parent / Child Processes
+Foreground
+Background
+Jobs
+Signals
+ps
 top
-  ↓
-pmap
+kill
+Process Inspection
+```
+
+The goal is to distinguish:
+
+```text
+Process exists
+Process is healthy
+Process is serving the expected workload
+```
+
+as separate questions.
+
+---
+
+# 10. Service Management
+
+File:
+
+```text
+service-management-lab.md
+```
+
+Topics include:
+
+```text
+systemd
+systemctl
+Service Units
+start
+stop
+restart
+reload
+enable
+disable
+mask
+unmask
+Service Status
+```
+
+A recurring principle is:
+
+```text
+Runtime State
+!=
+Boot-Time Configuration
+```
+
+For example:
+
+```text
+systemctl start
+→ Runtime
+
+systemctl enable
+→ Persistent boot behavior
 ```
 
 ---
 
-## 20. Boot and Kernel Management
+# 11. OpenSSH
 
-### [Boot and Kernel Management Lab](./boot-kernel-management-lab.md)
+File:
 
-Practice Linux boot-process inspection, kernel management, boot troubleshooting, and recovery concepts.
+```text
+ssh-basic-lab.md
+```
 
-Topics:
+Topics include:
 
-- BIOS
-- UEFI
-- MBR
-- GPT
-- EFI System Partition
-- GRUB2
-- Kernel images
-- Default boot kernel
-- Kernel parameters
-- `sysctl`
-- Kernel modules
-- `lsmod`
-- `modprobe`
-- `modinfo`
-- systemd targets
-- Emergency target
-- Rescue target
-- Root-password recovery concepts
-- Shutdown and reboot
-- Boot troubleshooting
-- Installation-media rescue
-- `/mnt/sysroot`
-- `chroot`
-- GRUB recovery concepts
-- `/etc/fstab` recovery
-- Filesystem recovery concepts
+```text
+OpenSSH Client
+sshd
+Remote Login
+Password Authentication
+Public-Key Authentication
+SSH Host Keys
+known_hosts
+authorized_keys
+ssh-keygen
+ssh-copy-id
+~/.ssh/config
+/etc/ssh/sshd_config
+SCP
+SFTP
+Local Port Forwarding
+SSH Tunneling
+SSH Troubleshooting
+```
 
-Boot model:
+Important distinctions include:
+
+```text
+Host Key
+→ Authenticates the SSH server
+```
+
+```text
+User Key
+→ Authenticates the SSH user
+```
+
+and:
+
+```text
+known_hosts
+→ Client-side server identity
+```
+
+```text
+authorized_keys
+→ Server-side user public-key authorization
+```
+
+SSH configuration changes are treated as lockout-sensitive operations.
+
+---
+
+# 12. Package Management
+
+File:
+
+```text
+package-management-lab.md
+```
+
+Topics include:
+
+```text
+RPM
+DNF
+Package Installation
+Package Removal
+Package Queries
+Repositories
+Dependency Management
+Updates
+```
+
+Package state is treated as part of infrastructure inventory and security maintenance.
+
+---
+
+# 13. User and Group Management
+
+File:
+
+```text
+user-management-lab.md
+```
+
+Topics include:
+
+```text
+Users
+Groups
+UID
+GID
+/etc/passwd
+/etc/shadow
+/etc/group
+useradd
+usermod
+userdel
+groupadd
+Password Management
+Supplementary Groups
+```
+
+Identity and authorization are treated as separate administrative concepts.
+
+---
+
+# 14. Time and Job Scheduling
+
+File:
+
+```text
+job-scheduling-lab.md
+```
+
+Topics include:
+
+```text
+System Time
+Time Zones
+cron
+crontab
+at
+Scheduled Jobs
+```
+
+The focus is on repeatable system operations rather than manually repeating administrative tasks.
+
+---
+
+# 15. Storage and Partition Management
+
+File:
+
+```text
+storage-management-lab.md
+```
+
+Topics include:
+
+```text
+Block Devices
+Disk Inspection
+Partitions
+Partition Tables
+lsblk
+fdisk
+Storage Layout
+```
+
+Storage operations are treated as potentially destructive and should begin with device identification and evidence collection.
+
+---
+
+# 16. Filesystem Management
+
+File:
+
+```text
+filesystem-management-lab.md
+```
+
+Topics include:
+
+```text
+Filesystems
+mkfs
+mount
+umount
+df
+du
+Filesystem Identification
+Persistent Mounting
+/etc/fstab
+```
+
+The recurring principle is:
+
+```text
+mount
+→ Runtime state
+
+/etc/fstab
+→ Persistent configuration
+```
+
+---
+
+# 17. LVM
+
+File:
+
+```text
+lvm-management-lab.md
+```
+
+Topics include:
+
+```text
+Physical Volumes
+Volume Groups
+Logical Volumes
+LVM Creation
+LVM Extension
+Filesystem Growth
+LVM Inspection
+```
+
+A key operational distinction is:
+
+```text
+Logical Volume Size
+!=
+Filesystem Size
+```
+
+Extending an LV does not automatically prove that the filesystem has also been expanded.
+
+---
+
+# 18. RAID
+
+File:
+
+```text
+raid-management-lab.md
+```
+
+Topics include:
+
+```text
+RAID Concepts
+mdadm
+RAID Creation
+RAID Status
+Failure
+Recovery
+Rebuild Concepts
+```
+
+RAID is treated as an availability mechanism rather than as a substitute for backup.
+
+---
+
+# 19. Memory and Swap
+
+File:
+
+```text
+memory-swap-management-lab.md
+```
+
+Topics include:
+
+```text
+Physical Memory
+Swap
+free
+vmstat
+top
+pmap
+Swap Files
+Swap Partitions
+```
+
+Memory troubleshooting is approached using multiple views rather than relying on one number from one command.
+
+---
+
+# 20. Boot and Kernel
+
+File:
+
+```text
+boot-kernel-management-lab.md
+```
+
+Topics include:
+
+```text
+Linux Boot Process
+GRUB
+Kernel
+systemd Boot Targets
+Kernel Inspection
+Kernel Packages
+Boot Configuration
+```
+
+Boot troubleshooting is approached by identifying which stage failed:
 
 ```text
 Firmware
-    ↓
-GRUB2
-    ↓
+   ↓
+Bootloader
+   ↓
 Kernel
-    ↓
+   ↓
 systemd
-    ↓
-Target
-    ↓
+   ↓
 Services
 ```
 
-Recovery model:
+Detailed recovery-environment procedures should be documented in this lab only after the corresponding recovery exercise is incorporated into the file.
+
+---
+
+# 21. Backup and Recovery
+
+File:
 
 ```text
-Boot Failure
-    ↓
-Recovery Environment
-    ↓
-Inspect Installed System
-    ↓
-Repair Configuration / Boot / Filesystem
-    ↓
+backup-recovery-lab.md
+```
+
+Topics include:
+
+```text
+Backup Concepts
+tar
+rsync
+Data Copy
+Recovery
+Restore Verification
+```
+
+A key principle is:
+
+```text
+Backup Created
+!=
+Recovery Verified
+```
+
+A backup is useful only when the required data can actually be restored.
+
+---
+
+# 22. Log Management
+
+File:
+
+```text
+log-management-lab.md
+```
+
+Topics include:
+
+```text
+systemd Journal
+journalctl
+Service Logs
+Log Inspection
+Log Filtering
+Follow Mode
+Troubleshooting Evidence
+```
+
+Logs are treated as evidence for explaining failures rather than something checked only after random configuration changes.
+
+---
+
+# 23. Firewall Management
+
+File:
+
+```text
+firewall-management-lab.md
+```
+
+Topics include:
+
+```text
+Netfilter
+firewalld
+firewall-cmd
+Zones
+Services
+Ports
+Runtime Rules
+Permanent Rules
+```
+
+Important principle:
+
+```text
+Service Running
+!=
+Service Reachable
+```
+
+A service can be healthy locally while its traffic is blocked by a firewall.
+
+---
+
+# 24. SELinux Management
+
+File:
+
+```text
+selinux-management-lab.md
+```
+
+Topics include:
+
+```text
+SELinux
+DAC
+MAC
+Enforcing
+Permissive
+Security Contexts
+Booleans
+File Contexts
+Port Labels
+chcon
+semanage
+restorecon
+Troubleshooting
+```
+
+SELinux should not be disabled as a generic fix.
+
+The preferred workflow is:
+
+```text
+Observe Denial
+      ↓
+Collect Evidence
+      ↓
+Identify Required Policy
+      ↓
+Apply Correct Context / Boolean / Port Mapping
+      ↓
 Verify
 ```
 
 ---
 
-## 21. Backup and Recovery
+# 25. Linux Network Management
 
-### [Backup and Recovery Lab](./backup-recovery-lab.md)
-
-Practice Linux backup, restore, and synchronization concepts.
-
-Topics:
-
-- Full backup
-- Incremental backup
-- Differential backup
-- Backup levels
-- `dump`
-- `restore`
-- `xfsdump`
-- `xfsrestore`
-- `rsync`
-- Remote synchronization
-- Trailing-slash behavior
-- `--delete`
-- `-u`
-- Dry runs
-- Restore verification
-
-Backup workflow:
+File:
 
 ```text
-Create Backup
-      ↓
-Inspect Backup
-      ↓
-Restore
-      ↓
-Verify Recovered Data
+network-management-lab.md
+```
+
+Topics include:
+
+```text
+NetworkManager
+nmcli
+Network Devices
+Connection Profiles
+IPv4 Addressing
+Default Gateway
+DNS Configuration
+ip addr
+ip route
+ss
+Runtime Configuration
+Persistent Configuration
+Netplan Overview
+```
+
+This file focuses on how Linux implements network configuration.
+
+General protocol theory is documented under:
+
+```text
+../network/
 ```
 
 ---
 
-## 22. Log Management
+# 26. Network Teaming
 
-### [Log Management Lab](./log-management-lab.md)
-
-Practice Linux logging, filtering, and troubleshooting.
-
-Topics:
-
-- rsyslog
-- `/etc/rsyslog.conf`
-- Syslog Facility
-- Syslog Severity
-- `/var/log`
-- `logger`
-- systemd-journald
-- `journalctl`
-- Journal metadata
-- Time-based filtering
-- Priority filtering
-- Process filtering
-- Persistent journals
-- Volatile journals
-- logrotate
-
-Troubleshooting model:
+File:
 
 ```text
-Incident
-   ↓
-Time Range
-   ↓
-Severity
-   ↓
-Process / Service
-   ↓
-Evidence
+network-teaming-lab.md
 ```
+
+Topics include:
+
+```text
+Linux Network Teaming
+Logical Interfaces
+Team Ports
+Active-Backup
+Round Robin
+Broadcast
+Load Balancing
+LACP
+Failover
+teamdctl
+NetworkManager
+```
+
+Important distinction:
+
+```text
+Active-Backup
+→ Availability / Failover
+```
+
+It should not automatically be interpreted as doubling network throughput.
 
 ---
 
-## 23. Firewall Management
+# 27. NFS
 
-### [Firewall Management Lab](./firewall-management-lab.md)
-
-Practice Linux firewall administration with firewalld.
-
-Topics:
-
-- Netfilter concepts
-- iptables concepts
-- firewalld
-- `firewall-cmd`
-- Zones
-- Interfaces
-- Sources
-- Service-based rules
-- Port-based rules
-- Runtime rules
-- Permanent rules
-- Reload behavior
-- Custom zones
-- Firewall troubleshooting
-
-Connectivity troubleshooting:
+File:
 
 ```text
-Application
-    ↓
-Listening Port
-    ↓
-Zone
-    ↓
-Firewall Rule
-    ↓
-Remote Connectivity
+nfs-management-lab.md
 ```
 
----
-
-## 24. SELinux Management
-
-### [SELinux Management Lab](./selinux-management-lab.md)
-
-Practice SELinux access-control inspection and troubleshooting.
-
-Topics:
-
-- DAC and MAC
-- Enforcing
-- Permissive
-- Disabled
-- `getenforce`
-- `sestatus`
-- `setenforce`
-- Security contexts
-- Process contexts
-- File contexts
-- SELinux users
-- SELinux Booleans
-- `getsebool`
-- `setsebool`
-- `chcon`
-- `semanage fcontext`
-- `restorecon`
-- SELinux troubleshooting
-
-Troubleshooting model:
+Topics include:
 
 ```text
-Access Failure
-      ↓
-DAC Permissions
-      ↓
-SELinux Mode
-      ↓
-Process Context
-      ↓
-File Context
-      ↓
-Boolean / Policy
-      ↓
-Logs
-      ↓
-Verify in Enforcing Mode
+NFS Server
+NFS Client
+nfs-utils
+/etc/exports
+Export Options
+exportfs
+showmount
+NFS Mounting
+/etc/fstab
+NFS Troubleshooting
 ```
 
----
-
-## 25. Network Management
-
-### [Network Management Lab](./network-management-lab.md)
-
-Practice Linux network configuration, inspection, and troubleshooting.
-
-Topics:
-
-- IPv4 addressing
-- Network and host addresses
-- CIDR
-- NetworkManager
-- `nmcli`
-- Network devices
-- Connection profiles
-- `ip addr`
-- Multiple IP addresses
-- Routing
-- Default gateway
-- `ip route`
-- DNS
-- `/etc/resolv.conf`
-- Traffic statistics
-- `ss`
-- Listening sockets
-- LISTEN and ESTABLISHED
-- Runtime vs persistent network configuration
-- Network troubleshooting
-
-Troubleshooting model:
-
-```text
-Network Device
-      ↓
-IP Address
-      ↓
-Subnet
-      ↓
-Route
-      ↓
-Gateway
-      ↓
-DNS
-      ↓
-Listening Socket
-      ↓
-Firewall
-      ↓
-Application
-```
-
----
-
-## 26. Network Teaming
-
-### [Network Teaming Lab](./network-teaming-lab.md)
-
-Practice network-link redundancy with NetworkManager teaming.
-
-Topics:
-
-- Network teaming
-- Logical team interfaces
-- Team member interfaces
-- Broadcast
-- Round-robin
-- Active-backup
-- Load balancing
-- LACP concepts
-- `nmcli` team configuration
-- `teamdctl`
-- Active-port inspection
-- Controlled interface disconnection
-- Link failover
-- Failover verification
-
-Active-backup model:
-
-```text
-              team0
-                |
-        +-------+-------+
-        |               |
-        v               v
-      NIC A           NIC B
-     ACTIVE           BACKUP
-```
-
-Failure test:
-
-```text
-Identify Active Port
-        ↓
-Disconnect Active Member
-        ↓
-Observe New Active Port
-        ↓
-Verify Connectivity
-        ↓
-Restore Member
-```
-
----
-
-## 27. NFS Management
-
-### [NFS Management Lab](./nfs-management-lab.md)
-
-Practice Linux network file sharing with NFS.
-
-Topics:
-
-- NFS server and client roles
-- `nfs-utils`
-- `/etc/exports`
-- Export syntax
-- `rw` and `ro`
-- `exportfs`
-- `nfs-server`
-- Firewall inspection
-- `showmount`
-- NFS client mount
-- Remote filesystem source syntax
-- NFS mount options
-- `/etc/fstab`
-- Runtime vs persistent mounts
-- NFS troubleshooting
-
-NFS service model:
+A useful troubleshooting path is:
 
 ```text
 Server Storage
       ↓
-Exported Directory
+Filesystem Permission
+      ↓
+SELinux
+      ↓
+Export
       ↓
 NFS Service
       ↓
@@ -1009,832 +1006,582 @@ Firewall
       ↓
 Network
       ↓
-Client Discovery
-      ↓
 Client Mount
 ```
 
 ---
 
-# Linux Administration Progression
+# 28. Linux Bridge
 
-The labs build on one another rather than being isolated command exercises.
-
-## System Administration
+File:
 
 ```text
-Users
-  ↓
-Packages
-  ↓
-Processes
-  ↓
-Services
-  ↓
-Scheduling
+linux-bridge-lab.md
 ```
 
-## Storage Administration
+Topics include:
 
 ```text
-Disk
-  ↓
-Partition
-  ↓
-RAID / LVM
-  ↓
-Filesystem
-  ↓
-Mount
+Linux Bridge
+Layer 2 Forwarding
+NetworkManager Bridge
+Bridge Ports
+br0
+STP
+Legacy brctl
+Virtualization Networking Concepts
 ```
 
-## System Operations
+Important distinction:
 
 ```text
-Memory
-  ↓
-Boot
-  ↓
-Kernel
-  ↓
-Backup
-  ↓
-Logging
+Bridge
+→ Layer 2 forwarding
 ```
 
-## Security
+```text
+Router
+→ Layer 3 forwarding
+```
+
+and:
 
 ```text
-DAC Permissions
-      ↓
-SELinux
-      ↓
+Bridge
+→ Connects Layer 2 interfaces
+```
+
+```text
+Team
+→ Link redundancy / aggregation
+```
+
+---
+
+# 29. AutoFS
+
+File:
+
+```text
+autofs-management-lab.md
+```
+
+Topics include:
+
+```text
+AutoFS
+Master Maps
+Direct Maps
+Indirect Maps
+Wildcard Keys
+& Substitution
+NFS Automount Concepts
+```
+
+Important distinction:
+
+```text
+Direct Map
+→ Full mount path is defined in the map
+```
+
+```text
+Indirect Map
+→ Child keys are managed beneath a parent path
+```
+
+---
+
+# 30. Samba and CIFS
+
+File:
+
+```text
+samba-cifs-management-lab.md
+```
+
+Topics include:
+
+```text
+SMB
+Samba
+smb Service
+/etc/samba/smb.conf
+Linux Users
+Samba Users
+smbpasswd
+SMB Shares
+Share Permissions
+Linux Filesystem Permissions
+cifs-utils
+mount -t cifs
+/etc/fstab
+```
+
+Important distinction:
+
+```text
+SMB
+→ Protocol family
+
+Samba
+→ Linux / Unix SMB implementation
+
+CIFS mount interface
+→ Linux SMB client filesystem interface
+```
+
+Share configuration and Linux filesystem permissions must both allow the intended operation.
+
+---
+
+# 31. Apache HTTP Server
+
+File:
+
+```text
+apache-httpd-management-lab.md
+```
+
+Topics include:
+
+```text
+httpd
+Apache Service Management
+DocumentRoot
+Directory Policies
+firewalld
+curl
+Virtual Hosting
+ServerName
+Apache Logs
+Modules
+mod_ssl
+mod_php
+mod_wsgi
+SELinux Considerations
+```
+
+A useful web-service troubleshooting path is:
+
+```text
+Content
+   ↓
+Apache Configuration
+   ↓
+httpd
+   ↓
+Listening Socket
+   ↓
 Firewall
-```
-
-## Networking
-
-```text
-Device
-  ↓
-IP
-  ↓
-Routing
-  ↓
-Gateway
-  ↓
-DNS
-  ↓
-Socket
-  ↓
-Firewall
-  ↓
-Application
-```
-
-## Network Services
-
-```text
+   ↓
 Network
    ↓
-Firewall
-   ↓
-Service
-   ↓
-Authentication / Export
+DNS
    ↓
 Client
 ```
 
-## Availability
+---
+
+# 32. BIND and Unbound
+
+File:
 
 ```text
-Storage Redundancy
-→ RAID
-
-Network-Link Redundancy
-→ Active-Backup Teaming
+dns-bind-unbound-management-lab.md
 ```
+
+Topics include:
+
+```text
+BIND
+named.conf
+Authoritative Zones
+Forward Zones
+Reverse Zones
+SOA
+NS
+A
+PTR
+Zone Transfers
+Unbound
+Caching Resolver
+Forwarding Resolver
+firewalld
+dig
+DNS Troubleshooting
+```
+
+General DNS protocol fundamentals remain under:
+
+```text
+../network/dns-fundamentals-lab.md
+```
+
+This Linux lab focuses on implementing and operating DNS services.
 
 ---
 
-# Troubleshooting Method
+# 33. Host Network Security Hardening
 
-Troubleshooting is integrated into the Linux administration labs.
-
-The general process is:
+File:
 
 ```text
-1. Identify the symptom
-2. Define the scope
-3. Check recent changes
-4. Collect error messages and logs
-5. Inspect the current system state
-6. Identify possible causes
-7. Prioritize the most likely cause
-8. Test one hypothesis at a time
-9. Apply a controlled change
-10. Verify recovery
-11. Document the result
+host-network-security-hardening-lab.md
 ```
 
-## Symptom vs Root Cause
-
-A symptom describes what is observed.
-
-A root cause explains why it occurred.
-
-Example:
+Topics include:
 
 ```text
-Symptom:
-SSH connection fails
+Package Inventory
+Service Inventory
+Listening Ports
+Attack Surface Reduction
+SSH Hardening
+PermitRootLogin
+PasswordAuthentication
+AllowUsers
+AllowGroups
+firewalld
+SELinux
+SELinux Port Labels
+TLS
+Self-Signed Certificates
+Security Updates
+CVE Awareness
 ```
 
-Possible causes:
+The focus is defense in depth.
 
 ```text
-Network route failure
-Firewall rule missing
-sshd stopped
-Authentication disabled
-Incorrect public key
-```
-
-Do not treat the symptom itself as the root cause.
-
-## Define the Scope
-
-Before changing the system, determine who or what is affected.
-
-```text
-One User
-   ↓
-User / Client Scope
-
-
-One Service
-   ↓
-Service Scope
-
-
-One Server
-   ↓
-System Scope
-
-
-Multiple Servers
-   ↓
-Shared Infrastructure Scope
-```
-
-## Check Recent Changes
-
-Ask:
-
-```text
-When did the issue begin?
-What changed immediately before the issue?
-```
-
-Examples:
-
-```text
-Firewall change
-Package update
-Network configuration change
-/etc/fstab edit
-SELinux context change
-Service configuration change
-```
-
-Recent changes can significantly narrow the investigation.
-
-## Collect Evidence
-
-Evidence can include:
-
-```text
-Terminal errors
-Service state
-System logs
-Network state
-Filesystem state
-Socket state
-Resource state
-Configuration differences
-```
-
-Troubleshooting should begin with evidence rather than random changes.
-
-## One Change at a Time
-
-Avoid changing multiple unrelated components simultaneously.
-
-Bad pattern:
-
-```text
-Disable Firewall
-Disable SELinux
-Restart Service
-Restart Network
-Reboot
-```
-
-If the problem disappears, the actual cause remains unknown.
-
-Preferred pattern:
-
-```text
-Hypothesis
-   ↓
-One Test or Change
-   ↓
-Observe Result
-   ↓
-Accept or Reject
-```
-
----
-
-# Troubleshooting Examples
-
-## Service Failure
-
-```text
-systemctl status
-       ↓
-Runtime State
-       ↓
-Enable / Mask State
-       ↓
-Dependencies
-       ↓
-Logs
-       ↓
-Recovery
-       ↓
-Verification
-```
-
-## Filesystem Failure
-
-```text
-Mount Failure
-     ↓
-Inspect Filesystem
-     ↓
-Confirm Filesystem Type
-     ↓
-Unmount Safely
-     ↓
-Use Appropriate Repair Tool
-     ↓
-Remount
-     ↓
-Verify Data
-```
-
-## LVM Capacity Problem
-
-```text
-Disk
- ↓
-PV
- ↓
-VG
- ↓
-LV
- ↓
-Filesystem
- ↓
-df
-```
-
-## RAID Failure
-
-```text
-/proc/mdstat
-     ↓
-Failed Member
-     ↓
-Remove
-     ↓
-Replace
-     ↓
-Rebuild
-     ↓
-Verify
-```
-
-## Memory Pressure
-
-```text
-free
- ↓
-vmstat
- ↓
-top
- ↓
-pmap
-```
-
-## Boot Failure
-
-```text
-Firmware
- ↓
-GRUB2
- ↓
-Kernel
- ↓
-systemd
- ↓
-Target
- ↓
-Service
-```
-
-If normal boot is unavailable:
-
-```text
-Emergency / Rescue Target
-```
-
-or:
-
-```text
-Installation Media
-      ↓
-Rescue Mode
-      ↓
-/mnt/sysroot
-      ↓
-chroot
-      ↓
-Repair
-```
-
-## Invalid `/etc/fstab`
-
-A recovery workflow can be represented as:
-
-```text
-Mount Failure
-     ↓
-Read Error Message
-     ↓
-Inspect /etc/fstab
-     ↓
-Identify Invalid Entry
-     ↓
-Correct Configuration
-     ↓
-mount -a
-     ↓
-Verify Filesystems
-```
-
-## Log Investigation
-
-```text
-Incident Time
-      ↓
-Priority
-      ↓
-Process / Service
-      ↓
-Relevant Evidence
-```
-
-## Firewall Failure
-
-```text
-Service Running?
-      ↓
-Port Listening?
-      ↓
-Zone Correct?
-      ↓
-Rule Present?
-      ↓
-Remote Test
-```
-
-## SELinux Failure
-
-```text
-DAC
- ↓
-Mode
- ↓
-Process Context
- ↓
-File Context
- ↓
-Boolean
- ↓
-Log
- ↓
-Verification
-```
-
-## Network Failure
-
-```text
-Device
- ↓
-Address
- ↓
-Route
- ↓
-Gateway
- ↓
-DNS
- ↓
-Socket
- ↓
+Software Minimization
+        ↓
+Service Minimization
+        ↓
+Remote Access Control
+        ↓
 Firewall
- ↓
+        ↓
+SELinux
+        ↓
+TLS
+        ↓
+Patch Management
+```
+
+No single security control is treated as sufficient on its own.
+
+---
+
+# Linux Troubleshooting Method
+
+Troubleshooting across the Linux labs follows:
+
+```text
+Symptom
+   ↓
+Evidence
+   ↓
+Root Cause
+   ↓
+Resolution
+   ↓
+Verification
+```
+
+The objective is to avoid:
+
+```text
+Random Restart
+Random Reconfiguration
+Disabling Security Controls
+Changing Several Layers at Once
+```
+
+before evidence has been collected.
+
+---
+
+# Service Troubleshooting
+
+A service should be investigated across multiple layers.
+
+```text
+Process
+   ↓
+systemd Service
+   ↓
+Listening Socket
+   ↓
+Firewall
+   ↓
+Network
+   ↓
+SELinux
+   ↓
+Authentication
+   ↓
 Application
 ```
 
-## SSH Failure
+For example:
 
 ```text
-Network
- ↓
-Route
- ↓
-Firewall
- ↓
-Listening Socket
- ↓
-sshd
- ↓
-Authentication
- ↓
-Account / Key
- ↓
-Logs
+systemctl status SERVICE
 ```
 
-## Teaming Failure
+showing:
 
 ```text
-Connection Profiles
-      ↓
-Physical Devices
-      ↓
-Team Runner
-      ↓
-Active Port
-      ↓
-Controlled Failure
-      ↓
-Failover Verification
+active
 ```
 
-## NFS Failure
-
-```text
-Client Network
-      ↓
-Server Reachability
-      ↓
-nfs-server
-      ↓
-/etc/exports
-      ↓
-exportfs
-      ↓
-Firewall
-      ↓
-showmount
-      ↓
-Client Mount
-      ↓
-Verification
-```
+does not automatically prove that a remote client can reach or use the service.
 
 ---
 
 # Runtime vs Persistent Configuration
 
-A recurring Linux administration concept is that current runtime state and persistent configuration are different.
+This distinction appears throughout Linux administration.
 
-## Services
+```text
+Runtime State
+!=
+Persistent Configuration
+```
+
+Examples:
 
 ```text
 systemctl start
-!=
+vs
 systemctl enable
 ```
 
-## Kernel Parameters
-
 ```text
-sysctl -w
-!=
-persistent sysctl configuration
+ip addr
+vs
+NetworkManager profile
 ```
-
-## Firewall
-
-```text
-firewall-cmd --add-service
-!=
-firewall-cmd --permanent --add-service
-```
-
-## Networking
-
-```text
-ip addr add
-!=
-NetworkManager connection configuration
-```
-
-## Filesystems
 
 ```text
 mount
-!=
+vs
 /etc/fstab
 ```
 
-## NFS
-
 ```text
-mount -t nfs
-!=
-persistent /etc/fstab configuration
+firewalld runtime
+vs
+firewalld permanent
 ```
 
-Recognizing this distinction is essential when a change works temporarily but disappears after restart or reload.
+```text
+sysctl -w
+vs
+persistent sysctl configuration
+```
+
+Infrastructure changes should always be evaluated in both contexts.
 
 ---
 
-# Recovery Concepts
+# Linux Network Administration vs Network Fundamentals
 
-Some problems cannot be repaired from a normal multi-user operating environment.
+Linux-specific networking remains in this directory.
 
-## systemd Recovery Targets
-
-The course introduces:
+Examples:
 
 ```text
-emergency.target
-rescue.target
+network-management-lab.md
+network-teaming-lab.md
+linux-bridge-lab.md
+ssh-basic-lab.md
+nfs-management-lab.md
+samba-cifs-management-lab.md
+dns-bind-unbound-management-lab.md
 ```
 
-These provide reduced environments for maintenance and recovery.
-
-## Installation-Media Rescue
-
-When the installed operating system cannot boot normally, a recovery environment can be started from installation media.
-
-Conceptually:
+General networking concepts remain under:
 
 ```text
-Installation Media
-      ↓
-Rescue Environment
-      ↓
-Installed System
-mounted under /mnt/sysroot
-      ↓
-chroot /mnt/sysroot
-      ↓
-Repair
+../network/
 ```
 
-Possible recovery areas include:
+Examples:
 
 ```text
-GRUB
-/etc/fstab
-Filesystem configuration
-Root filesystem
-Boot configuration
+OSI
+Ethernet
+IPv4
+IPv6
+ARP
+Routing
+Routing Protocols
+DNS Fundamentals
+Network Troubleshooting
 ```
 
-Recovery commands must be selected according to the actual boot mode and filesystem type.
+This prevents protocol theory and Linux implementation from being mixed into one large topic.
 
 ---
 
-# Documentation Principles
+# Security Principles
 
-## 1. Commands Must Be Verified
-
-A successful command does not automatically prove that the intended system state was achieved.
+The Linux labs follow several security principles.
 
 ```text
-Create
-→ Verify
+Do not disable SELinux as a generic fix.
 
-Modify
-→ Verify
+Do not disable firewalls merely to restore connectivity.
 
-Repair
-→ Verify
+Do not expose unnecessary services.
 
-Restore
-→ Verify
+Do not commit passwords or authentication secrets.
 
-Failover
-→ Verify
+Do not commit SSH private keys.
+
+Do not commit TLS private keys.
+
+Verify another SSH login method before disabling password authentication.
+
+Keep a recovery path when modifying remote network or SSH configuration.
 ```
 
-## 2. System Layers Must Be Distinguished
+---
 
-For storage:
+# Evidence Policy
 
-```text
-Disk
-!=
-Partition
-!=
-RAID
-!=
-Logical Volume
-!=
-Filesystem
-!=
-Mount Point
-```
+Course screenshots and example output are not actual lab evidence.
 
-For network applications:
+Do not fabricate:
 
 ```text
-Service
-!=
-Process
-!=
-Socket
-!=
-Firewall
-!=
-Network
-```
-
-For NFS:
-
-```text
-Export
-!=
-Service
-!=
-Firewall
-!=
-Network
-!=
-Client Mount
-```
-
-Understanding the layer being changed is critical for infrastructure troubleshooting.
-
-## 3. Evidence Comes Before Changes
-
-When a problem occurs, collect the current state before changing configuration.
-
-```text
-Symptom
-   ↓
-Evidence
-   ↓
-Root Cause
-   ↓
-Resolution
-   ↓
-Verification
-```
-
-## 4. Change One Variable at a Time
-
-Multiple simultaneous changes make it difficult to determine the actual cause.
-
-## 5. Real Environment Values Must Not Be Fabricated
-
-Values such as:
-
-```text
-PID
-UID
-GID
-UUID
-Disk name
-Interface name
-IP address
-Gateway
-Kernel version
-Filesystem size
-Package version
+PIDs
+IP addresses
+MAC addresses
+UUIDs
+Interface names
+Routes
+SSH fingerprints
 Service output
-RAID state
-Active team port
-SSH fingerprint
-Command output
+DNS responses
+Logs
 ```
 
-must come from the actual lab environment.
-
-## 6. Destructive Operations Use Disposable Resources
-
-Potentially destructive or connectivity-breaking operations are practiced only on dedicated lab devices or disposable virtual machines.
-
-Examples include:
-
-```text
-fdisk
-parted
-mkfs
-xfs_repair
-pvcreate
-lvreduce
-mdadm failure tests
-mkswap
-GRUB changes
-route changes
-firewall changes
-network interface disconnect tests
-NFS export tests
-```
-
-## 7. Troubleshooting Is Part of the Lab
-
-Failures are treated as useful evidence rather than something to hide.
-
-The goal is to understand:
-
-```text
-What failed?
-Who or what was affected?
-What evidence was collected?
-Why did the failure occur?
-Which layer was responsible?
-What changed?
-How was recovery verified?
-```
-
-## 8. Troubleshooting Must Be Documented
-
-A useful incident record follows:
-
-```text
-Symptom
-   ↓
-Evidence
-   ↓
-Root Cause
-   ↓
-Resolution
-   ↓
-Verification
-```
-
-This makes a completed lab useful for future incidents as well as portfolio documentation.
+Environment-specific values should be recorded only after they are observed on the actual lab system.
 
 ---
 
-# Current Linux Coverage
+# Legacy and Modern Tools
 
-The current Linux study path includes:
+Some course materials use legacy Linux commands.
+
+They remain useful for understanding older environments.
+
+Modern alternatives are documented where appropriate.
+
+```text
+ifconfig
+→ ip addr / ip link
+
+route
+→ ip route
+
+arp
+→ ip neigh
+
+netstat
+→ ss
+
+network-scripts
+→ NetworkManager / nmcli
+
+brctl
+→ ip / NetworkManager tools
+```
+
+The purpose is to understand both the training material and current Linux administration practice.
+
+---
+
+# Current Linux Progress
+
+The current Linux administration path includes:
 
 ```text
 Linux Fundamentals
+Shell
 Bash Automation
-Process Management
-systemd Service Management
-SSH
-Package Management
-User and Group Management
-Time and Scheduled Operations
-Storage and Partition Management
-Filesystem Administration
+Processes
+Services
+Packages
+Users and Groups
+Scheduled Jobs
+Storage
+Filesystems
 LVM
 RAID
 Memory and Swap
-Boot and Kernel Management
+Boot and Kernel
 Backup and Recovery
-Logging and Observability
-Firewall Management
+Logs
+Firewall
 SELinux
-Network Administration
+NetworkManager
+OpenSSH
 Network Teaming
 NFS
-System Recovery
-Infrastructure Troubleshooting
+Linux Bridge
+AutoFS
+Samba / CIFS
+Apache HTTP Server
+BIND / Unbound
+Host Security Hardening
 ```
 
-These labs provide the Linux foundation for later work in:
+The next networking study continues under:
 
 ```text
-Cloud Infrastructure
-Infrastructure Automation
-Containers
-Kubernetes
-Observability
-Infrastructure Security
-Cloud Security
+../network/
+```
+
+with packet analysis after the current network-troubleshooting material.
+
+---
+
+# What This Directory Demonstrates
+
+This directory is intended to demonstrate progression from basic Linux usage toward infrastructure operations.
+
+```text
+Linux Commands
+      ↓
+System Administration
+      ↓
+Service Configuration
+      ↓
+Security Controls
+      ↓
+Network Services
+      ↓
+Troubleshooting
+      ↓
+Operational Reasoning
+```
+
+The target is not:
+
+```text
+"I know this command."
+```
+
+The target is:
+
+```text
+"I understand what this component should do,
+how to inspect its actual state,
+how to identify why it failed,
+and how to verify recovery."
 ```
