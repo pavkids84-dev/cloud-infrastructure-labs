@@ -2,9 +2,9 @@
 
 ## Objective
 
-Practice OpenSSH service inspection, remote login, password and public-key authentication concepts, SSH server authentication configuration, SCP file transfer, SFTP operations, and SSH troubleshooting.
+Practice OpenSSH service inspection, remote login, server identity verification, password and public-key authentication, SSH client and server configuration, secure file transfer, local port forwarding, and layered SSH troubleshooting.
 
-The goal of this lab is to understand SSH as an end-to-end remote-access service rather than treating `ssh` as an isolated command.
+The goal is to understand SSH as an encrypted remote-access framework rather than treating `ssh` as an isolated login command.
 
 ## Environment
 
@@ -14,7 +14,35 @@ The goal of this lab is to understand SSH as an end-to-end remote-access service
 - Server Daemon: `sshd`
 - Client Tools: `ssh`, `scp`, `sftp`
 - Init System: systemd
-- Privilege: root or sudo-enabled user when server configuration is inspected
+- Client Configuration: `~/.ssh/config`
+- Server Configuration: `/etc/ssh/sshd_config`
+
+## SSH Capabilities
+
+The course introduces four major SSH capabilities:
+
+```text
+Remote Session Login
+Remote Command Execution
+File Transfer
+Tunneling
+```
+
+SSH can therefore provide more than an interactive shell.
+
+A simplified view is:
+
+```text
+SSH
+ |
+ +-- Remote Login
+ |
+ +-- Remote Command
+ |
+ +-- SCP / SFTP
+ |
+ +-- Port Forwarding
+```
 
 ## SSH Architecture
 
@@ -110,23 +138,152 @@ Each layer should be checked separately during troubleshooting.
 
 ## Basic Remote Login
 
-The course demonstrates remote login with:
+General form:
 
 ```bash
 ssh USER@HOST
 ```
 
-Example structure:
+Use only a hostname or IP address belonging to the authorized lab environment.
+
+## SSH Encryption Flow
+
+SSH establishes an encrypted session between a client and server.
+
+A simplified workflow is:
 
 ```text
-ssh
-+
-remote username
-+
-remote host
+Client Connects
+      ↓
+Server Identity Verification
+      ↓
+Cryptographic Negotiation
+      ↓
+Key Exchange
+      ↓
+User Authentication
+      ↓
+Encrypted Session
 ```
 
-Use only a hostname or IP address belonging to the current lab environment.
+SSH host authentication and user authentication are separate concepts.
+
+## SSH Host Key
+
+An SSH server has host keys that identify the server.
+
+Server host-key files can exist under:
+
+```text
+/etc/ssh/
+```
+
+with names such as:
+
+```text
+ssh_host_rsa_key
+ssh_host_rsa_key.pub
+
+ssh_host_ecdsa_key
+ssh_host_ecdsa_key.pub
+
+ssh_host_ed25519_key
+ssh_host_ed25519_key.pub
+```
+
+Actual algorithms and files depend on the current OpenSSH configuration.
+
+## Host Key Purpose
+
+A host key answers the question:
+
+```text
+Is this the SSH server I expected to reach?
+```
+
+It should be distinguished from a user authentication key.
+
+```text
+Host Key
+→ Authenticates server identity
+
+User Key
+→ Authenticates user identity
+```
+
+## `known_hosts`
+
+The SSH client stores information about previously accepted server host keys in:
+
+```text
+~/.ssh/known_hosts
+```
+
+Conceptually:
+
+```text
+First Connection
+      ↓
+Receive Server Host Key
+      ↓
+Verify Fingerprint
+      ↓
+Accept Server Identity
+      ↓
+Store in known_hosts
+```
+
+On later connections, the client can compare the presented host key with the previously recorded identity.
+
+## Host-Key Change Warning
+
+A changed host key should not automatically be ignored.
+
+Possible reasons can include:
+
+```text
+Server reinstallation
+Host-key regeneration
+Server replacement
+IP address reuse
+Unexpected destination
+Potential interception
+```
+
+Investigate the reason before deleting or replacing a `known_hosts` entry.
+
+## Host-Key Algorithms
+
+The course introduces host-key algorithm families including:
+
+```text
+RSA
+ECDSA
+Ed25519
+```
+
+Detailed cryptographic mathematics are outside the scope of this lab.
+
+The important concept is that these algorithms can be used to establish SSH server identity.
+
+## Host Authentication vs Session Encryption
+
+The server host key is primarily associated with server authentication.
+
+A simplified model is:
+
+```text
+Host Key
+→ Verify Server Identity
+
+Key Exchange
+→ Establish Session Key Material
+
+Session Keys
+→ Protect Session Traffic
+```
+
+Do not interpret the host public key as directly encrypting every byte of the entire SSH session.
 
 ## Password Authentication
 
@@ -150,8 +307,6 @@ Password
 ```
 
 The user account must exist on the remote system.
-
-The lecture diagram should be understood as illustrating Linux account authentication rather than as a detailed password-storage architecture.
 
 ## Public-Key Authentication
 
@@ -205,8 +360,9 @@ Private Key
 → Keep on the client
 → Do not share
 → Never commit to GitHub
+```
 
-
+```text
 Public Key
 → Can be registered on the remote SSH server
 ```
@@ -256,7 +412,49 @@ Public Key
 stored in authorized_keys
 ```
 
-Do not copy private keys to the server as part of this workflow.
+Do not confuse `authorized_keys` with `known_hosts`.
+
+## `known_hosts` vs `authorized_keys`
+
+```text
+known_hosts
+→ Client-side server identity database
+
+authorized_keys
+→ Server-side user public-key authorization list
+```
+
+A useful question is:
+
+```text
+Who is being authenticated?
+```
+
+If the answer is:
+
+```text
+Server
+```
+
+think:
+
+```text
+Host Key
+known_hosts
+```
+
+If the answer is:
+
+```text
+User
+```
+
+think:
+
+```text
+User Key
+authorized_keys
+```
 
 ## Test Key-Based Login
 
@@ -270,24 +468,130 @@ Verify that the intended authentication method works.
 
 Do not assume successful key registration solely because `ssh-copy-id` completed.
 
-## SSH Authentication Methods
+## SSH Client Directory
 
-The course identifies:
+A user SSH directory can contain files such as:
 
 ```text
-Password Authentication
-Public-Key Authentication
+~/.ssh/known_hosts
+~/.ssh/id_*
+~/.ssh/id_*.pub
+~/.ssh/config
 ```
 
-Password authentication uses a user credential.
+Their functions should be distinguished.
 
-Public-key authentication uses an asymmetric key pair.
+## SSH Client Configuration
 
-These methods can be controlled through SSH server configuration.
+The course introduces:
+
+```text
+~/.ssh/config
+```
+
+This file allows connection parameters to be stored under SSH aliases.
+
+General structure:
+
+```text
+Host ALIAS
+    Hostname ACTUAL_HOST
+    Port SSH_PORT
+    User REMOTE_USER
+```
+
+## SSH Client Alias
+
+`Host` defines the alias used by the SSH client.
+
+Example:
+
+```text
+Host app-server
+```
+
+The alias does not have to be the actual DNS hostname.
+
+A user can connect with:
+
+```bash
+ssh app-server
+```
+
+when the corresponding configuration exists.
+
+## `Hostname`
+
+`Hostname` defines the actual SSH destination.
+
+Example structure:
+
+```text
+Host app-server
+    Hostname SERVER_ADDRESS
+```
+
+Distinguish:
+
+```text
+Host
+→ Local SSH alias
+
+Hostname
+→ Actual remote destination
+```
+
+## `Port`
+
+A client profile can define a non-default SSH port.
+
+```text
+Port SSH_PORT
+```
+
+This avoids repeatedly typing the port on the command line.
+
+## `User`
+
+A profile can also define:
+
+```text
+User REMOTE_USER
+```
+
+The client can therefore combine:
+
+```text
+Host
+Hostname
+Port
+User
+```
+
+into one reusable connection profile.
+
+## Example Client Configuration
+
+Use placeholders rather than lecture addresses:
+
+```text
+Host internal-server
+    Hostname SERVER_ADDRESS
+    Port 22
+    User clouduser
+```
+
+Then connect with:
+
+```bash
+ssh internal-server
+```
+
+Do not store passwords or private keys in the SSH client configuration.
 
 ## SSH Server Configuration
 
-The SSH server configuration file introduced in the course is:
+The SSH server configuration file introduced by the course is:
 
 ```text
 /etc/ssh/sshd_config
@@ -299,31 +603,29 @@ Inspect it safely:
 sudo less /etc/ssh/sshd_config
 ```
 
-Do not modify a remote production SSH configuration without a recovery method.
+Do not modify a remote SSH configuration without a recovery method.
 
 ## `PermitRootLogin`
 
-The course highlights:
+The server setting:
 
 ```text
 PermitRootLogin
 ```
 
-This controls SSH root-login behavior.
+controls SSH root-login behavior.
 
-The lecture uses a `yes` example to demonstrate the setting.
-
-It should not be interpreted as a general production-security recommendation.
+It should be interpreted as a security-policy setting rather than as a value that should always be enabled.
 
 ## `PubkeyAuthentication`
 
-The course highlights:
+The setting:
 
 ```text
-PubkeyAuthentication yes
+PubkeyAuthentication
 ```
 
-This allows public-key authentication when supported by the rest of the server configuration.
+controls public-key authentication.
 
 It connects directly to:
 
@@ -335,59 +637,65 @@ authorized_keys
 
 ## `PasswordAuthentication`
 
-The course highlights:
+The course demonstrates:
 
 ```text
-PasswordAuthentication yes
+PasswordAuthentication no
 ```
 
-This controls password-based SSH authentication.
+This disables password-based SSH authentication when the effective server configuration uses that value.
 
-During troubleshooting, distinguish:
+Do not disable password authentication before verifying another authorized login method.
+
+## Safe Password-Authentication Hardening
+
+A safe workflow is:
 
 ```text
-SSH transport works
+Configure Public-Key Authentication
+        ↓
+Verify Key Login in a New Session
+        ↓
+Keep Existing Session Open
+        ↓
+Change PasswordAuthentication
+        ↓
+Validate Configuration
+        ↓
+Apply the Change
+        ↓
+Test Another New Connection
 ```
 
-from:
-
-```text
-A particular authentication method is permitted
-```
+This reduces the risk of locking yourself out of a remote system.
 
 ## Safe SSH Configuration Changes
 
-Changing SSH server authentication remotely can lock an administrator out.
+Changing SSH configuration remotely can interrupt administrative access.
 
-A safe operational principle is:
+Use this operational principle:
 
 ```text
 Keep Existing Session Open
-        |
-        v
+        ↓
 Modify Configuration
-        |
-        v
+        ↓
 Validate Configuration
-        |
-        v
+        ↓
 Apply the Intended Change
-        |
-        v
+        ↓
 Test from a New Session
-        |
-        v
+        ↓
 Confirm Access
-        |
-        v
+        ↓
 Close the Original Session
 ```
 
-Do not treat a configuration edit as complete until a new connection has been tested.
+Do not treat an edit as complete until a new connection has been tested.
 
 ## SCP Overview
 
-The course introduces SCP for secure file transfer.
+SCP provides direct secure file-copy operations over SSH-related transport.
 
 General structure:
 
@@ -403,9 +711,35 @@ Local → Remote
 Remote → Local
 ```
 
+## SCP with a Custom SSH Port
+
+The course demonstrates the SCP port option:
+
+```text
+-P
+```
+
+General structure:
+
+```bash
+scp -P SSH_PORT FILE USER@HOST:DESTINATION
+```
+
+Important distinction:
+
+```text
+scp
+→ -P for port
+
+ssh
+→ -p for port
+```
+
+The option letters are case-sensitive.
+
 ## Copy a Local File to a Remote Server
 
-The course uses a structure such as:
+General structure:
 
 ```bash
 scp SOURCE_FILE USER@SERVER:/tmp
@@ -422,9 +756,21 @@ Remote /tmp
 
 Use a disposable test file and the actual remote user and host.
 
+## Copy a Directory with SCP
+
+The course introduces recursive transfer with:
+
+```bash
+scp -r DIRECTORY USER@HOST:DESTINATION
+```
+
+The `-r` option recursively copies directory contents.
+
+Verify the resulting destination after transfer.
+
 ## Copy a Remote File to the Local System
 
-The course also introduces:
+General structure:
 
 ```bash
 scp USER@SERVER:/tmp/REMOTE_FILE LOCAL_DIRECTORY
@@ -449,14 +795,7 @@ USER@HOST:PATH
 
 The colon separates the remote host specification from the remote filesystem path.
 
-Examples:
-
-```text
-USER@HOST:/tmp
-USER@HOST:/home/USER/file
-```
-
-Read the source and destination positions carefully before transferring data.
+Read source and destination positions carefully before transferring data.
 
 ## Verify SCP Transfers
 
@@ -468,7 +807,7 @@ For a local destination:
 ls -l LOCAL_DIRECTORY
 ```
 
-For a remote destination, connect to the remote lab system and inspect the actual destination.
+For a remote destination, inspect the actual remote path.
 
 The workflow is:
 
@@ -482,15 +821,9 @@ Verify File
 
 ## SFTP Overview
 
-The course introduces SFTP as an interactive secure file-transfer session.
+SFTP provides an interactive secure file-transfer session.
 
 Start a session:
-
-```bash
-sftp HOST
-```
-
-or, when a user must be specified:
 
 ```bash
 sftp USER@HOST
@@ -502,13 +835,7 @@ The prompt changes to:
 sftp>
 ```
 
-## SFTP Help
-
-The course demonstrates:
-
-```text
-sftp> help
-```
+## SFTP Commands
 
 Available commands can include:
 
@@ -529,7 +856,7 @@ quit
 bye
 ```
 
-The exact help output can differ by OpenSSH version.
+The exact command list can vary by OpenSSH version.
 
 ## Remote and Local SFTP Context
 
@@ -541,53 +868,21 @@ Remote Filesystem
 Local Filesystem
 ```
 
-They must not be confused.
-
-### Remote Working Directory
+Remote working directory:
 
 ```text
 sftp> pwd
 ```
 
-### Local Working Directory
+Local working directory:
 
 ```text
 sftp> lpwd
 ```
 
-These can point to completely different directories.
+These can point to different directories.
 
-## Remote and Local Directory Changes
-
-Remote directory:
-
-```text
-sftp> cd PATH
-```
-
-Local directory:
-
-```text
-sftp> lcd PATH
-```
-
-The `l` prefix indicates a local-side operation in commands such as `lcd` and `lpwd`.
-
-## List Files
-
-Remote files:
-
-```text
-sftp> ls
-```
-
-Local-side file inspection can be performed using the available local SFTP command or the local shell after leaving the SFTP session.
-
-Do not assume the local and remote directories contain the same files.
-
-## Download with SFTP
-
-The course introduces:
+## SFTP Download
 
 ```text
 sftp> get FILE
@@ -598,16 +893,11 @@ Direction:
 ```text
 Remote
   |
-  | get
   v
 Local
 ```
 
-The file is downloaded into the selected local working directory unless another destination is specified.
-
-## Upload with SFTP
-
-The SFTP command set includes:
+## SFTP Upload
 
 ```text
 sftp> put FILE
@@ -618,42 +908,211 @@ Direction:
 ```text
 Local
   |
-  | put
   v
 Remote
 ```
-
-Confirm both working directories before transferring a file.
-
-## End an SFTP Session
-
-The course uses:
-
-```text
-sftp> bye
-```
-
-Other OpenSSH SFTP clients can also provide:
-
-```text
-exit
-quit
-```
-
-according to the available command set.
 
 ## SCP and SFTP Comparison
 
 ```text
 SCP
 → Direct command-based file copy
+```
 
-
+```text
 SFTP
 → Interactive secure file-transfer session
 ```
 
-Both use SSH-related secure transport mechanisms but provide different user workflows.
+## SSH Tunneling
+
+The course introduces SSH tunneling as another SSH capability.
+
+A tunnel carries another TCP connection through the encrypted SSH session.
+
+Conceptually:
+
+```text
+Application Traffic
+        ↓
+Local SSH Client
+        ↓
+Encrypted SSH Tunnel
+        ↓
+SSH Server
+        ↓
+Destination Service
+```
+
+## SSH Tunneling and VPN Concepts
+
+The course illustrates tunneling using client-site and site-to-site VPN diagrams.
+
+The shared concept is:
+
+```text
+Traffic
+  ↓
+Encapsulated / Protected Tunnel
+  ↓
+Intermediate Network
+  ↓
+Remote Side
+```
+
+SSH local port forwarding should not automatically be treated as a complete network-layer VPN.
+
+SSH `-L` forwarding normally forwards selected TCP connections.
+
+## Local Port Forwarding
+
+The course introduces:
+
+```text
+-L
+```
+
+for local port forwarding.
+
+General syntax:
+
+```bash
+ssh -L LOCAL_PORT:DESTINATION_HOST:DESTINATION_PORT USER@SSH_SERVER
+```
+
+Conceptually:
+
+```text
+Local Application
+        ↓
+localhost:LOCAL_PORT
+        ↓
+SSH Client
+        ↓
+Encrypted SSH Tunnel
+        ↓
+SSH Server
+        ↓
+DESTINATION_HOST:DESTINATION_PORT
+```
+
+## Local Port Forwarding to the SSH Server
+
+If the destination is:
+
+```text
+localhost
+```
+
+inside the `-L` specification:
+
+```bash
+ssh -L LOCAL_PORT:localhost:DESTINATION_PORT USER@SSH_SERVER
+```
+
+that `localhost` is interpreted from the SSH server side.
+
+Conceptually:
+
+```text
+Client Computer
+localhost:LOCAL_PORT
+        ↓
+SSH Tunnel
+        ↓
+SSH Server
+localhost:DESTINATION_PORT
+```
+
+Do not confuse client-side localhost with server-side localhost.
+
+## Local Port Forwarding to Another Host
+
+The tunnel destination does not have to be the SSH server itself.
+
+General form:
+
+```bash
+ssh -L LOCAL_PORT:INTERNAL_HOST:INTERNAL_PORT USER@SSH_SERVER
+```
+
+Conceptually:
+
+```text
+Client Computer
+localhost:LOCAL_PORT
+        ↓
+SSH Tunnel
+        ↓
+SSH Server
+        ↓
+Internal Host
+INTERNAL_HOST:INTERNAL_PORT
+```
+
+The SSH server must be able to reach the specified destination.
+
+## Bastion-Style Access Concept
+
+Local forwarding can allow an authorized administrator to reach an internal service through an SSH-accessible host.
+
+Conceptually:
+
+```text
+Administrator Laptop
+        ↓
+localhost:LOCAL_PORT
+        ↓
+SSH Bastion
+        ↓
+Private Service
+```
+
+Examples can include internal administration services or databases.
+
+Use only authorized systems and destinations.
+
+## Port-Forwarding Security
+
+An encrypted tunnel does not remove the need for access control.
+
+Questions to consider include:
+
+```text
+Who can access the SSH server?
+Which accounts can authenticate?
+Which destinations can the SSH server reach?
+Which services should be forwarded?
+How is administrative access audited?
+```
+
+Do not create tunnels that bypass organizational security policy.
+
+## End-to-End SSH Model
+
+SSH now combines multiple infrastructure layers and capabilities.
+
+```text
+Network Interface
+       ↓
+IP Address
+       ↓
+Route
+       ↓
+Firewall
+       ↓
+Listening Socket
+       ↓
+sshd
+       ↓
+Server Host Authentication
+       ↓
+User Authentication
+       ↓
+Encrypted Session
+       ↓
+Shell / Command / File Transfer / Tunneling
+```
 
 ## SSH Troubleshooting Model
 
@@ -681,6 +1140,9 @@ Is SSH listening on the expected socket?
 Does the firewall allow the traffic?
         |
         v
+Is server identity verification succeeding?
+        |
+        v
 Is the selected authentication method allowed?
         |
         v
@@ -692,95 +1154,23 @@ Inspect SSH logs
 
 Do not change all layers at once.
 
-## Inspect the SSH Service
+## Host-Key Troubleshooting
 
-```bash
-systemctl status sshd
-```
-
-Determine whether the failure is at the service layer before changing authentication settings.
-
-## Inspect Network State
-
-Relevant course commands from the network-management lab include:
-
-```bash
-ip addr
-```
-
-```bash
-ip route
-```
-
-Verify that basic connectivity exists.
-
-## Inspect the Listening Socket
-
-Use the socket-inspection concepts from the network-management lab.
-
-```bash
-ss -nlp
-```
-
-Identify whether SSH is listening.
-
-Runtime port and PID values must come from the actual VM.
-
-## Inspect Firewall State
-
-Use:
-
-```bash
-firewall-cmd --list-all
-```
-
-Confirm whether the currently active firewall zone permits the required SSH traffic.
-
-Do not switch the entire firewall to a trusted policy simply because SSH fails.
-
-## Inspect SSH Logs
-
-Relevant course logging tools include:
-
-```bash
-journalctl _COMM=sshd
-```
-
-and, where available in the configured logging environment:
-
-```bash
-tail /var/log/secure
-```
-
-Use logs as evidence for authentication and session failures.
-
-## Password Authentication Troubleshooting
-
-If key authentication works but password authentication does not, investigate the authentication configuration rather than the basic network first.
-
-A possible reasoning path is:
+If the SSH client reports a host-key mismatch:
 
 ```text
-Network Works
-     ↓
-sshd Works
-     ↓
-SSH Transport Works
-     ↓
-Key Authentication Works
-     ↓
-Password Authentication Fails
-     ↓
-Inspect Password Authentication Configuration
+Stop
+  ↓
+Confirm the intended destination
+  ↓
+Check whether the server was rebuilt or replaced
+  ↓
+Verify the expected fingerprint through a trusted method
+  ↓
+Update known_hosts only when the identity change is legitimate
 ```
 
-The course highlights:
-
-```text
-PasswordAuthentication
-```
-
-as an SSH server setting.
+Do not automatically suppress host-identity warnings.
 
 ## Public-Key Authentication Troubleshooting
 
@@ -810,96 +1200,94 @@ When public-key authentication fails:
 
 Do not regenerate keys immediately without first identifying which layer failed.
 
-## Authentication Troubleshooting Principle
+## Password Authentication Troubleshooting
 
-A successful TCP connection and a successful user login are different stages.
-
-```text
-Network Connection
-       |
-       v
-SSH Transport
-       |
-       v
-Authentication
-       |
-       v
-User Session
-```
-
-An authentication failure does not necessarily indicate a firewall or network failure.
-
-## End-to-End SSH Model
-
-SSH combines several Linux administration layers.
+If key authentication works but password authentication does not:
 
 ```text
-Network Interface
-       ↓
-IP Address
-       ↓
-Route
-       ↓
-Firewall
-       ↓
-Listening Socket
-       ↓
-sshd Service
-       ↓
-sshd Configuration
-       ↓
-Authentication Method
-       ↓
-Linux User
-       ↓
-Remote Session
+Network Works
+     ↓
+SSH Transport Works
+     ↓
+Key Authentication Works
+     ↓
+Password Authentication Fails
+     ↓
+Inspect PasswordAuthentication Policy
 ```
 
-This model should be used to localize SSH failures.
+The failure is likely beyond the basic network layer.
+
+## Tunnel Troubleshooting
+
+When local port forwarding fails:
+
+```text
+Can the client reach the SSH server?
+        ↓
+Can SSH authentication succeed?
+        ↓
+Is the local port available?
+        ↓
+Can the SSH server reach the destination host?
+        ↓
+Is the destination service listening?
+        ↓
+Is forwarding permitted by SSH policy?
+        ↓
+Test the local forwarded port
+```
+
+Separate SSH transport problems from destination-service problems.
 
 ## Verification Checklist
 
-- OpenSSH packages were inspected.
+- OpenSSH capabilities were reviewed.
 - The SSH client and `sshd` server roles were distinguished.
 - The `sshd` service state was inspected.
-- Basic remote SSH login was reviewed or tested.
+- SSH encryption was understood conceptually.
+- Server host authentication was distinguished from user authentication.
+- SSH host keys were identified.
+- `known_hosts` was identified as client-side server identity information.
+- Host-key changes were treated as security-relevant events.
+- RSA, ECDSA, and Ed25519 host-key concepts were reviewed.
 - Password authentication was understood.
 - Public-key authentication was understood.
-- An SSH key pair was generated or reviewed.
-- The private key was kept on the client.
-- Public-key registration with `ssh-copy-id` was reviewed.
-- `authorized_keys` was identified as a server-side public-key list.
-- `/etc/ssh/sshd_config` was inspected.
-- `PermitRootLogin` was understood as a server-policy setting.
-- `PubkeyAuthentication` was reviewed.
-- `PasswordAuthentication` was reviewed.
-- SSH configuration changes were treated as remote-access-sensitive operations.
-- SCP local-to-remote transfer was reviewed.
-- SCP remote-to-local transfer was reviewed.
-- Transfer results were verified at the destination.
-- An SFTP session was reviewed or used.
-- Local and remote SFTP working directories were distinguished.
-- `get` and `put` directions were understood.
-- SSH troubleshooting was organized across network, service, socket, firewall, authentication, and logging layers.
+- A private key was kept private.
+- `authorized_keys` was identified as a server-side user public-key list.
+- `known_hosts` and `authorized_keys` were distinguished.
+- `~/.ssh/config` was reviewed.
+- `Host`, `Hostname`, `Port`, and `User` were distinguished.
+- `/etc/ssh/sshd_config` was inspected or reviewed.
+- `PasswordAuthentication` was understood.
+- Authentication hardening was treated as a lockout-sensitive operation.
+- SCP custom-port syntax was reviewed.
+- SCP recursive transfer was reviewed.
+- SFTP was reviewed.
+- Local port forwarding with `ssh -L` was understood.
+- Client-side and server-side `localhost` contexts were distinguished.
+- Forwarding through an SSH server to another internal host was understood.
+- SSH tunneling was distinguished from a general full-network VPN.
+- SSH troubleshooting was organized across network, service, identity, authentication, and forwarding layers.
 - No passwords or private keys were committed to the repository.
 - Runtime hostnames, IP addresses, PIDs, fingerprints, and key values were recorded only from the actual lab environment.
 
 ## What I Learned
 
-- `ssh` is a client while `sshd` is the SSH server daemon.
-- A running `sshd` service does not by itself prove that remote SSH access will succeed.
-- SSH access depends on networking, listening sockets, firewall policy, server configuration, authentication, and the remote user account.
-- OpenSSH supports both password and public-key authentication.
-- `ssh-keygen` creates a public/private key pair.
-- The private key must remain private and must never be committed to GitHub.
-- The public key can be registered in the remote user's `authorized_keys`.
-- `ssh-copy-id` helps register a client public key on a remote account.
+- SSH provides remote login, remote command execution, file transfer, and tunneling.
+- SSH host keys authenticate the identity of the server.
+- `known_hosts` records accepted SSH server identities on the client.
+- User public keys and server host keys serve different authentication purposes.
+- `authorized_keys` controls which user public keys can authenticate to a remote account.
+- SSH establishes encrypted session traffic after cryptographic negotiation and key exchange.
+- `~/.ssh/config` can simplify repeated SSH connections.
+- `Host` is an SSH client alias while `Hostname` defines the actual destination.
 - `/etc/ssh/sshd_config` controls SSH server behavior.
-- `PermitRootLogin`, `PubkeyAuthentication`, and `PasswordAuthentication` affect authentication policy.
-- SCP provides direct secure file-copy operations.
-- SFTP provides an interactive file-transfer environment.
-- SFTP maintains separate local and remote working directories.
-- `get` transfers remote data to the local system.
-- `put` transfers local data to the remote system.
-- SSH troubleshooting should localize the failure before configuration is changed.
-- Logs should be used as evidence when transport or authentication behavior does not match expectations.
+- Password authentication should not be disabled until another verified login method exists.
+- SCP uses uppercase `-P` for a custom SSH port.
+- SCP and SFTP provide different secure file-transfer workflows.
+- Local port forwarding maps a client-side port through an encrypted SSH session to a destination service.
+- In `ssh -L`, the destination host is reached from the SSH server side.
+- SSH tunneling can provide controlled access to internal TCP services.
+- SSH tunneling and a full network-layer VPN are not identical concepts.
+- SSH failures should be localized before configuration is changed.
