@@ -1,36 +1,44 @@
 # Cloud Infrastructure Labs
 
-Hands-on infrastructure engineering labs focused on Linux administration, networking, troubleshooting, automation, and the foundations required for cloud infrastructure engineering.
+This repository documents my hands-on learning path toward cloud infrastructure engineering.
 
-This repository documents my learning process through:
+The repository is organized around three current foundations:
 
 ```text
-Theory
+Linux System Administration
+        ↓
+Network Fundamentals and Troubleshooting
+        ↓
+Containers and Docker
+```
+
+The focus is not simply on memorizing commands.
+
+Each topic is studied through:
+
+```text
+Concept
    ↓
-Hands-On Practice
+Architecture
    ↓
-System Observation
+Configuration
+   ↓
+Observable State
    ↓
 Troubleshooting
    ↓
-Evidence
-   ↓
-Recovery
-   ↓
-Infrastructure Engineering
+Verification
 ```
 
-The goal is not to collect commands.
-
-The goal is to understand:
+The long-term goal is to build practical infrastructure skills that can later extend into:
 
 ```text
-How the system should work
-What actually happened
-How to collect evidence
-How to identify the failing layer
-How to recover safely
-How to verify the result
+Kubernetes
+Cloud Platforms
+Infrastructure as Code
+Observability
+Automation
+Cloud Security
 ```
 
 ---
@@ -39,7 +47,9 @@ How to verify the result
 
 ```text
 cloud-infrastructure-labs/
+│
 ├── README.md
+│
 ├── linux/
 │   ├── README.md
 │   ├── system-information-lab.md
@@ -49,7 +59,6 @@ cloud-infrastructure-labs/
 │   ├── shell-environment-lab.md
 │   ├── search-archive-compression-lab.md
 │   ├── text-processing-lab.md
-│   ├── shell-script/
 │   ├── process-management-lab.md
 │   ├── service-management-lab.md
 │   ├── ssh-basic-lab.md
@@ -74,39 +83,41 @@ cloud-infrastructure-labs/
 │   ├── samba-cifs-management-lab.md
 │   ├── apache-httpd-management-lab.md
 │   ├── dns-bind-unbound-management-lab.md
-│   └── host-network-security-hardening-lab.md
-└── network/
+│   ├── host-network-security-hardening-lab.md
+│   └── shell-script/
+│       └── README.md
+│
+├── network/
+│   ├── README.md
+│   ├── osi-model-lab.md
+│   ├── network-types-protocols-lab.md
+│   ├── ethernet-lab.md
+│   ├── ipv4-addressing-lab.md
+│   ├── ipv6-addressing-lab.md
+│   ├── arp-rarp-lab.md
+│   ├── routing-fundamentals-lab.md
+│   ├── routing-protocols-lab.md
+│   ├── network-standards-lab.md
+│   ├── dns-fundamentals-lab.md
+│   ├── network-troubleshooting-lab.md
+│   └── packet-analysis-lab.md
+│
+└── docker/
     ├── README.md
-    ├── osi-model-lab.md
-    ├── network-types-protocols-lab.md
-    ├── ethernet-lab.md
-    ├── ipv4-addressing-lab.md
-    ├── ipv6-addressing-lab.md
-    ├── arp-rarp-lab.md
-    ├── routing-fundamentals-lab.md
-    ├── routing-protocols-lab.md
-    ├── network-standards-lab.md
-    ├── dns-fundamentals-lab.md
-    └── network-troubleshooting-lab.md
+    ├── virtualization-container-foundations-lab.md
+    ├── cloud-computing-cloud-native-foundations-lab.md
+    ├── docker-engine-foundations-lab.md
+    ├── image-container-lifecycle-lab.md
+    ├── dockerfile-image-build-lab.md
+    ├── container-management-lab.md
+    └── registry-management-lab.md
 ```
+
+Future directories will be added only after the corresponding topics are actually studied or reproduced.
 
 ---
 
-# Main Learning Areas
-
-The repository is currently organized into two major infrastructure foundations:
-
-```text
-Linux Administration
-        +
-Network Fundamentals
-        ↓
-Cloud Infrastructure Engineering
-```
-
----
-
-# Linux
+# Linux System Administration
 
 Directory:
 
@@ -114,25 +125,28 @@ Directory:
 linux/
 ```
 
-Detailed roadmap:
+The Linux section establishes the operating-system foundation required for infrastructure engineering.
 
-[Linux Administration Labs](linux/README.md)
-
-The Linux section focuses on operating-system administration and infrastructure services.
-
-Major areas include:
+Topics currently covered include:
 
 ```text
-Linux Fundamentals
-File and Directory Permissions
+System Information
+Files and Directories
+Permissions
+vi
+Shell Fundamentals
 Shell Environment
+Search
+Archive and Compression
+Text Processing
 Bash Scripting
-Process Management
+Processes
 systemd Services
+OpenSSH
 Package Management
 Users and Groups
-Scheduled Jobs
-Storage
+Job Scheduling
+Disk and Partition Management
 Filesystems
 LVM
 RAID
@@ -140,10 +154,9 @@ Memory and Swap
 Boot and Kernel
 Backup and Recovery
 Logging
-Firewall
+firewalld
 SELinux
-NetworkManager
-OpenSSH
+Linux Networking
 Network Teaming
 NFS
 Linux Bridge
@@ -151,20 +164,42 @@ AutoFS
 Samba / CIFS
 Apache HTTP Server
 BIND / Unbound
-Host Security Hardening
+Host Network Security Hardening
 ```
 
-Linux networking content focuses on:
+The section emphasizes the difference between:
 
 ```text
-How Linux configures and operates networking
+Runtime State
+and
+Persistent Configuration
 ```
 
-rather than general network-protocol theory.
+Examples include:
+
+```text
+systemctl start
+vs
+systemctl enable
+
+ip addr
+vs
+NetworkManager configuration
+
+mount
+vs
+/etc/fstab
+
+firewalld runtime rules
+vs
+permanent rules
+```
+
+Linux administration is treated as the base layer for later container and cloud infrastructure work.
 
 ---
 
-# Network
+# Network Fundamentals and Troubleshooting
 
 Directory:
 
@@ -172,18 +207,13 @@ Directory:
 network/
 ```
 
-Detailed roadmap:
+General networking theory is intentionally separated from Linux-specific network administration.
 
-[Network Fundamentals and Troubleshooting](network/README.md)
-
-The networking section focuses on protocol behavior and infrastructure-level network reasoning.
-
-Major areas currently include:
+The network section covers:
 
 ```text
 OSI Model
-Network Types
-TCP/IP Model
+Network Types and Protocols
 Ethernet
 IPv4
 IPv6
@@ -191,86 +221,571 @@ ARP
 Routing
 Dynamic Routing Protocols
 Network Standards
-DNS Fundamentals
+DNS
 Network Troubleshooting
-```
-
-The next major networking topic is:
-
-```text
 Packet Analysis
 ```
 
-It will be added only after the corresponding material and labs are actually completed.
+The networking model progresses from protocol theory toward observable traffic.
+
+```text
+OSI Model
+    ↓
+Ethernet
+    ↓
+IP
+    ↓
+Routing
+    ↓
+DNS
+    ↓
+Transport
+    ↓
+Troubleshooting
+    ↓
+Packet Capture
+```
+
+Packet analysis introduces practical use of concepts such as:
+
+```text
+Ethernet Headers
+IPv4 / IPv6 Headers
+TCP Flags
+Sequence and Acknowledgment Numbers
+ARP Request / Reply
+ICMP
+IGMP
+Wireshark Filters
+Follow Stream
+Flow Graph
+Latency Analysis
+```
+
+This section provides the networking foundation required for Docker networking, Kubernetes networking, cloud VPCs, load balancers, and network security.
 
 ---
 
-# Linux vs Network Scope
+# Containers and Docker
 
-The repository deliberately separates general networking theory from Linux-specific network administration.
-
-## `network/`
-
-Examples:
+Directory:
 
 ```text
-Why ARP exists
-How Ethernet forwarding works
-How routing decisions are made
-How DNS resolution works
-How network layers interact
-How network failures are isolated
+docker/
 ```
 
-## `linux/`
+The Docker section extends the Linux and networking foundations into containerized infrastructure.
 
-Examples:
+The current learning path covers:
 
 ```text
-NetworkManager configuration
-Linux routing configuration
-Linux bridge configuration
-Network teaming
-OpenSSH administration
-firewalld
-SELinux networking policy
-NFS
-Samba
-Apache
-BIND / Unbound
+Virtualization
+    ↓
+VM vs Container
+    ↓
+Cloud Computing
+    ↓
+Cloud-Native Architecture
+    ↓
+Linux Container Foundations
+    ↓
+Docker Engine
+    ↓
+Images
+    ↓
+Containers
+    ↓
+Dockerfile
+    ↓
+Image Build
+    ↓
+Persistent Data
+    ↓
+Container Management
+    ↓
+Registry
 ```
-
-This keeps protocol fundamentals separate from operating-system implementation.
 
 ---
 
-# Learning Method
+# Virtualization Foundations
 
-Each lab is intended to follow a progression similar to:
+The Docker learning path begins with virtualization concepts including:
 
 ```text
-Understand
-    ↓
-Configure
-    ↓
-Inspect
-    ↓
-Break or Observe Failure
-    ↓
-Collect Evidence
-    ↓
-Recover
-    ↓
-Verify
+Emulation
+QEMU
+KVM
+Hypervisors
+Full Virtualization
+Paravirtualization
+libvirt
+RAW
+QCOW2
+Snapshots
+VM Migration
 ```
 
-Commands are treated as tools for investigating infrastructure state rather than as isolated syntax to memorize.
+The key architectural distinction is:
+
+```text
+Virtual Machine
+→ Hardware virtualization
+→ Separate guest kernel
+```
+
+```text
+Container
+→ OS-level isolation
+→ Shared host kernel
+```
+
+This provides the foundation for understanding why containers behave differently from virtual machines.
+
+---
+
+# Cloud-Native Foundations
+
+The Docker section also connects containers to cloud architecture.
+
+Topics include:
+
+```text
+IaaS
+PaaS
+SaaS
+Cloud Responsibility Models
+Private Cloud
+Public Cloud
+Hybrid Cloud
+Microservices
+REST / HTTP APIs
+DevOps
+CI/CD
+Infrastructure as Code
+Serverless
+Containers
+```
+
+A simplified progression is:
+
+```text
+Cloud Infrastructure
+        ↓
+Cloud-Native Application
+        ↓
+Decoupled Services
+        ↓
+Containers
+        ↓
+Automated Delivery
+```
+
+Containers are studied as part of a wider cloud-native architecture rather than as an isolated Docker technology.
+
+---
+
+# Linux Container Foundations
+
+Docker builds directly on Linux kernel concepts.
+
+```text
+Namespaces
+→ Isolation and visibility
+```
+
+```text
+cgroups
+→ Resource accounting and control
+```
+
+Examples include:
+
+```text
+PID Namespace
+Network Namespace
+Mount Namespace
+UTS Namespace
+IPC Namespace
+```
+
+This reinforces an important principle:
+
+```text
+Container
+!=
+Small Virtual Machine
+```
+
+A container is better understood as an isolated process environment using the host kernel.
+
+---
+
+# Docker Engine Architecture
+
+The Docker architecture studied so far is:
+
+```text
+User
+ ↓
+Docker CLI
+ ↓
+Docker API
+ ↓
+Docker Daemon
+ ├── Images
+ ├── Containers
+ ├── Networks
+ └── Volumes
+       ↕
+    Registry
+```
+
+This architecture connects Docker commands to the actual objects being managed.
+
+---
+
+# Image and Container Lifecycle
+
+Docker images and containers are treated as separate objects.
+
+```text
+Image
+→ Reusable artifact
+```
+
+```text
+Container
+→ Runtime instance created from an image
+```
+
+The relationship is:
+
+```text
+Registry
+   ↓
+Image
+   ↓
+Container
+   ↓
+Main Process
+```
+
+A fundamental runtime rule is:
+
+```text
+Main Process Running
+→ Container Running
+```
+
+```text
+Main Process Exits
+→ Container Exits
+```
+
+This process model is important for both Docker and later Kubernetes troubleshooting.
+
+---
+
+# Dockerfile and Image Build
+
+Dockerfiles are used to create reproducible images.
+
+```text
+Project Files
+     ↓
+.dockerignore
+     ↓
+Build Context
+     ↓
+Dockerfile
+     ↓
+docker build
+     ↓
+Image Layers
+     ↓
+Docker Image
+```
+
+Instructions currently studied include:
+
+```text
+FROM
+RUN
+COPY
+ADD
+ENV
+USER
+EXPOSE
+ENTRYPOINT
+CMD
+VOLUME
+```
+
+Important distinctions include:
+
+```text
+RUN
+→ Build time
+```
+
+```text
+CMD / ENTRYPOINT
+→ Container runtime
+```
+
+and:
+
+```text
+EXPOSE
+→ Port metadata
+```
+
+```text
+-p
+→ Host-to-container port publishing
+```
+
+---
+
+# Image Build Optimization
+
+Docker image construction is also studied from an operational perspective.
+
+Topics include:
+
+```text
+Build Context
+.dockerignore
+Image Layers
+Build Cache
+Instruction Ordering
+Multi-Stage Builds
+Least-Privilege Runtime Users
+Minimal Runtime Images
+```
+
+A multi-stage build separates build tools from the final runtime image.
+
+```text
+Build Environment
+      ↓
+Application Artifact
+      ↓
+Runtime Environment
+```
+
+Potential benefits include:
+
+```text
+Smaller Images
+Reduced Build Tooling
+Reduced Attack Surface
+Clear Build / Runtime Separation
+```
+
+---
+
+# Persistent Data
+
+Container runtime and persistent application data have separate lifecycles.
+
+```text
+Container
+→ Replaceable runtime
+```
+
+```text
+Volume / External Storage
+→ Persistent data
+```
+
+Concepts currently introduced include:
+
+```text
+Dockerfile VOLUME
+Bind Mounts
+Shared Container Data
+Image vs Data Lifecycle
+```
+
+Persistent data should not depend only on a disposable container writable layer.
+
+---
+
+# Container Management and Troubleshooting
+
+Docker container state is investigated using evidence before destructive recovery actions.
+
+Relevant tools currently include:
+
+```text
+docker ps
+docker inspect
+docker logs
+docker events
+docker top
+docker stats
+docker diff
+docker cp
+docker system df
+```
+
+A useful investigation sequence is:
+
+```text
+Container Problem
+      ↓
+docker ps -a
+      ↓
+docker inspect
+      ↓
+docker logs
+      ↓
+docker top
+      ↓
+docker stats
+      ↓
+docker diff
+```
+
+Additional evidence can be collected before restarting, rebuilding, or removing the failed container.
+
+---
+
+# Container and Image Archives
+
+Docker provides different archive workflows.
+
+```text
+docker export
+docker import
+→ Container filesystem workflow
+```
+
+```text
+docker save
+docker load
+→ Docker image workflow
+```
+
+These operations should not be treated as equivalent.
+
+---
+
+# Docker Registry
+
+Container images can be distributed through registries.
+
+```text
+Source Code
+    ↓
+Dockerfile
+    ↓
+docker build
+    ↓
+Image
+    ↓
+docker tag
+    ↓
+docker push
+    ↓
+Registry
+    ↓
+docker pull
+    ↓
+Deployment Host
+```
+
+Current registry topics include:
+
+```text
+Docker Hub
+Public Repositories
+Private Repositories
+Image References
+Tags
+Digests
+docker login
+docker push
+docker pull
+Private Registry
+Multi-Host Image Distribution
+```
+
+Registry infrastructure is also connected to future CI/CD and Kubernetes workflows.
+
+---
+
+# Linux, Network, and Docker Relationship
+
+The three current repository areas are intentionally connected.
+
+```text
+Linux
+→ Processes
+→ Filesystems
+→ Users
+→ Services
+→ Storage
+→ Security
+
+Network
+→ Ethernet
+→ IP
+→ Routing
+→ DNS
+→ Ports
+→ Packet Analysis
+
+Docker
+→ Namespaces
+→ cgroups
+→ Images
+→ Containers
+→ Storage
+→ Registries
+```
+
+For example:
+
+```text
+Linux Process Management
+        ↓
+Container Process Model
+```
+
+```text
+Linux Bridge
+        ↓
+Docker Bridge Networking
+```
+
+```text
+Linux Users and Permissions
+        ↓
+Docker USER / Least Privilege
+```
+
+```text
+Network Ports
+        ↓
+Container Port Publishing
+```
+
+```text
+DNS and Routing
+        ↓
+Container and Registry Connectivity
+```
+
+The goal is to understand Docker as an extension of Linux and networking concepts rather than as an isolated command-line tool.
 
 ---
 
 # Troubleshooting Method
 
-Troubleshooting work follows:
+Infrastructure troubleshooting throughout this repository follows:
 
 ```text
 Symptom
@@ -284,318 +799,314 @@ Resolution
 Verification
 ```
 
-## Symptom
-
-Describe exactly what failed.
-
-## Evidence
-
-Collect observable system or network state.
-
-Examples include:
-
-```text
-systemctl
-journalctl
-ss
-ip
-dig
-lsof
-tcpdump
-```
-
-## Root Cause
-
-Identify the actual failed layer or configuration.
-
-## Resolution
-
-Apply the smallest controlled change required to correct the problem.
-
-## Verification
-
-Repeat the original test and confirm normal operation.
-
-A configuration change is not considered successful until it has been verified.
+The process begins by observing state rather than immediately changing configuration.
 
 ---
 
 # Layered Troubleshooting
 
-A common infrastructure troubleshooting path is:
+A general infrastructure troubleshooting model is:
 
 ```text
+Physical / Host
+      ↓
+Operating System
+      ↓
+Network
+      ↓
+Service / Runtime
+      ↓
+Container
+      ↓
 Application
-     ↑
-Service
-     ↑
-Listening Socket
-     ↑
-Firewall / Security Policy
-     ↑
-Routing
-     ↑
-IP Addressing
-     ↑
-Neighbor / Ethernet
-     ↑
-Interface / Link
 ```
 
-This allows failures to be localized instead of changing unrelated configuration.
+For network-oriented failures:
+
+```text
+Interface
+   ↓
+Address
+   ↓
+Neighbor
+   ↓
+Route
+   ↓
+DNS
+   ↓
+Port
+   ↓
+Service
+   ↓
+Application
+```
+
+For Docker-oriented failures:
+
+```text
+Docker Service
+      ↓
+Docker Daemon
+      ↓
+Image
+      ↓
+Container State
+      ↓
+Main Process
+      ↓
+Network / Storage
+      ↓
+Application
+```
+
+---
+
+# Service Troubleshooting
+
+A running service is not automatically reachable.
+
+A useful model is:
+
+```text
+Process Running
+      ↓
+Socket Listening
+      ↓
+Firewall
+      ↓
+Routing / Network Path
+      ↓
+Security Policy
+      ↓
+Application Protocol
+```
+
+This principle applies to Linux services, Docker containers, and later cloud workloads.
 
 ---
 
 # Runtime vs Persistent Configuration
 
-A recurring infrastructure principle throughout the repository is:
+A recurring infrastructure principle is:
 
 ```text
 Runtime State
 !=
-Persistent Configuration
+Persistent Definition
 ```
 
-Examples:
+Examples include:
 
 ```text
 systemctl start
-→ Runtime service state
-
+vs
 systemctl enable
-→ Boot-time service configuration
 ```
 
 ```text
 ip addr
-→ Runtime network state
-
-NetworkManager profile
-→ Persistent network configuration
+vs
+NetworkManager configuration
 ```
 
 ```text
 mount
-→ Runtime filesystem mount
-
+vs
 /etc/fstab
-→ Persistent mount configuration
 ```
 
 ```text
-firewalld runtime rule
-→ Current firewall state
-
-firewalld permanent rule
-→ Persistent firewall configuration
+Running Container
+vs
+Dockerfile / Image
 ```
 
 ```text
-sysctl -w
-→ Runtime kernel parameter
-
-sysctl configuration
-→ Persistent kernel configuration
+Container Writable Layer
+vs
+Persistent Volume Data
 ```
 
-Understanding this distinction is essential for infrastructure operations.
+Understanding which state survives restart or recreation is essential for reliable infrastructure operations.
 
 ---
 
-# Service Troubleshooting Model
+# Immutable Infrastructure
 
-A service can be running while still being unreachable.
-
-A useful model is:
+Container infrastructure reinforces the idea of rebuilding and replacing workloads instead of repeatedly modifying them in place.
 
 ```text
-Process
-   ↓
-Service State
-   ↓
-Listening Socket
-   ↓
-Firewall
-   ↓
-Network Route
-   ↓
-Security Policy
-   ↓
-Authentication
-   ↓
-Application
+Definition Change
+      ↓
+New Image
+      ↓
+Validation
+      ↓
+Deployment
+      ↓
+Replacement
 ```
 
-For example:
-
-```text
-systemctl says active
-```
-
-does not automatically prove:
-
-```text
-Remote clients can use the service.
-```
+This helps reduce configuration drift and improves reproducibility.
 
 ---
 
 # Security Approach
 
-Security labs focus on layered controls rather than disabling protections to make a service work.
+Security is treated as part of infrastructure operation rather than as a separate final step.
 
-Examples include:
+Current principles include:
 
 ```text
-Package and Service Minimization
-SSH Authentication
-User / Group Access Restrictions
-firewalld
+Least Privilege
+Minimal Installed Software
+Trusted Package and Image Sources
+Restricted Service Exposure
+Firewall Enforcement
 SELinux
-TLS
-Security Updates
-CVE Awareness
+SSH Hardening
+Non-Root Container Execution
+Minimal Runtime Images
+Protected Secrets
+Protected Registry Credentials
+Trusted Container Images
 ```
 
-General rule:
-
-```text
-Do not disable security controls
-without first identifying why the intended operation is blocked.
-```
+Containers should not automatically be assumed to provide a complete security boundary.
 
 ---
 
 # Evidence Policy
 
-Course screenshots and example values are not treated as actual runtime evidence.
+Course screenshots and example command output are educational examples.
 
-The repository should not fabricate:
+They are not recorded as real lab evidence.
+
+This repository does not fabricate:
 
 ```text
-IP addresses
-MAC addresses
-Interface names
-PIDs
-UUIDs
+IP Addresses
+MAC Addresses
+Process IDs
+Container IDs
+Image IDs
+Image Digests
+Network IDs
+Volume IDs
 Routes
-DNS responses
-SSH fingerprints
-Packet captures
-Service output
-Port-scan results
+Packet Captures
+Registry Results
+Exit Codes
+Resource Metrics
+Command Output
 ```
 
-Environment-specific evidence should come from the system where the lab was actually performed.
+Actual environment-specific evidence should come from the system where the exercise was performed.
 
 ---
 
-# Secret Management
+# Historical Material Policy
 
-The following must never be committed:
+Training materials can contain historical commands, versions, products, and terminology.
 
-```text
-Passwords
-SSH Private Keys
-TLS Private Keys
-Cloud Credentials
-API Tokens
-Authentication Secrets
-Sensitive Packet Payloads
-```
-
-Public repositories should contain only sanitized and intentional evidence.
-
----
-
-# Legacy and Modern Linux Commands
-
-Some training materials include older Linux tools.
-
-The repository preserves the concepts while also documenting current alternatives.
-
-Examples:
+Examples encountered so far include:
 
 ```text
 ifconfig
-→ ip addr / ip link
-
 route
-→ ip route
-
 arp
-→ ip neigh
-
 netstat
-→ ss
+Docker Toolbox
+Boot2Docker
+Older Docker CE / EE models
+Older Docker version requirements
+Historical Docker storage drivers
+MAINTAINER
+Historical Docker Hub policies
 ```
 
-The goal is to recognize legacy environments while building current Linux administration skills.
+Historical material is preserved for context while modern concepts and alternatives are distinguished where relevant.
 
 ---
 
 # Current Progress
 
-Completed infrastructure foundations currently include:
+Completed major areas include:
 
 ```text
 Linux Fundamentals
-Bash and Shell Automation
 Linux System Administration
-Storage and Filesystems
-Linux Security Controls
+Linux Service Administration
+Linux Storage
+Linux Security
 Linux Networking
-Remote Access
-Network File Services
-Web Services
-Linux DNS Services
 Network Fundamentals
-IP Addressing
+IPv4 / IPv6
 ARP
 Routing
-DNS Fundamentals
+DNS
 Network Troubleshooting
+Packet Analysis
+Virtualization Foundations
+Cloud Computing Foundations
+Cloud-Native Concepts
+Linux Container Foundations
+Docker Engine Architecture
+Docker Image Lifecycle
+Docker Container Lifecycle
+Dockerfile
+Image Build and Cache
+Multi-Stage Builds
+Persistent Storage Fundamentals
+Docker Container Management
+Docker Registry Fundamentals
 ```
 
-The networking study is currently moving toward:
+The next Docker topics are:
 
 ```text
-Packet Analysis
+Docker Networking
+Custom Networks
+Shared Network Namespaces
+Host Networking
+Docker Compose
+YAML
+Multi-Container Applications
+Docker Clustering
+Docker Swarm
+Kubernetes Introduction
 ```
 
 ---
 
-# Future Expansion
+# Planned Expansion
 
-Future top-level areas can be added when the corresponding hands-on study begins.
+As the learning path continues, additional top-level areas can be created when enough actual study and lab evidence exists.
 
-Possible areas include:
+Potential future areas include:
 
 ```text
-docker/
 kubernetes/
 aws/
 terraform/
 ```
 
-These directories should not be created only for roadmap appearance.
-
-They should be added when there is real study material, configuration, troubleshooting, or project evidence to document.
+They should not be created only as placeholders.
 
 ---
 
 # Long-Term Infrastructure Path
 
-The current learning progression is:
+The current learning path is:
 
 ```text
 Linux
    ↓
 Networking
    ↓
-Packet Analysis
-   ↓
 Containers
+   ↓
+Docker
    ↓
 Kubernetes
    ↓
@@ -603,33 +1114,45 @@ Cloud Infrastructure
    ↓
 Infrastructure as Code
    ↓
-Operations and Observability
-   ↓
 Cloud Security
 ```
 
-The repository will evolve as those areas are actually studied and practiced.
+The objective is to develop the ability to understand, operate, troubleshoot, automate, and secure infrastructure rather than only memorize individual tools.
 
 ---
 
-# Repository Goal
+# What This Repository Demonstrates
 
-This repository is intended to demonstrate more than command familiarity.
-
-The target capability is:
+This repository documents progression from basic operating-system knowledge toward infrastructure-level reasoning.
 
 ```text
-Understand the architecture
-        ↓
-Observe real system state
-        ↓
-Identify failures
-        ↓
-Explain the root cause
-        ↓
-Recover safely
-        ↓
-Verify the result
+Theory
+   ↓
+Configuration
+   ↓
+Runtime Observation
+   ↓
+Failure Analysis
+   ↓
+Troubleshooting
+   ↓
+Verification
+   ↓
+Automation
 ```
 
-That operational reasoning is the core skill being developed throughout these labs.
+The central questions throughout the repository are:
+
+```text
+What should happen?
+
+What actually happened?
+
+Which layer is responsible?
+
+What evidence supports the conclusion?
+
+What change resolves the issue?
+
+How was recovery verified?
+```
