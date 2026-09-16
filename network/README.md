@@ -2,9 +2,9 @@
 
 This directory documents my networking studies and labs as part of my cloud infrastructure engineering learning path.
 
-The focus is not only on memorizing protocols or commands, but on understanding how communication moves through network layers and how to isolate failures using observable evidence.
+The focus is not only on memorizing protocols or commands, but on understanding how communication moves through network layers, how protocol headers represent that communication, and how to isolate failures using observable evidence.
 
-The learning path progresses from:
+The learning path progresses through:
 
 ```text
 OSI Model
@@ -32,39 +32,13 @@ The long-term goal is to apply these fundamentals to:
 
 ```text
 Linux Infrastructure
-Cloud Networking
-Containers
-Kubernetes
-Infrastructure as Code
+Docker Networking
+Kubernetes Networking
+Cloud VPC Networking
+Load Balancing
 Network Security
 Cloud Security
 ```
-
----
-
-# Learning Principles
-
-The networking materials in this directory follow several principles.
-
-```text
-Understand the protocol
-        ↓
-Understand the packet path
-        ↓
-Inspect actual system state
-        ↓
-Generate a hypothesis
-        ↓
-Collect evidence
-        ↓
-Identify the failing layer
-        ↓
-Make one controlled change
-        ↓
-Verify recovery
-```
-
-The goal is to avoid troubleshooting by random configuration changes.
 
 ---
 
@@ -83,24 +57,25 @@ network/
 ├── routing-protocols-lab.md
 ├── network-standards-lab.md
 ├── dns-fundamentals-lab.md
-└── network-troubleshooting-lab.md
+├── network-troubleshooting-lab.md
+└── packet-analysis-lab.md
 ```
 
 Linux-specific network administration remains under:
 
 ```text
-linux/
+../linux/
 ```
 
 Examples include:
 
 ```text
-NetworkManager configuration
-Linux bridges
-Network teaming
+NetworkManager
+Linux Bridge
+Network Teaming
 OpenSSH
 NFS
-Samba
+Samba / CIFS
 firewalld
 SELinux
 BIND / Unbound
@@ -119,20 +94,22 @@ File:
 osi-model-lab.md
 ```
 
-Topics:
+Topics include:
 
 ```text
 OSI 7-Layer Model
 Encapsulation
 Decapsulation
 Protocol Data Units
-Layer 2 / Layer 3 / Layer 4 Addressing
 Hub
 Repeater
 Bridge
 Switch
 Router
 Gateway
+Layer 2 Addressing
+Layer 3 Addressing
+Layer 4 Ports
 ```
 
 Core relationships:
@@ -141,7 +118,7 @@ Core relationships:
 Layer 2
 → MAC Address
 → Ethernet Frame
-→ Switch
+→ Switch / Bridge
 
 Layer 3
 → IP Address
@@ -153,7 +130,7 @@ Layer 4
 → Port
 ```
 
-This layer model is also used as a troubleshooting framework throughout the networking labs.
+The OSI model is used throughout this directory as a troubleshooting framework rather than only as a theoretical model.
 
 ---
 
@@ -168,19 +145,21 @@ network-types-protocols-lab.md
 Topics include:
 
 ```text
-LAN
-MAN
-WAN
-Internet
+Transmission Methods
 Network Topologies
 Circuit Switching
 Packet Switching
-Protocol Concepts
-OSI vs TCP/IP
-TCP/IP Protocol Suite
+Cell Switching
+LAN
+MAN
+WAN
+Protocol Syntax
+Protocol Semantics
+Protocol Timing
+TCP/IP Model
 ```
 
-The objective is to understand how different network scopes and protocol layers work together before studying individual protocols in detail.
+The goal is to understand how network communication is structured before studying individual protocols in detail.
 
 ---
 
@@ -197,20 +176,19 @@ Topics include:
 ```text
 Ethernet
 IEEE 802.3
-Ethernet Frame
-MAC Address
-Frame Header
-Frame Trailer
+Ethernet Frames
+MAC Addresses
+Ethernet Headers
 FCS
 MTU
 Switching
 Collision Domains
 CSMA/CD
-Full Duplex
 Half Duplex
+Full Duplex
 ```
 
-A key relationship is:
+A core relationship is:
 
 ```text
 IP Packet
@@ -222,7 +200,7 @@ Ethernet Frame
 Delivered across a local link
 ```
 
-Ethernet concepts provide the foundation for later ARP and packet-analysis labs.
+Historical collision-domain concepts are preserved for context while modern switched full-duplex Ethernet behavior is distinguished where appropriate.
 
 ---
 
@@ -234,7 +212,7 @@ File:
 ipv4-addressing-lab.md
 ```
 
-Topics:
+Topics include:
 
 ```text
 32-bit IPv4 Addresses
@@ -252,7 +230,7 @@ Prefix Length
 Linux IPv4 Inspection
 ```
 
-Private IPv4 ranges reviewed:
+Private IPv4 ranges reviewed include:
 
 ```text
 10.0.0.0/8
@@ -262,10 +240,12 @@ Private IPv4 ranges reviewed:
 192.168.0.0/16
 ```
 
-Modern addressing is interpreted using:
+Modern IPv4 addressing is interpreted using:
 
 ```text
-IP Address + Prefix Length
+IP Address
++
+Prefix Length
 ```
 
 rather than assuming classful network boundaries.
@@ -280,7 +260,7 @@ File:
 ipv6-addressing-lab.md
 ```
 
-Topics:
+Topics include:
 
 ```text
 128-bit IPv6 Addresses
@@ -293,11 +273,11 @@ Link-Local Addresses
 Global Addresses
 IPv6 Loopback
 Interface Identifiers
-IPv6 Routing
 Dual Stack
+IPv6 Routing
 ```
 
-Important examples:
+Important examples include:
 
 ```text
 FE80::/10
@@ -332,16 +312,15 @@ ARP
 MAC Address
 ```
 
-Topics:
+Topics include:
 
 ```text
 ARP Request
 ARP Reply
 Ethernet Broadcast
-ARP Cache
-Linux Neighbor Table
+Neighbor Cache
 Direct Communication
-Gateway MAC Resolution
+Default Gateway MAC Resolution
 Historical RARP
 ```
 
@@ -357,7 +336,7 @@ Remote Destination
 → Resolve the gateway MAC
 ```
 
-The final IP destination and immediate Ethernet destination can therefore represent different systems.
+The final IP destination and immediate Ethernet destination can therefore identify different systems.
 
 ---
 
@@ -369,7 +348,7 @@ File:
 routing-fundamentals-lab.md
 ```
 
-Topics:
+Topics include:
 
 ```text
 Routing Tables
@@ -384,7 +363,7 @@ Longest Prefix Match
 Linux IPv4 Forwarding
 ```
 
-Basic decision model:
+A simplified routing decision model is:
 
 ```text
 Destination IP
@@ -396,7 +375,7 @@ Most Specific Matching Route
 Local Interface or Gateway
 ```
 
-Routing is treated as a host function as well as a router function.
+Routing is treated as both a router function and a host networking function.
 
 ---
 
@@ -408,7 +387,7 @@ File:
 routing-protocols-lab.md
 ```
 
-Topics:
+Topics include:
 
 ```text
 RIP
@@ -424,7 +403,7 @@ EGP
 BGP
 ```
 
-Core distinctions:
+Core distinctions include:
 
 ```text
 RIP
@@ -443,7 +422,7 @@ BGP
 → Inter-AS Routing
 ```
 
-The goal at this stage is to understand routing-protocol architecture rather than memorize vendor-specific router configuration.
+The focus is on protocol architecture rather than vendor-specific router configuration.
 
 ---
 
@@ -478,10 +457,10 @@ Ethernet
 → IEEE 802.3
 
 Internet Protocol Standards
-→ IETF / RFC ecosystem
+→ IETF / RFC Ecosystem
 ```
 
-Understanding standards helps distinguish protocol specifications from vendor-specific implementations.
+Understanding standards helps distinguish protocol specifications from vendor-specific implementation.
 
 ---
 
@@ -493,7 +472,7 @@ File:
 dns-fundamentals-lab.md
 ```
 
-Topics:
+Topics include:
 
 ```text
 DNS
@@ -512,7 +491,7 @@ Forward Lookup
 Reverse Lookup
 ```
 
-Important DNS records:
+Important DNS records include:
 
 ```text
 A
@@ -535,6 +514,12 @@ PTR
 
 SOA
 → Zone Authority Metadata
+
+TXT
+→ Text Data
+
+SRV
+→ Service Location
 ```
 
 DNS troubleshooting is treated separately from basic IP connectivity.
@@ -584,91 +569,757 @@ curl
 ethtool
 ```
 
-Tool selection depends on the layer being investigated.
+Tool selection depends on the question being investigated.
 
-| Question | Useful Tools |
-|---|---|
-| Is the interface operational? | `ip link`, `ethtool` |
-| Is addressing correct? | `ip addr` |
-| Can a local neighbor be resolved? | `ip neigh`, `arping` |
-| Is a route available? | `ip route`, `traceroute` |
-| Does DNS work? | `dig`, `host`, `getent` |
-| Is a port listening? | `ss`, `lsof` |
-| Is a remote TCP port reachable? | `nc` |
-| Which hosts or ports are visible in an authorized lab? | `nmap` |
-| Did the packet actually arrive? | `tcpdump`, `tshark` |
-| Does the application respond? | `curl` |
+```text
+Interface State
+→ ip link / ethtool
+
+Addressing
+→ ip addr
+
+Neighbor Resolution
+→ ip neigh / arping
+
+Routing
+→ ip route / traceroute
+
+DNS
+→ dig / host / getent
+
+Listening Sockets
+→ ss / lsof
+
+Remote TCP Reachability
+→ nc
+
+Authorized Host / Port Discovery
+→ nmap
+
+Packet Arrival
+→ tcpdump / tshark
+
+Application Response
+→ curl
+```
 
 ---
 
-# Troubleshooting Method
+# 12. Packet Analysis
 
-Troubleshooting is documented using:
+File:
 
 ```text
-Symptom
-   ↓
-Evidence
-   ↓
-Root Cause
-   ↓
-Resolution
-   ↓
-Verification
+packet-analysis-lab.md
 ```
 
-## Symptom
+Packet analysis connects networking theory to actual captured traffic.
 
-Describe exactly what failed.
-
-Example:
+Topics include:
 
 ```text
-The client cannot reach the remote HTTP service.
+Wireshark
+Packet Capture
+Packet List
+Packet Details
+Raw Packet Bytes
+IPv4 Header
+IPv6 Header
+TCP Header
+TCP Flags
+TCP vs UDP
+Ethernet II
+ARP Request / Reply
+ICMP
+IGMP
+Follow Stream
+Stream Filtering
+Flow Graph
+Latency Analysis
+Capture Filters
+Display Filters
 ```
 
-## Evidence
-
-Collect observable system or network state.
-
-Examples:
+A typical packet can be analyzed as:
 
 ```text
-ip addr
-ip route
-ip neigh
-ss
+Ethernet
+    ↓
+IP
+    ↓
+TCP / UDP / ICMP
+    ↓
+Application Protocol
+```
+
+Not every packet contains every layer.
+
+For example:
+
+```text
+ARP
+
+Ethernet
+   ↓
+ARP
+```
+
+while:
+
+```text
+TCP over IPv4
+
+Ethernet
+   ↓
+IPv4
+   ↓
+TCP
+   ↓
+Application Data
+```
+
+---
+
+# Packet Header Relationships
+
+Important protocol relationships include:
+
+```text
+Ethernet
+→ Source MAC
+→ Destination MAC
+→ EtherType
+```
+
+```text
+IPv4
+→ Source IP
+→ Destination IP
+→ TTL
+→ Protocol
+```
+
+```text
+IPv6
+→ Source IP
+→ Destination IP
+→ Hop Limit
+→ Next Header
+```
+
+```text
+TCP
+→ Source Port
+→ Destination Port
+→ Sequence Number
+→ Acknowledgment Number
+→ Flags
+→ Window
+```
+
+These fields make it possible to reconstruct what occurred during network communication.
+
+---
+
+# TCP Flags
+
+The classic TCP flags reviewed include:
+
+```text
+URG
+ACK
+PSH
+RST
+SYN
+FIN
+```
+
+Important operational interpretations include:
+
+```text
+SYN
+→ Connection establishment
+```
+
+```text
+ACK
+→ Acknowledgment information is valid
+```
+
+```text
+RST
+→ Connection reset / abort
+```
+
+```text
+FIN
+→ Normal connection shutdown
+```
+
+TCP flags should be interpreted together with packet direction, sequence numbers, acknowledgment numbers, and surrounding traffic.
+
+---
+
+# Follow Stream
+
+Wireshark can reconstruct packets belonging to one conversation.
+
+Conceptually:
+
+```text
+Full Packet Capture
+       ↓
+Select Relevant Packet
+       ↓
+Follow Stream
+       ↓
+Client / Server Conversation
+```
+
+This is useful when many simultaneous connections exist in the same capture.
+
+Stream analysis can help answer:
+
+```text
+What did the client request?
+
+What did the server return?
+
+Which packets belong to this communication?
+
+Did the application conversation complete?
+```
+
+---
+
+# Stream Filtering
+
+Once a relevant stream has been identified, the packet list can be narrowed to that conversation.
+
+```text
+Large Capture
+    ↓
+Identify Stream
+    ↓
+Filter Stream
+    ↓
+Inspect Related Packets Only
+```
+
+This reduces unrelated traffic while preserving the packet sequence associated with the incident.
+
+---
+
+# Flow Graph
+
+A flow graph visualizes communication direction and sequence.
+
+Conceptually:
+
+```text
+Client                         Server
+
+  |----------- SYN ------------->|
+  |<-------- SYN/ACK ------------|
+  |----------- ACK ------------->|
+  |                              |
+  |-------- Application -------->|
+  |<------- Application ---------|
+```
+
+Flow graphs can help identify:
+
+```text
+TCP Handshake Completion
+Request / Response Direction
+Communication Sequence
+Connection Shutdown
+The Point Where Communication Stops
+```
+
+The graph complements detailed packet inspection rather than replacing it.
+
+---
+
+# Latency Analysis
+
+Packet timestamps can help identify where visible delay appears in a transaction.
+
+A simplified model is:
+
+```text
+Client
+   ↓
+Request
+   ↓
+Network
+   ↓
+Server Processing
+   ↓
+Response
+   ↓
+Network
+   ↓
+Client
+```
+
+A large time gap does not automatically prove that the network is slow.
+
+Possible contributors include:
+
+```text
+Client Processing
+Network Delay
+Server Processing
+Application Delay
+Retransmission
+```
+
+The direction and surrounding packets must be inspected before assigning the cause.
+
+---
+
+# Time-Based Analysis
+
+Useful timing perspectives can include:
+
+```text
+Time Since Capture Start
+Time Since Previous Packet
+Time Since Previous Displayed Packet
+```
+
+A practical investigation model is:
+
+```text
+Compare Packet Timing
+      ↓
+Identify Large Gap
+      ↓
+Inspect Packet Before Gap
+      ↓
+Inspect Packet After Gap
+      ↓
+Determine Communication Direction
+      ↓
+Form Hypothesis
+```
+
+Packet timing is evidence, not automatic root-cause determination.
+
+---
+
+# Capture Filters
+
+Capture filters decide which packets are collected.
+
+```text
+Network Traffic
+      ↓
+Capture Filter
+      ↓
+Stored Packets
+```
+
+Packets excluded during capture cannot be recovered from that capture later.
+
+Capture filters can narrow traffic by:
+
+```text
+Host
+Network
+Protocol
+Port
+Broadcast
+Multicast
+```
+
+Examples of general BPF-style structures include:
+
+```text
+host HOST
+
+src host HOST
+
+dst host HOST
+
+net NETWORK/PREFIX
+
+port PORT
+
+tcp port PORT
+
+udp port PORT
+
+icmp
+```
+
+Capture filters should be narrow enough to reduce noise but broad enough to preserve troubleshooting context.
+
+---
+
+# Capture Filter Risk
+
+Overly restrictive filters can hide the actual cause of a problem.
+
+An application failure can depend on:
+
+```text
+ARP
+   ↓
+DNS
+   ↓
+TCP Handshake
+   ↓
+Application Traffic
+```
+
+Capturing only the final application port may remove evidence from earlier stages.
+
+When the failure location is not yet known, a broader capture combined with display filters can preserve more evidence.
+
+---
+
+# Display Filters
+
+Display filters operate after packets have already been captured.
+
+```text
+Stored Capture
+      ↓
+Display Filter
+      ↓
+Visible Packets
+```
+
+Non-matching packets remain in the capture.
+
+They are only hidden from the current view.
+
+Basic protocol-oriented filters can include:
+
+```text
+arp
+ip
+ipv6
+tcp
+udp
+icmp
+dns
+http
+```
+
+Decoded fields can also be used for more specific filtering.
+
+---
+
+# Capture Filter vs Display Filter
+
+This distinction is fundamental.
+
+```text
+Capture Filter
+→ Applied during capture
+→ Non-matching packets are not stored
+```
+
+```text
+Display Filter
+→ Applied after capture
+→ Non-matching packets remain stored
+→ They are only hidden
+```
+
+A useful troubleshooting strategy is:
+
+```text
+When uncertain:
+Broad Capture
+     ↓
+Targeted Display Filter
+```
+
+rather than discarding potentially useful evidence too early.
+
+---
+
+# Display Filter Operators
+
+Display filters can use comparison and search operators such as:
+
+```text
+==
+!=
+>
+<
+>=
+<=
+contains
+```
+
+Conceptual examples include:
+
+```text
+ip.src == SOURCE_IP
+```
+
+```text
+tcp.srcport != PORT
+```
+
+```text
+frame.time_relative > VALUE
+```
+
+```text
+tcp.window_size < VALUE
+```
+
+```text
+http contains "GET"
+```
+
+Actual field availability depends on the decoded protocol and packet capture.
+
+---
+
+# TCP Analysis Filters
+
+Wireshark provides TCP analysis fields that can help locate suspicious traffic.
+
+Examples introduced include concepts such as:
+
+```text
+tcp.analysis.flags
+tcp.analysis.zero_window
+```
+
+These should be treated as analysis hints.
+
+A Wireshark-generated analysis label is not automatically the root cause.
+
+The surrounding flow and system evidence must still be interpreted.
+
+---
+
+# Saved Filters
+
+Frequently used display filters can be saved for repeated analysis.
+
+The operational value is:
+
+```text
+Common Troubleshooting Question
+       ↓
+Reusable Display Filter
+       ↓
+Faster Consistent Analysis
+```
+
+The useful concept is repeatability rather than the specific user-interface button used to save a filter.
+
+---
+
+# Packet Analysis Workflow
+
+A practical workflow is:
+
+```text
+1. Define the symptom.
+
+2. Identify relevant endpoints.
+
+3. Capture broad enough traffic.
+
+4. Confirm Layer 2 / Layer 3 behavior.
+
+5. Apply display filters.
+
+6. Identify the relevant TCP or application stream.
+
+7. Follow the stream.
+
+8. Inspect the flow graph.
+
+9. Compare timestamps.
+
+10. Correlate packet evidence with system evidence.
+
+11. Identify the failing layer.
+
+12. Verify after resolution.
+```
+
+---
+
+# Packet Analysis and Troubleshooting
+
+Packet capture answers a different question from configuration inspection.
+
+```text
+Configuration
+→ What should happen?
+```
+
+```text
+Packet Capture
+→ What actually crossed the interface?
+```
+
+Useful packet-analysis questions include:
+
+```text
+Did the client send the request?
+
+Did the request reach the server?
+
+Did the server respond?
+
+Did the response leave the server?
+
+Did ARP resolution occur?
+
+Did DNS resolution occur?
+
+Was the TCP handshake completed?
+
+Was the connection reset?
+
+Did the application send data?
+
+Where did the communication stop?
+
+Where did the largest timing gap occur?
+```
+
+---
+
+# Example: TCP Connection Failure
+
+```text
+Client Cannot Connect
+       ↓
+SYN sent?
+       ↓
+SYN reaches server?
+       ↓
+Server responds?
+```
+
+Possible observations include:
+
+```text
+No SYN reaches server
+→ Investigate network path / firewall before the server
+```
+
+```text
+SYN reaches server
+RST returns
+→ Investigate listening service / connection rejection
+```
+
+```text
+SYN
+SYN/ACK
+ACK
+→ TCP connection established
+→ Investigate higher application layers
+```
+
+---
+
+# Example: DNS Failure
+
+A packet-oriented DNS workflow is:
+
+```text
+Client Generates DNS Query?
+       ↓
+Query Leaves Client?
+       ↓
+Query Reaches Resolver?
+       ↓
+Resolver Responds?
+       ↓
+Response Returns to Client?
+```
+
+Packet evidence should be correlated with:
+
+```text
 dig
-nc
-tcpdump
+host
+getent
+Resolver Configuration
+DNS Server Logs
 ```
 
-Do not replace evidence with assumptions.
+---
 
-## Root Cause
+# Example: Slow Application
 
-Identify which layer actually caused the failure.
-
-Examples:
+A slow service can be analyzed using:
 
 ```text
-Incorrect route
-Missing gateway
-ARP failure
-DNS configuration error
-Firewall rule
-Service not listening
+TCP Handshake Timing
+        ↓
+Application Request
+        ↓
+Response Delay
+        ↓
+Data Transfer
+        ↓
+Acknowledgments
 ```
 
-## Resolution
+Useful Wireshark functions include:
 
-Make the smallest controlled configuration change required to correct the issue.
+```text
+Follow Stream
+Flow Graph
+Packet Timestamps
+Display Filters
+```
 
-## Verification
+A visible delay must be interpreted according to direction and protocol context before deciding whether the network or application is responsible.
 
-Repeat the original test and verify the affected layers.
+---
 
-A fix is not complete until normal behavior is demonstrated.
+# Packet Capture Is Evidence
+
+Packet analysis can reveal symptoms without proving the underlying cause.
+
+For example:
+
+```text
+TCP Retransmission
+```
+
+can be related to multiple conditions.
+
+Possible areas can include:
+
+```text
+Packet Loss
+Congestion
+Network Path
+Firewall Behavior
+Remote Endpoint Behavior
+```
+
+Do not conclude the root cause from one packet label alone.
+
+Correlate:
+
+```text
+Topology
+Configuration
+Logs
+Socket State
+Packet Flow
+Application Behavior
+```
 
 ---
 
@@ -694,7 +1345,7 @@ A general troubleshooting path is:
 8. Application
 ```
 
-This avoids immediately changing application configuration when the actual failure exists at a lower layer.
+Packet capture can be inserted wherever direct traffic evidence is required.
 
 ---
 
@@ -710,6 +1361,8 @@ Neighbor / Gateway Reachable?
 Correct Route?
       ↓
 TCP Port Reachable?
+      ↓
+SYN Reaches Server?
       ↓
 SSH Listening?
       ↓
@@ -728,35 +1381,10 @@ ip route
 traceroute
 nc
 ss
+tcpdump
+Wireshark
 systemctl
 journalctl
-```
-
----
-
-# Example: DNS Failure
-
-```text
-Network Connectivity
-       ↓
-DNS Server Reachable?
-       ↓
-Direct DNS Query Works?
-       ↓
-Resolver Configuration
-       ↓
-NSS Configuration
-       ↓
-Application Lookup
-```
-
-Useful tools:
-
-```text
-ip route
-dig
-getent
-tcpdump
 ```
 
 ---
@@ -768,6 +1396,8 @@ Network Reachability
        ↓
 TCP 80 / 443
        ↓
+TCP Handshake
+       ↓
 Listening Socket
        ↓
 Firewall
@@ -777,13 +1407,15 @@ HTTP Request
 Application Response
 ```
 
-Useful tools:
+Useful tools can include:
 
 ```text
+ip
 traceroute
 nc
 ss
 tcpdump
+Wireshark
 curl
 ```
 
@@ -803,7 +1435,7 @@ Examples include:
 
 ```text
 ip addr add
-→ Runtime IP state
+→ Runtime address change
 ```
 
 ```text
@@ -811,17 +1443,17 @@ NetworkManager profile
 → Persistent network configuration
 ```
 
-This same principle appears throughout the Linux infrastructure labs.
+This same distinction appears throughout Linux and container infrastructure.
 
 ---
 
 # Legacy and Modern Tools
 
-Some course materials contain older Linux networking commands.
+Some training materials contain historical Linux networking commands and terminology.
 
-They are preserved for understanding, while modern alternatives are also documented.
+These are preserved for context while modern alternatives are also documented.
 
-Examples:
+Examples include:
 
 ```text
 route
@@ -835,62 +1467,27 @@ netstat
 
 ifconfig
 → ip addr / ip link
+
+nmap -sP
+→ nmap -sn
+
+nmap -PN
+→ nmap -Pn
 ```
 
-The goal is to understand both the course material and the tools commonly used on current Linux systems.
-
----
-
-# Evidence Policy
-
-This repository does not treat course screenshots or example values as actual lab evidence.
-
-Do not fabricate:
-
-```text
-IP addresses
-MAC addresses
-Interface names
-Routes
-PIDs
-Packet captures
-DNS responses
-Port-scan results
-Command output
-```
-
-Actual environment-specific evidence should come from the system where the lab is performed.
-
----
-
-# Security Principles
-
-Networking tools can expose or affect systems.
-
-The following rules apply:
-
-```text
-Use scanning only on authorized networks.
-Do not capture unrelated user traffic.
-Do not publish credentials or secrets.
-Do not publish SSH private keys.
-Do not publish sensitive packet payloads.
-Do not disconnect remote management interfaces without a recovery path.
-```
-
-Packet captures should be reviewed before they are committed to a public repository.
+Historical protocol terminology is treated similarly.
 
 ---
 
 # Relationship to Linux Labs
 
-General network theory is documented here under:
+General networking theory is documented under:
 
 ```text
 network/
 ```
 
-Operating-system-specific network administration remains under:
+Operating-system-specific implementation remains under:
 
 ```text
 linux/
@@ -903,7 +1500,9 @@ network/
 → Why ARP exists
 → How routing works
 → How DNS resolution works
+→ How packet headers are structured
 → How packets move through layers
+→ How packet captures expose communication behavior
 ```
 
 while:
@@ -912,6 +1511,7 @@ while:
 linux/
 → NetworkManager configuration
 → Linux bridge configuration
+→ Network teaming
 → SSH administration
 → firewalld
 → SELinux network policy
@@ -920,7 +1520,161 @@ linux/
 → NFS / Samba
 ```
 
-This separation keeps the repository organized by responsibility.
+This keeps network theory separate from Linux administration while preserving their relationship.
+
+---
+
+# Relationship to Docker
+
+The networking foundation in this directory directly supports the Docker learning path.
+
+Examples include:
+
+```text
+Linux Bridge
++
+Ethernet Switching
+→ Docker Bridge Networking
+```
+
+```text
+IP Addressing
++
+Routing
+→ Container Connectivity
+```
+
+```text
+TCP / UDP Ports
+→ Docker Port Publishing
+```
+
+```text
+DNS
+→ Container Name Resolution
+```
+
+```text
+Packet Analysis
+→ Container Network Troubleshooting
+```
+
+Docker networking should therefore be understood as an application of existing Linux and network concepts rather than as an isolated Docker feature.
+
+---
+
+# Troubleshooting Method
+
+Networking incidents should follow:
+
+```text
+Symptom
+   ↓
+Evidence
+   ↓
+Root Cause
+   ↓
+Resolution
+   ↓
+Verification
+```
+
+## Symptom
+
+Describe exactly what failed.
+
+## Evidence
+
+Collect observable state using appropriate tools.
+
+## Root Cause
+
+Identify the layer or configuration actually responsible for the failure.
+
+## Resolution
+
+Apply the smallest controlled change necessary to correct the issue.
+
+## Verification
+
+Repeat the original test and verify that expected behavior has returned.
+
+---
+
+# Evidence Policy
+
+Course screenshots and example values are educational examples.
+
+They are not recorded as actual lab evidence.
+
+Do not fabricate:
+
+```text
+IP Addresses
+MAC Addresses
+Interface Names
+Routes
+DNS Responses
+Packet Captures
+TCP Sequence Numbers
+TCP Acknowledgment Numbers
+Packet Counts
+Latency Measurements
+Port Scan Results
+Command Output
+```
+
+Actual environment-specific evidence should come from an authorized lab environment.
+
+---
+
+# Packet Capture Safety
+
+Packet captures can contain sensitive information.
+
+Possible sensitive content includes:
+
+```text
+Authentication Data
+Internal IP Addresses
+Hostnames
+Cookies
+Tokens
+HTTP Payloads
+DNS Names
+Application Content
+User Information
+```
+
+Before storing or publishing packet evidence:
+
+```text
+Review the capture.
+Remove unrelated traffic.
+Remove secrets.
+Remove credentials.
+Remove sensitive identifiers where required.
+```
+
+Capture only traffic from systems and networks that are authorized for analysis.
+
+---
+
+# Security Principles
+
+Networking tools can expose information or affect system availability.
+
+Important principles include:
+
+```text
+Scan only authorized networks.
+Capture only authorized traffic.
+Do not expose credentials.
+Do not publish sensitive packet payloads.
+Do not disable remote-management interfaces without a recovery path.
+Do not treat ping success as proof of application availability.
+Do not treat one Wireshark analysis label as automatic root cause.
+```
 
 ---
 
@@ -940,28 +1694,25 @@ Dynamic Routing Protocols
 Network Standards
 DNS Fundamentals
 Network Troubleshooting
-```
-
-The next major area is:
-
-```text
 Packet Analysis
+Wireshark Stream Analysis
+Flow Graph Analysis
+Latency Analysis
+Capture Filtering
+Display Filtering
 ```
 
-The packet-analysis section will build on:
+The networking foundation now covers both:
 
 ```text
-Ethernet Frames
-ARP
-IP
-ICMP
-TCP
-UDP
-DNS
-Packet Capture
+Protocol Theory
++
+Traffic Observation
++
+Evidence-Based Troubleshooting
 ```
 
-and focus on reading actual protocol headers and communication flows.
+This provides a foundation for Docker, Kubernetes, cloud networking, and network security.
 
 ---
 
@@ -970,11 +1721,10 @@ and focus on reading actual protocol headers and communication flows.
 As the infrastructure learning path progresses, this directory can expand into areas such as:
 
 ```text
-TCP / UDP Deep Dive
-Packet Analysis
 DHCP
 VLAN
 NAT
+Advanced TCP Analysis
 Network Segmentation
 Load Balancing
 Cloud VPC Networking
@@ -983,6 +1733,7 @@ Network ACLs
 VPN
 Container Networking
 Kubernetes Networking
+Overlay Networks
 Network Security
 ```
 
@@ -992,23 +1743,29 @@ New files should be added only when those areas are actually studied or reproduc
 
 # What This Directory Demonstrates
 
-This directory is intended to demonstrate progression from network fundamentals toward infrastructure troubleshooting.
+This directory demonstrates progression from network fundamentals toward evidence-driven infrastructure troubleshooting.
 
 ```text
 Theory
    ↓
 Protocol Understanding
    ↓
-Linux Observation
+System Observation
    ↓
-Traffic Verification
+Packet Capture
+   ↓
+Stream Analysis
+   ↓
+Flow Analysis
+   ↓
+Timing Analysis
    ↓
 Troubleshooting
    ↓
-Cloud Infrastructure
+Verification
 ```
 
-The objective is not to collect commands.
+The objective is not to collect commands or memorize packet headers.
 
 The objective is to understand:
 
@@ -1017,9 +1774,17 @@ What should happen?
 
 What actually happened?
 
+What do the headers show?
+
+Which packets belong to the same conversation?
+
+Where did communication stop?
+
+Where did the delay occur?
+
 Which layer failed?
 
 What evidence proves it?
 
-How was the system verified after recovery?
+How was recovery verified?
 ```
