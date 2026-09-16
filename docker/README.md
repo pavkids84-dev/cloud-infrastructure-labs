@@ -2,7 +2,7 @@
 
 This directory documents my Docker and container-infrastructure studies as part of my cloud infrastructure engineering learning path.
 
-The focus is not only on Docker commands, but on understanding how containers are built from Linux kernel features, how images become running workloads, how reproducible images are built, and how container infrastructure connects to cloud-native application delivery.
+The focus is not only on Docker commands, but on understanding how containers are built from Linux kernel features, how images become running workloads, how reproducible images are built and distributed, and how container infrastructure connects to cloud-native application delivery.
 
 The learning path currently progresses through:
 
@@ -55,7 +55,9 @@ docker/
 ├── cloud-computing-cloud-native-foundations-lab.md
 ├── docker-engine-foundations-lab.md
 ├── image-container-lifecycle-lab.md
-└── dockerfile-image-build-lab.md
+├── dockerfile-image-build-lab.md
+├── container-management-lab.md
+└── registry-management-lab.md
 ```
 
 Additional files will be added only after the corresponding topics are studied.
@@ -301,18 +303,6 @@ Image Layers
 Docker Image
 ```
 
-Runtime behavior is separated from build behavior.
-
-```text
-RUN
-→ Build time
-```
-
-```text
-CMD / ENTRYPOINT
-→ Container runtime
-```
-
 Multi-stage builds separate build tooling from the final runtime image.
 
 ```text
@@ -323,7 +313,127 @@ Artifact
 Runtime Stage
 ```
 
-This can reduce runtime image size and unnecessary software.
+---
+
+# 6. Docker Container Management
+
+File:
+
+```text
+container-management-lab.md
+```
+
+Topics include:
+
+```text
+docker cp
+docker diff
+docker commit
+docker inspect
+docker events
+docker logs
+docker export
+docker import
+docker save
+docker load
+docker top
+docker stats
+docker system df
+```
+
+The operational troubleshooting model is:
+
+```text
+Container Failure
+      ↓
+docker ps -a
+      ↓
+docker inspect
+      ↓
+docker logs
+      ↓
+docker top
+      ↓
+docker stats
+      ↓
+docker diff
+```
+
+Additional evidence can be collected using:
+
+```text
+docker events
+docker cp
+Linux system logs
+Host resource state
+```
+
+Container evidence should be collected before destructive recovery actions when root-cause analysis is required.
+
+A fundamental archive distinction is:
+
+```text
+export / import
+→ Container filesystem workflow
+```
+
+```text
+save / load
+→ Docker image workflow
+```
+
+---
+
+# 7. Docker Registry Management
+
+File:
+
+```text
+registry-management-lab.md
+```
+
+Topics include:
+
+```text
+Docker Registry
+Docker Hub
+Repositories
+Image References
+docker tag
+docker login
+docker push
+docker pull
+Private Registry
+Multi-Host Image Distribution
+CI/CD Context
+Registry Security
+```
+
+The image distribution workflow is:
+
+```text
+Dockerfile
+    ↓
+Build
+    ↓
+Image
+    ↓
+Tag
+    ↓
+Push
+    ↓
+Registry
+    ↓
+Pull
+    ↓
+Deployment Host
+    ↓
+Container
+```
+
+A registry separates image build from image execution and provides a common distribution point for multiple hosts.
+
+This concept becomes especially important in Kubernetes and other container-orchestration environments.
 
 ---
 
@@ -361,6 +471,9 @@ Filesystem Permissions
 
 systemd
 → Docker service management
+
+Linux Storage
+→ Docker host storage
 
 Networking
 → Container networking
@@ -405,6 +518,7 @@ Container-to-Container Communication
 DNS-Based Service Discovery
 Host Networking
 Overlay Networking
+Registry Connectivity
 ```
 
 ---
@@ -462,13 +576,17 @@ Image state
 Container state
 Container exit state
 Container logs
+Docker events
+Container filesystem changes
+Process state
+Resource usage
 Network configuration
 Port mappings
 Volume configuration
-Resource usage
+Registry state
 ```
 
-Do not immediately recreate or rebuild a failing workload before collecting useful evidence.
+Do not immediately recreate, restart, or rebuild a failing workload before collecting useful evidence.
 
 ---
 
@@ -496,10 +614,13 @@ ENTRYPOINT
 CMD
 Environment Variables
 Container User
+Container State
+Exit Code
+Application Logs
+Process State
 Published Ports
 Mounted Storage
-Application Logs
-Process Exit State
+Resource Usage
 ```
 
 A successful image build does not prove that a containerized application will run correctly.
@@ -541,6 +662,8 @@ Container-local runtime changes can disappear when a container is removed and re
 Docker introduces an image-based deployment model.
 
 ```text
+Source Code
+    ↓
 Dockerfile
     ↓
 Image
@@ -551,6 +674,115 @@ Container Deployment
 ```
 
 This supports repeatable deployment and connects directly to CI/CD and immutable-infrastructure practices.
+
+---
+
+# Container Evidence
+
+A container should be treated as an observable runtime object.
+
+Useful evidence sources include:
+
+```text
+docker inspect
+docker logs
+docker events
+docker diff
+docker top
+docker stats
+docker cp
+```
+
+Different tools answer different questions.
+
+```text
+inspect
+→ What is the configured/runtime state?
+
+logs
+→ What did the application report?
+
+events
+→ What lifecycle actions occurred?
+
+diff
+→ What changed in the writable filesystem?
+
+top
+→ What processes are running?
+
+stats
+→ What resources are being consumed?
+
+cp
+→ What files can be preserved for investigation?
+```
+
+---
+
+# Image Archive Models
+
+Docker provides different archive workflows.
+
+```text
+docker export / import
+→ Container filesystem
+```
+
+```text
+docker save / load
+→ Docker image
+```
+
+The selected workflow should match the Docker object that needs to be preserved or transferred.
+
+---
+
+# Registry-Based Delivery
+
+Container images can be treated as deployable artifacts.
+
+```text
+Build
+ ↓
+Image
+ ↓
+Registry
+ ↓
+Deployment
+```
+
+The registry becomes a dependency for:
+
+```text
+Image Distribution
+Versioned Deployment
+CI/CD
+Multi-Host Infrastructure
+Container Orchestration
+```
+
+---
+
+# Registry Security
+
+Registry infrastructure is part of the application software supply chain.
+
+Important areas include:
+
+```text
+Authentication
+Authorization
+TLS
+Credential Management
+Trusted Image Sources
+Image Digests
+Image Scanning
+Access Logging
+Storage Protection
+```
+
+Registry credentials must not be committed to Git.
 
 ---
 
@@ -567,8 +799,6 @@ Version-Control Metadata
 Temporary Content
 Sensitive Local Files
 ```
-
-Build contexts should be intentionally designed rather than treated as arbitrary directory uploads.
 
 ---
 
@@ -682,6 +912,8 @@ Avoid unnecessary build tools in runtime images.
 Use multi-stage builds when appropriate.
 Review exposed and published ports.
 Keep persistent data separate from replaceable containers.
+Protect registry credentials.
+Use trusted registry sources.
 Do not assume a container is a complete security boundary.
 ```
 
@@ -707,9 +939,12 @@ MAC Addresses
 Network IDs
 Volume IDs
 File Ownership
-Registry Results
+Registry Addresses
+Registry Authentication Results
+Push / Pull Results
 Exit Codes
 Image Sizes
+Resource Metrics
 Command Output
 ```
 
@@ -719,9 +954,9 @@ Actual environment-specific evidence must come from the lab environment.
 
 # Historical Material Policy
 
-The Docker course contains historical terminology, products, versions, and installation methods.
+The Docker course contains historical terminology, products, versions, installation methods, and service policies.
 
-Examples can include:
+Examples include:
 
 ```text
 Docker Toolbox
@@ -732,11 +967,12 @@ Older Docker versions
 Historical parent/child image terminology
 Historical storage drivers
 MAINTAINER
+Historical Docker Hub repository quotas
 ```
 
 These are preserved as course context.
 
-Current infrastructure concepts should be distinguished from historical implementation details.
+Current infrastructure concepts should be distinguished from historical product policies.
 
 ---
 
@@ -757,7 +993,7 @@ Docker Client / Daemon / Registry
 Docker Installation Concepts
 Docker Images
 Image Layers
-Image Distribution
+Image Distribution Basics
 Container Creation
 Container Lifecycle
 Container PID 1
@@ -773,24 +1009,35 @@ Container User
 Multi-Stage Builds
 Volume Fundamentals
 Image History
+Container File Transfer
+Container Filesystem Diff
+Container Commit
+Container Inspection
+Container Logs and Events
+Container Export / Import
+Image Save / Load
+Container Process Monitoring
+Container Resource Monitoring
+Docker Storage Usage
+Docker Hub
+Image Tagging and Push
+Private Registry Fundamentals
 ```
 
 The next major topics are:
 
 ```text
-Container Management
-File Copy and Filesystem Changes
-Container Commit
-Inspection
-Logs and Events
-Image Export / Import
-Image Save / Load
-Resource Statistics
-Docker Hub
-Private Registry
 Docker Networking
+Bridge Network
+Custom Network
+Shared Container Network Namespace
+Host Network
 Docker Compose
-Docker Clustering
+YAML
+Multi-Container Applications
+Container Clustering
+Docker Swarm
+Kubernetes Introduction
 ```
 
 ---
@@ -817,4 +1064,4 @@ Infrastructure as Code
 Cloud Security
 ```
 
-The objective is to understand not only how to run containers, but how to build, diagnose, secure, and operate containerized infrastructure.
+The objective is to understand not only how to run containers, but how to build, inspect, distribute, diagnose, secure, and operate containerized infrastructure.
