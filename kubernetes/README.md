@@ -2,9 +2,9 @@
 
 This directory documents my Kubernetes learning path as part of my cloud infrastructure engineering studies.
 
-The focus is not only on `kubectl` commands, but on understanding Kubernetes as an API-driven desired-state system built on Linux, networking, containers, storage, and distributed control-plane components.
+The focus is not only on `kubectl` commands, but on understanding Kubernetes as an API-driven desired-state platform built on Linux, networking, container runtimes, distributed control-plane components, and declarative infrastructure.
 
-The learning path begins with:
+The learning path currently progresses through:
 
 ```text
 Docker and Containers
@@ -13,7 +13,9 @@ Container Clustering
         ↓
 Kubernetes Architecture
         ↓
-Cluster Installation
+Local Cluster with Minikube
+        ↓
+Cluster Bootstrap with kubeadm
         ↓
 kubectl
         ↓
@@ -26,6 +28,8 @@ Services
 Deployments
         ↓
 Security
+        ↓
+Helm
         ↓
 Storage
         ↓
@@ -41,7 +45,8 @@ Current files:
 ```text
 kubernetes/
 ├── README.md
-└── kubernetes-architecture-foundations-lab.md
+├── kubernetes-architecture-foundations-lab.md
+└── minikube-local-cluster-lab.md
 ```
 
 Additional files will be added only after the corresponding Kubernetes topics are actually studied.
@@ -102,6 +107,68 @@ Containers
 
 ---
 
+# 2. Minikube Local Cluster
+
+File:
+
+```text
+minikube-local-cluster-lab.md
+```
+
+Topics include:
+
+```text
+Kubernetes Installation Methods
+Minikube
+Local Kubernetes Clusters
+minikube start
+minikube status
+kubectl
+kubeconfig
+kubectl cluster-info
+Kubernetes Nodes
+Node Ready State
+Minikube Host Access
+System Components
+Kubernetes Dashboard
+Local Cluster Troubleshooting
+```
+
+The local-cluster workflow is:
+
+```text
+Install Minikube
+      ↓
+Start Cluster
+      ↓
+Verify Minikube
+      ↓
+Verify API Access
+      ↓
+Verify Node
+      ↓
+Inspect System Components
+```
+
+Minikube, Kubernetes, and `kubectl` have separate responsibilities.
+
+```text
+Minikube
+→ Local cluster environment
+```
+
+```text
+Kubernetes
+→ Orchestration platform
+```
+
+```text
+kubectl
+→ API client
+```
+
+---
+
 # API-Driven Architecture
 
 Kubernetes infrastructure is managed through API objects.
@@ -116,7 +183,7 @@ kube-apiserver
 Kubernetes Objects
 ```
 
-The API server should be treated as the central entry point for cluster state management.
+The API server is the central interface for cluster state management.
 
 ---
 
@@ -142,34 +209,23 @@ Act
 Observe Again
 ```
 
-This reconciliation model is central to Kubernetes operations.
-
 ---
 
 # Control Plane
 
-The control plane contains cluster-management components such as:
+The core control-plane responsibilities include:
 
 ```text
 kube-apiserver
-etcd
-kube-scheduler
-kube-controller-manager
-```
-
-A simplified responsibility model is:
-
-```text
-API Server
-→ API access and cluster-state interface
+→ Kubernetes API
 
 etcd
 → Cluster state storage
 
-Scheduler
+kube-scheduler
 → Workload placement
 
-Controllers
+kube-controller-manager
 → Desired-state reconciliation
 ```
 
@@ -203,7 +259,7 @@ Container
 
 # Container Runtime Architecture
 
-Kubernetes node execution should be understood through the Container Runtime Interface.
+Kubernetes node execution is understood through the Container Runtime Interface.
 
 ```text
 kubelet
@@ -217,7 +273,49 @@ OCI Runtime
 Linux Container
 ```
 
-Docker images remain relevant even though Kubernetes does not require Docker Engine as its runtime integration layer.
+Docker images remain relevant even when Docker Engine is not the Kubernetes runtime integration layer.
+
+---
+
+# kubeconfig and Client Context
+
+`kubectl` requires connection configuration.
+
+```text
+kubectl
+   ↓
+kubeconfig
+   ↓
+Cluster
+User
+Context
+   ↓
+API Server
+```
+
+Client configuration and cluster health should be treated as separate troubleshooting layers.
+
+---
+
+# Cluster Verification
+
+A local-cluster verification sequence is:
+
+```text
+Environment Running?
+      ↓
+API Reachable?
+      ↓
+Node Registered?
+      ↓
+Node Ready?
+      ↓
+System Components Running?
+      ↓
+Application Workloads
+```
+
+Do not start application troubleshooting before confirming cluster foundations.
 
 ---
 
@@ -242,11 +340,13 @@ Security
 Networking
 ```
 
+A Kubernetes node remains a real operating-system environment.
+
 ---
 
 # Network Foundations
 
-General network concepts are documented under:
+General networking concepts are documented under:
 
 ```text
 ../network/
@@ -337,25 +437,50 @@ Verification
 Potential layers include:
 
 ```text
-Application
-Container
+Client Configuration
+Kubernetes API
+Control Plane
+Worker Node
+Container Runtime
 Pod
 Controller
 Service
 Network
 Storage
-Worker Node
-Container Runtime
-kubelet
-Control Plane
-Kubernetes API
+Application
 ```
+
+---
+
+# Local Cluster Troubleshooting
+
+A Minikube-focused troubleshooting sequence is:
+
+```text
+Minikube Environment
+       ↓
+minikube status
+       ↓
+kubeconfig / Context
+       ↓
+kubectl cluster-info
+       ↓
+kubectl get nodes
+       ↓
+Node Ready
+       ↓
+System Components
+       ↓
+Application
+```
+
+This separates local-environment failures from Kubernetes workload failures.
 
 ---
 
 # Runtime vs Desired State
 
-Kubernetes introduces an especially important distinction:
+Kubernetes introduces an important distinction:
 
 ```text
 Desired State
@@ -363,16 +488,19 @@ vs
 Observed Runtime State
 ```
 
-A manifest can define the intended state while:
+A manifest describes intent.
+
+Runtime observation determines what actually occurred.
+
+Relevant evidence can later include:
 
 ```text
 kubectl get
 kubectl describe
 kubectl logs
 Events
+Node State
 ```
-
-later provide evidence about what actually occurred.
 
 ---
 
@@ -380,7 +508,7 @@ later provide evidence about what actually occurred.
 
 Security should be treated as part of Kubernetes architecture.
 
-Future topics in this directory include:
+Future topics include:
 
 ```text
 API Authentication
@@ -410,6 +538,8 @@ Pod Addresses
 Container IDs
 API Server Addresses
 Runtime IDs
+Minikube Addresses
+Dashboard URLs
 Scheduler Decisions
 RBAC Results
 Storage IDs
@@ -422,20 +552,21 @@ Actual evidence must come from an authorized lab environment.
 
 # Historical Material Policy
 
-The Kubernetes course contains historical versions, products, commands, and ecosystem components.
+The Kubernetes course contains historical versions, tools, commands, and ecosystem components.
 
-Examples can include:
+Examples include:
 
 ```text
 Older Kubernetes versions
+Older Minikube versions
+VirtualBox-based Minikube examples
 Historical Docker runtime integration
 Heapster
 rkt
-Older installation procedures
-Legacy API versions
+Legacy Kubernetes API versions
 ```
 
-These should be preserved as course context while modern architectural concepts are distinguished when necessary.
+These are preserved as course context while current architectural concepts are distinguished when necessary.
 
 ---
 
@@ -464,15 +595,26 @@ CNI Introduction
 Cluster DNS Introduction
 Ingress Introduction
 Control Plane HA Introduction
+Kubernetes Installation Methods Overview
+Minikube
+Local Cluster Startup
+kubeconfig Introduction
+Cluster API Verification
+Node Verification
+Minikube Host Inspection
+System Component Observation
+Kubernetes Dashboard Introduction
 ```
 
 The next major topics are:
 
 ```text
-Kubernetes Installation Methods
-Minikube
 kubeadm
-Cluster Bootstrap
+Node Preparation
+Control Plane Bootstrap
+CNI Installation
+Worker Join
+Cluster Component Verification
 kubectl
 Pods
 ```
