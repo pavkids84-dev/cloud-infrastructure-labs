@@ -2,7 +2,7 @@
 
 This directory documents my Docker and container-infrastructure studies as part of my cloud infrastructure engineering learning path.
 
-The focus is not only on Docker commands, but on understanding how containers are built from Linux kernel features, how images become running workloads, how reproducible images are built and distributed, and how container infrastructure connects to cloud-native application delivery.
+The focus is not only on Docker commands, but on understanding how containers are built from Linux kernel features, how images become running workloads, how reproducible images are built and distributed, and how container networking connects Linux networking to cloud-native application delivery.
 
 The learning path currently progresses through:
 
@@ -57,7 +57,8 @@ docker/
 ├── image-container-lifecycle-lab.md
 ├── dockerfile-image-build-lab.md
 ├── container-management-lab.md
-└── registry-management-lab.md
+├── registry-management-lab.md
+└── docker-networking-lab.md
 ```
 
 Additional files will be added only after the corresponding topics are studied.
@@ -227,18 +228,6 @@ docker exec
 Image vs Container Lifecycle
 ```
 
-The core relationship is:
-
-```text
-Registry
-   ↓
-Image
-   ↓
-Container
-   ↓
-Main Process
-```
-
 A fundamental runtime principle is:
 
 ```text
@@ -305,14 +294,6 @@ Docker Image
 
 Multi-stage builds separate build tooling from the final runtime image.
 
-```text
-Build Stage
-    ↓
-Artifact
-    ↓
-Runtime Stage
-```
-
 ---
 
 # 6. Docker Container Management
@@ -359,28 +340,7 @@ docker stats
 docker diff
 ```
 
-Additional evidence can be collected using:
-
-```text
-docker events
-docker cp
-Linux system logs
-Host resource state
-```
-
 Container evidence should be collected before destructive recovery actions when root-cause analysis is required.
-
-A fundamental archive distinction is:
-
-```text
-export / import
-→ Container filesystem workflow
-```
-
-```text
-save / load
-→ Docker image workflow
-```
 
 ---
 
@@ -431,9 +391,96 @@ Deployment Host
 Container
 ```
 
-A registry separates image build from image execution and provides a common distribution point for multiple hosts.
+---
 
-This concept becomes especially important in Kubernetes and other container-orchestration environments.
+# 8. Docker Networking
+
+File:
+
+```text
+docker-networking-lab.md
+```
+
+Topics include:
+
+```text
+Docker Network Drivers
+Linux Network Namespaces
+Bridge Networking
+Custom Bridge Networks
+Container Name Communication
+Container Network Namespace Sharing
+Host Networking
+None Network
+Macvlan
+Overlay Networking
+Docker Network Troubleshooting
+```
+
+The default conceptual model is:
+
+```text
+Container
+    ↓
+Network Namespace
+    ↓
+Virtual Interface
+    ↓
+Docker Bridge
+    ↓
+Host Network
+```
+
+Docker networking directly reuses Linux and general networking concepts.
+
+```text
+Linux Network Namespace
+→ Container Network Isolation
+
+Linux Bridge
+→ Docker Bridge Networking
+
+IP Subnet
+→ Docker Network Addressing
+
+Gateway / Routing
+→ Container Reachability
+
+DNS / Naming
+→ Container Name Communication
+
+TCP / UDP Ports
+→ Container Services
+```
+
+A custom network can group related containers into an intentional communication domain.
+
+```text
+Custom Docker Network
+       │
+       ├── Container A
+       └── Container B
+```
+
+Docker also supports intentionally sharing network namespaces.
+
+```text
+Container A
+      ┐
+      ├── Shared Network Namespace
+Container B
+      ┘
+```
+
+Host networking instead uses:
+
+```text
+Container Process
+      ↓
+Host Network Namespace
+```
+
+Overlay networking introduces the concept of container communication across multiple Docker hosts.
 
 ---
 
@@ -475,11 +522,11 @@ systemd
 Linux Storage
 → Docker host storage
 
-Networking
-→ Container networking
-
 Linux Bridge
-→ Container bridge-network concepts
+→ Docker bridge networking
+
+Routing
+→ Container reachability
 
 Logs
 → Container troubleshooting
@@ -502,24 +549,28 @@ Important relationships include:
 ```text
 Ethernet
 IP Addressing
+Subnetting
 Routing
 DNS
 Ports
-Bridges
+Linux Bridges
 Packet Analysis
 ```
 
-These concepts become important when studying:
+These concepts are now directly applied to:
 
 ```text
 Docker Bridge Networks
-Port Publishing
+Custom Container Networks
 Container-to-Container Communication
-DNS-Based Service Discovery
+Container Name Resolution
+Port Publishing
 Host Networking
 Overlay Networking
 Registry Connectivity
 ```
+
+Docker networking should be understood as an application of existing networking fundamentals.
 
 ---
 
@@ -580,13 +631,57 @@ Docker events
 Container filesystem changes
 Process state
 Resource usage
-Network configuration
+Docker network state
+Container addressing
+Routing
 Port mappings
 Volume configuration
 Registry state
 ```
 
 Do not immediately recreate, restart, or rebuild a failing workload before collecting useful evidence.
+
+---
+
+# Docker Network Troubleshooting
+
+A container network problem should be investigated layer by layer.
+
+```text
+Container Running?
+      ↓
+Correct Docker Network?
+      ↓
+Correct Network Driver?
+      ↓
+Network Attachment Present?
+      ↓
+Container Addressing Correct?
+      ↓
+Route / Gateway Correct?
+      ↓
+Name Resolution Works?
+      ↓
+Socket Listening?
+      ↓
+Port Published if Required?
+      ↓
+Application Responding?
+```
+
+Useful tools can include:
+
+```text
+docker network ls
+docker network inspect
+docker inspect
+docker ps
+ip
+ss
+curl
+nc
+Packet Capture
+```
 
 ---
 
@@ -618,12 +713,15 @@ Container State
 Exit Code
 Application Logs
 Process State
+Docker Network
+Container Addressing
+Name Resolution
 Published Ports
 Mounted Storage
 Resource Usage
 ```
 
-A successful image build does not prove that a containerized application will run correctly.
+A successful image build does not prove that a containerized application will run or communicate correctly.
 
 ---
 
@@ -645,7 +743,11 @@ vs
 Dockerfile / Image
 ```
 
-and:
+```text
+Runtime Network Attachment
+vs
+Declared Multi-Container Configuration
+```
 
 ```text
 Container Writable Layer
@@ -653,7 +755,7 @@ vs
 Persistent Volume Data
 ```
 
-Container-local runtime changes can disappear when a container is removed and recreated unless state is intentionally persisted.
+This distinction becomes increasingly important when Docker Compose is introduced.
 
 ---
 
@@ -691,6 +793,7 @@ docker diff
 docker top
 docker stats
 docker cp
+docker network inspect
 ```
 
 Different tools answer different questions.
@@ -714,8 +817,8 @@ top
 stats
 → What resources are being consumed?
 
-cp
-→ What files can be preserved for investigation?
+network inspect
+→ How is the workload connected?
 ```
 
 ---
@@ -764,28 +867,6 @@ Container Orchestration
 
 ---
 
-# Registry Security
-
-Registry infrastructure is part of the application software supply chain.
-
-Important areas include:
-
-```text
-Authentication
-Authorization
-TLS
-Credential Management
-Trusted Image Sources
-Image Digests
-Image Scanning
-Access Logging
-Storage Protection
-```
-
-Registry credentials must not be committed to Git.
-
----
-
 # Build Context Discipline
 
 Only files required for the image build should be included in the build context.
@@ -799,59 +880,6 @@ Version-Control Metadata
 Temporary Content
 Sensitive Local Files
 ```
-
----
-
-# Dockerfile Instruction Model
-
-The main Dockerfile instructions studied so far are:
-
-```text
-FROM
-→ Base image
-
-RUN
-→ Build-time command
-
-COPY / ADD
-→ Add content to image
-
-ENV
-→ Environment configuration
-
-USER
-→ Execution identity
-
-EXPOSE
-→ Port metadata
-
-ENTRYPOINT
-→ Primary runtime executable
-
-CMD
-→ Default runtime command / arguments
-
-VOLUME
-→ Persistent-data mount point
-```
-
----
-
-# Build Cache
-
-Dockerfile ordering can affect rebuild performance.
-
-A useful strategy is:
-
-```text
-Stable Dependencies
-       ↓
-Stable Configuration
-       ↓
-Frequently Changing Application Content
-```
-
-The goal is to preserve useful cache layers without sacrificing correctness or readability.
 
 ---
 
@@ -911,6 +939,8 @@ Run applications with least privilege.
 Avoid unnecessary build tools in runtime images.
 Use multi-stage builds when appropriate.
 Review exposed and published ports.
+Use network modes intentionally.
+Do not use host networking only to bypass troubleshooting.
 Keep persistent data separate from replaceable containers.
 Protect registry credentials.
 Use trusted registry sources.
@@ -937,13 +967,13 @@ Process IDs
 IP Addresses
 MAC Addresses
 Network IDs
+Routes
+Gateway Addresses
 Volume IDs
-File Ownership
 Registry Addresses
 Registry Authentication Results
 Push / Pull Results
 Exit Codes
-Image Sizes
 Resource Metrics
 Command Output
 ```
@@ -968,11 +998,12 @@ Historical parent/child image terminology
 Historical storage drivers
 MAINTAINER
 Historical Docker Hub repository quotas
+Historical network terminology
 ```
 
 These are preserved as course context.
 
-Current infrastructure concepts should be distinguished from historical product policies.
+Current infrastructure concepts should be distinguished from historical implementation details.
 
 ---
 
@@ -1022,19 +1053,24 @@ Docker Storage Usage
 Docker Hub
 Image Tagging and Push
 Private Registry Fundamentals
+Docker Network Drivers
+Custom Bridge Networks
+Container Name Communication
+Container Network Namespace Sharing
+Host Networking
+Macvlan Fundamentals
+Overlay Network Fundamentals
+Docker Network Troubleshooting
 ```
 
 The next major topics are:
 
 ```text
-Docker Networking
-Bridge Network
-Custom Network
-Shared Container Network Namespace
-Host Network
 Docker Compose
 YAML
 Multi-Container Applications
+Compose Networking
+Compose Storage
 Container Clustering
 Docker Swarm
 Kubernetes Introduction
@@ -1064,4 +1100,4 @@ Infrastructure as Code
 Cloud Security
 ```
 
-The objective is to understand not only how to run containers, but how to build, inspect, distribute, diagnose, secure, and operate containerized infrastructure.
+The objective is to understand not only how to run containers, but how to build, connect, inspect, distribute, diagnose, secure, and operate containerized infrastructure.
