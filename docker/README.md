@@ -2,9 +2,9 @@
 
 This directory documents my Docker and container-infrastructure studies as part of my cloud infrastructure engineering learning path.
 
-The focus is not only on Docker commands, but on understanding how containers are built from Linux kernel features, how images become running workloads, how reproducible images are built and distributed, how containers communicate, and how multi-container applications are defined as repeatable infrastructure.
+The focus is not only on Docker commands, but on understanding how Linux container isolation becomes an image-based application platform and how that platform expands from individual containers to multi-container applications and cluster orchestration.
 
-The learning path currently progresses through:
+The completed Docker learning path is:
 
 ```text
 Virtualization
@@ -19,17 +19,13 @@ Cloud-Native Architecture
     ↓
 Docker Engine
     ↓
-Docker Images
-    ↓
-Container Lifecycle
+Images and Containers
     ↓
 Dockerfile
     ↓
-Image Build and Layers
+Image Build
     ↓
-Multi-Stage Builds
-    ↓
-Persistent Storage
+Storage
     ↓
 Container Management
     ↓
@@ -40,13 +36,13 @@ Docker Networking
 Docker Compose
     ↓
 Container Clustering
+    ↓
+Kubernetes
 ```
 
 ---
 
 # Directory Structure
-
-Current files:
 
 ```text
 docker/
@@ -59,10 +55,9 @@ docker/
 ├── container-management-lab.md
 ├── registry-management-lab.md
 ├── docker-networking-lab.md
-└── docker-compose-lab.md
+├── docker-compose-lab.md
+└── container-clustering-foundations-lab.md
 ```
-
-Additional files will be added only after the corresponding topics are studied.
 
 ---
 
@@ -79,22 +74,15 @@ Topics include:
 ```text
 Emulation
 Virtualization
-Type 1 Hypervisors
-Type 2 Hypervisors
+Hypervisors
 QEMU
 KVM
-Full Virtualization
-Paravirtualization
 libvirt
-virsh
-virt-manager
 RAW
 QCOW2
-Copy-on-Write
 Snapshots
 VM Migration
-Virtual Machines
-Containers
+VM vs Container
 Namespaces
 cgroups
 ```
@@ -129,22 +117,19 @@ Topics include:
 IaaS
 PaaS
 SaaS
-Management Responsibility
-Private Cloud
-Community Cloud
-Public Cloud
-Hybrid Cloud
+Cloud Responsibility Models
+Private / Public / Hybrid Cloud
 Cloud Native
-DevOps
-REST / HTTP APIs
 Microservices
+REST / HTTP APIs
+DevOps
 CI/CD
-Containers
 Infrastructure as Code
 Serverless
+Containers
 ```
 
-This section establishes why containers are commonly used in modern cloud-native application delivery.
+This section establishes the architectural context in which container platforms are commonly used.
 
 ---
 
@@ -162,8 +147,6 @@ Topics include:
 OS-Level Isolation
 Namespaces
 cgroups
-System Containers
-Application Containers
 Docker Engine
 Docker Client
 Docker Daemon
@@ -173,11 +156,10 @@ Containers
 Networks
 Volumes
 Registry
-Docker Installation Concepts
 systemd Service Management
 ```
 
-The central Docker architecture is:
+Core architecture:
 
 ```text
 User
@@ -208,27 +190,20 @@ image-container-lifecycle-lab.md
 Topics include:
 
 ```text
-Docker Images
-Image Layers
+Images
+Layers
 Repositories
 Tags
-Image IDs
 Digests
-Image Pull and Removal
-Containers
+Image Pull / Removal
 Container Creation
-Container State
+Container Lifecycle
 Container PID 1
-Interactive Containers
-Detached Containers
-Container Start / Stop / Restart
-Pause / Unpause
-Container Removal
+Interactive / Detached Containers
 docker exec
-Image vs Container Lifecycle
 ```
 
-The core relationship is:
+Core relationship:
 
 ```text
 Registry
@@ -240,7 +215,7 @@ Container
 Main Process
 ```
 
-A fundamental runtime principle is:
+A fundamental runtime rule is:
 
 ```text
 Main Process Running
@@ -268,25 +243,23 @@ Topics include:
 Dockerfile
 Build Context
 .dockerignore
-docker build
 FROM
-CMD
-ENTRYPOINT
-ENV
-EXPOSE
+RUN
 COPY
 ADD
-RUN
+ENV
 USER
-Image Layers
-Build Cache
-Multi-Stage Builds
+EXPOSE
+ENTRYPOINT
+CMD
 VOLUME
-Persistent Data
+Build Cache
+Image Layers
+Multi-Stage Builds
 docker history
 ```
 
-The image build workflow is:
+Build workflow:
 
 ```text
 Project Files
@@ -299,12 +272,10 @@ Dockerfile
      ↓
 docker build
      ↓
-Image Layers
-     ↓
-Docker Image
+Image
 ```
 
-Multi-stage builds separate build tooling from the final runtime environment.
+Build-time and runtime instructions are treated separately.
 
 ---
 
@@ -334,25 +305,7 @@ docker stats
 docker system df
 ```
 
-The operational troubleshooting model is:
-
-```text
-Container Failure
-      ↓
-docker ps -a
-      ↓
-docker inspect
-      ↓
-docker logs
-      ↓
-docker top
-      ↓
-docker stats
-      ↓
-docker diff
-```
-
-Container evidence should be collected before destructive recovery actions when root-cause analysis is required.
+Operational troubleshooting emphasizes evidence collection before destructive recovery.
 
 ---
 
@@ -369,34 +322,26 @@ Topics include:
 ```text
 Docker Registry
 Docker Hub
-Repositories
 Image References
-docker tag
+Tags
+Digests
 docker login
 docker push
 docker pull
 Private Registry
-Multi-Host Image Distribution
-CI/CD Context
+Multi-Host Distribution
 Registry Security
+CI/CD Context
 ```
 
-The image distribution workflow is:
+Image-delivery workflow:
 
 ```text
 Dockerfile
     ↓
-Build
-    ↓
 Image
     ↓
-Tag
-    ↓
-Push
-    ↓
 Registry
-    ↓
-Pull
     ↓
 Deployment Host
 ```
@@ -414,12 +359,11 @@ docker-networking-lab.md
 Topics include:
 
 ```text
-Docker Network Drivers
-Linux Network Namespaces
-Bridge Networking
-Custom Bridge Networks
+Network Namespaces
+Bridge Networks
+Custom Networks
 Container Name Communication
-Container Network Namespace Sharing
+Shared Network Namespaces
 Host Networking
 None Network
 Macvlan
@@ -427,21 +371,24 @@ Overlay Networking
 Docker Network Troubleshooting
 ```
 
-The default conceptual model is:
+Docker networking directly reuses Linux and general networking concepts.
 
 ```text
-Container
-    ↓
-Network Namespace
-    ↓
-Virtual Interface
-    ↓
-Docker Bridge
-    ↓
-Host Network
-```
+Linux Network Namespace
+→ Container Network Isolation
 
-Docker networking directly reuses Linux and general networking concepts.
+Linux Bridge
+→ Docker Bridge Network
+
+IP / Routing
+→ Container Reachability
+
+DNS / Naming
+→ Container Name Communication
+
+TCP / UDP Ports
+→ Container Services
+```
 
 ---
 
@@ -456,73 +403,93 @@ docker-compose-lab.md
 Topics include:
 
 ```text
-Docker Compose
-YAML
 Compose Projects
+YAML
 Services
 Images
-Restart Policies
 Ports
 Volumes
 Environment Variables
 Service Discovery
 Service Names
+Restart Policies
 Multi-Container Applications
-Compose Lifecycle Commands
-WordPress
-MySQL
 Compose Troubleshooting
 ```
 
-Compose changes the operational unit from an individual container to an application project.
-
-```text
-Compose Project
-├── Application Service
-├── Database Service
-├── Network
-└── Storage
-```
-
-The runtime definition can be represented as:
-
-```text
-compose.yaml
-      ↓
-docker compose up
-      ↓
-Multi-Container Application
-```
-
-Dockerfile and Compose solve different problems.
+Dockerfile and Compose have different responsibilities.
 
 ```text
 Dockerfile
-→ How an image is built
+→ How one image is built
 ```
 
 ```text
 Compose
-→ How application services run together
+→ How multiple services run together
 ```
 
-Service-name-based communication avoids unnecessary dependence on runtime container IP addresses.
+The delivery path becomes:
 
 ```text
-Application Service
-       ↓
-Service Name
-       ↓
-Dependent Service
+Source
+ ↓
+Dockerfile
+ ↓
+Image
+ ↓
+Registry
+ ↓
+Compose
+ ↓
+Multi-Container Application
 ```
 
-Compose also establishes an important foundation for later container orchestration.
+---
+
+# 10. Container Clustering Foundations
+
+File:
+
+```text
+container-clustering-foundations-lab.md
+```
+
+Topics include:
+
+```text
+Multi-Host Clusters
+Scale-Out
+Discovery
+Scheduling
+High Availability
+Docker Swarm
+Cluster Management
+Container Orchestration
+Kubernetes Introduction
+```
+
+The cluster-management problem is:
+
+```text
+Multiple Hosts
+      ↓
+Discovery
+      ↓
+Scheduling
+      ↓
+Workload Placement
+      ↓
+Failure Handling
+```
+
+The Docker course concludes by transitioning from container clustering into Kubernetes.
 
 ---
 
 # Linux Foundations Behind Docker
 
-Docker depends heavily on Linux concepts already studied under:
+Docker directly reuses Linux concepts documented under:
 
 ```text
 ../linux/
@@ -531,32 +498,23 @@ Docker depends heavily on Linux concepts already studied under:
 Important relationships include:
 
 ```text
-Linux Processes
+Processes
 → Container processes
 
-PID Namespaces
-→ Container process isolation
-
-Network Namespaces
-→ Container network isolation
-
-Mount Namespaces
-→ Filesystem isolation
+Namespaces
+→ Container isolation
 
 cgroups
-→ Container resource control
+→ Resource control
 
-Users and Groups
-→ Container execution identity
-
-Filesystem Permissions
-→ Container filesystem access
+Users / Permissions
+→ Container identity and filesystem access
 
 systemd
-→ Docker service management
+→ Docker daemon management
 
-Linux Storage
-→ Docker host storage
+Storage
+→ Container host and persistent storage
 
 Linux Bridge
 → Docker bridge networking
@@ -565,10 +523,10 @@ Routing
 → Container reachability
 
 Logs
-→ Container troubleshooting
+→ Runtime troubleshooting
 ```
 
-Docker administration therefore extends Linux system administration rather than replacing it.
+Docker administration extends Linux administration rather than replacing it.
 
 ---
 
@@ -593,75 +551,32 @@ Linux Bridges
 Packet Analysis
 ```
 
-These concepts are directly applied to:
+These concepts are applied to:
 
 ```text
-Docker Bridge Networks
-Custom Container Networks
-Container-to-Container Communication
-Container Name Resolution
+Container Networks
+Service Discovery
 Port Publishing
-Host Networking
-Overlay Networking
 Registry Connectivity
-Compose Service Discovery
-```
-
----
-
-# Dockerfile, Registry, and Compose Relationship
-
-The application-delivery workflow can now be represented as:
-
-```text
-Source Code
-    ↓
-Dockerfile
-    ↓
-Image Build
-    ↓
-Container Image
-    ↓
-Registry
-    ↓
-Compose Definition
-    ↓
-Multi-Container Application
-```
-
-Each component has a different responsibility.
-
-```text
-Dockerfile
-→ Build artifact definition
-```
-
-```text
-Registry
-→ Artifact distribution
-```
-
-```text
-Compose
-→ Runtime application definition
+Compose Networking
+Overlay Networking
+Cluster Connectivity
 ```
 
 ---
 
 # Learning Method
 
-Each Docker topic should progress through:
+Each topic follows:
 
 ```text
 Concept
    ↓
 Architecture
    ↓
-Definition
+Configuration
    ↓
-Build / Runtime Action
-   ↓
-Observable State
+Runtime State
    ↓
 Failure Scenario
    ↓
@@ -693,108 +608,55 @@ Verification
 Relevant evidence can include:
 
 ```text
-Linux service state
 Docker daemon state
-Build output
-Image history
 Image state
 Container state
-Container exit state
-Container logs
-Docker events
-Container filesystem changes
+Exit codes
+Logs
+Events
 Process state
 Resource usage
-Docker network state
-Container addressing
-Service name resolution
-Routing
-Port mappings
-Volume configuration
-Compose service state
+Network state
+Storage state
 Registry state
+Compose service state
 ```
+
+As infrastructure expands into clusters, additional evidence will be required at the node, scheduler, and cluster-state layers.
 
 ---
 
-# Compose Troubleshooting
+# Build-Time vs Runtime
 
-A multi-container application should be investigated as a project.
-
-```text
-Compose Definition Valid?
-        ↓
-Images Available?
-        ↓
-docker compose ps
-        ↓
-Which Service Failed?
-        ↓
-docker compose logs
-        ↓
-Service Discovery?
-        ↓
-Environment Configuration?
-        ↓
-Network?
-        ↓
-Storage?
-        ↓
-Port Publishing?
-        ↓
-Application Ready?
-```
-
-Do not assume that the user-facing container is the root cause.
-
-A dependency service may be responsible for the visible failure.
-
----
-
-# Build-Time vs Runtime Troubleshooting
-
-Docker image builds and container runtime failures are different problem domains.
-
-Build-time investigation can include:
+Docker builds and running containers represent different failure domains.
 
 ```text
-Dockerfile Instruction
-Build Context
-.dockerignore
-Base Image
-Package Availability
-File Paths
-Permissions
-Build Cache
+Build-Time
+→ Dockerfile
+→ Build Context
+→ Base Image
+→ Build Cache
+→ Package / File Availability
 ```
-
-Runtime investigation can include:
 
 ```text
-ENTRYPOINT
-CMD
-Environment Variables
-Container User
-Container State
-Exit Code
-Application Logs
-Process State
-Docker Network
-Container Addressing
-Service Discovery
-Published Ports
-Mounted Storage
-Resource Usage
-Compose Dependency State
+Runtime
+→ Main Process
+→ Environment
+→ User
+→ Network
+→ Port
+→ Storage
+→ Dependencies
 ```
 
-A successful image build does not prove that a containerized application will run or communicate correctly.
+A successful build does not prove runtime correctness.
 
 ---
 
 # Runtime vs Persistent Definition
 
-Container infrastructure repeatedly reinforces:
+A recurring infrastructure principle is:
 
 ```text
 Runtime State
@@ -822,166 +684,27 @@ vs
 Persistent Volume Data
 ```
 
-```text
-Expected Compose Services
-vs
-Observed Runtime State
-```
-
-This distinction is essential for reproducible infrastructure.
-
----
-
-# Image-Based Infrastructure
-
-Docker introduces an image-based deployment model.
-
-```text
-Source Code
-    ↓
-Dockerfile
-    ↓
-Image
-    ↓
-Registry
-    ↓
-Runtime Definition
-    ↓
-Container Deployment
-```
-
-This connects directly to CI/CD and immutable-infrastructure practices.
-
----
-
-# Container Evidence
-
-A container should be treated as an observable runtime object.
-
-Useful evidence sources include:
-
-```text
-docker inspect
-docker logs
-docker events
-docker diff
-docker top
-docker stats
-docker cp
-docker network inspect
-docker compose ps
-docker compose logs
-```
-
-Different tools answer different questions.
-
----
-
-# Registry-Based Delivery
-
-Container images can be treated as deployable artifacts.
-
-```text
-Build
- ↓
-Image
- ↓
-Registry
- ↓
-Deployment
-```
-
-The registry becomes a dependency for:
-
-```text
-Image Distribution
-Versioned Deployment
-CI/CD
-Multi-Host Infrastructure
-Compose Deployments
-Container Orchestration
-```
-
----
-
-# Build Context Discipline
-
-Only files required for the image build should be included in the build context.
-
-Use `.dockerignore` to reduce:
-
-```text
-Unnecessary Files
-Large Artifacts
-Version-Control Metadata
-Temporary Content
-Sensitive Local Files
-```
-
----
-
-# Multi-Stage Builds
-
-Multi-stage builds separate build-time requirements from runtime requirements.
-
-```text
-Build Environment
-      ↓
-Application Artifact
-      ↓
-Minimal Runtime Environment
-```
-
-Potential benefits include:
-
-```text
-Smaller Runtime Images
-Reduced Build Tooling in Production
-Reduced Attack Surface
-Clear Build and Runtime Separation
-```
-
----
-
-# Persistent Data
-
-Container runtime and application data should have intentionally designed lifecycles.
-
-```text
-Container
-→ Replaceable runtime
-```
-
-```text
-Volume / External Storage
-→ Persistent application data
-```
-
-Multi-container applications should also define which services require persistent data rather than assuming container-local storage is permanent.
+Reproducible infrastructure requires intentional persistent definitions.
 
 ---
 
 # Security Principles
-
-Container security is treated as part of infrastructure design.
 
 Important principles include:
 
 ```text
 Use trusted base images.
 Keep build contexts minimal.
-Do not expose secrets in Dockerfiles.
+Do not embed secrets in Dockerfiles.
 Do not commit real secrets in Compose files.
 Treat Docker daemon access as highly privileged.
-Run applications with least privilege.
-Avoid unnecessary build tools in runtime images.
-Use multi-stage builds when appropriate.
-Review exposed and published ports.
+Use least-privilege container users.
+Minimize runtime image content.
+Review published ports.
 Use network modes intentionally.
-Limit service connectivity to what is required.
-Keep persistent data separate from replaceable containers.
+Protect persistent data.
 Protect registry credentials.
-Use trusted registry sources.
+Use trusted registries.
 Do not assume a container is a complete security boundary.
 ```
 
@@ -989,9 +712,7 @@ Do not assume a container is a complete security boundary.
 
 # Evidence Policy
 
-Course screenshots and example command output are educational examples.
-
-Do not record them as actual lab evidence.
+Course output and screenshots are educational examples.
 
 Do not fabricate:
 
@@ -999,136 +720,87 @@ Do not fabricate:
 Container IDs
 Image IDs
 Image Digests
-Layer IDs
-Build Cache Results
 Process IDs
+Network IDs
 IP Addresses
 MAC Addresses
-Network IDs
 Routes
-Gateway Addresses
 Volume IDs
-Registry Addresses
-Registry Authentication Results
-Push / Pull Results
-Compose Service States
-Database Connection Results
-Exit Codes
-Resource Metrics
+Registry Results
+Compose States
+Node Names
+Cluster IDs
+Scheduling Results
+Failover Results
 Command Output
 ```
 
-Actual environment-specific evidence must come from the lab environment.
+Actual environment-specific evidence must come from an authorized lab environment.
 
 ---
 
 # Historical Material Policy
 
-The Docker course contains historical terminology, products, versions, installation methods, and service policies.
+The course includes historical Docker ecosystem material.
 
 Examples include:
 
 ```text
 Docker Toolbox
 Boot2Docker
-Old Docker CE / EE models
-Older Linux kernel requirements
-Older Docker versions
-Historical parent/child image terminology
+Older Docker CE / EE models
 Historical storage drivers
 MAINTAINER
-Historical Docker Hub repository quotas
 docker-compose standalone CLI
 Compose version: "3"
-MySQL 5.7 example
+Historical Docker Hub policies
+Older cluster-management ecosystem references
+CoreOS-related material
 ```
 
-These are preserved as course context.
-
-Current infrastructure concepts should be distinguished from historical implementation details.
+These are preserved as course context while architectural concepts remain the primary learning objective.
 
 ---
 
-# Current Learning Progress
+# Completed Docker Course
 
-Completed Docker-related areas:
+The Docker course now covers:
 
 ```text
 Virtualization Foundations
 VM vs Container
 Cloud Computing
-Cloud Service Models
-Cloud-Native Architecture
-Microservices Context
-Linux Container Foundations
-Docker Engine Architecture
-Docker Client / Daemon / Registry
-Docker Installation Concepts
-Docker Images
-Image Layers
-Image Distribution Basics
-Container Creation
+Cloud Native
+Linux Container Isolation
+Docker Engine
+Images
+Containers
 Container Lifecycle
-Container PID 1
-Interactive / Detached Containers
-docker exec
 Dockerfile
 Build Context
-.dockerignore
-Dockerfile Runtime Instructions
-Dockerfile Build Instructions
-Image Build Cache
-Container User
+Build Cache
 Multi-Stage Builds
-Volume Fundamentals
-Image History
-Container File Transfer
-Container Filesystem Diff
-Container Commit
-Container Inspection
-Container Logs and Events
-Container Export / Import
-Image Save / Load
-Container Process Monitoring
-Container Resource Monitoring
-Docker Storage Usage
-Docker Hub
-Image Tagging and Push
-Private Registry Fundamentals
-Docker Network Drivers
-Custom Bridge Networks
-Container Name Communication
-Container Network Namespace Sharing
-Host Networking
-Macvlan Fundamentals
-Overlay Network Fundamentals
-Docker Network Troubleshooting
+Storage Fundamentals
+Container Management
+Registry Management
+Docker Networking
 Docker Compose
-Compose YAML
-Compose Project Management
-Compose Service Discovery
-Compose Ports and Volumes
-Compose Environment Configuration
-Multi-Container WordPress / MySQL Architecture
-Compose Troubleshooting
+Container Clustering
+Docker Swarm Introduction
+Kubernetes Transition
 ```
 
-The next major topics are:
+The Docker foundation is complete.
+
+The next major learning area is:
 
 ```text
-Container Clustering
-Docker Swarm
-Service Discovery in Clusters
-Cluster Scheduling
-High Availability
-Kubernetes Introduction
+Kubernetes
 ```
 
 ---
 
 # Long-Term Infrastructure Path
-
-This Docker learning path connects to:
 
 ```text
 Linux
@@ -1148,4 +820,4 @@ Infrastructure as Code
 Cloud Security
 ```
 
-The objective is to understand not only how to run containers, but how to build, connect, compose, inspect, distribute, diagnose, secure, and operate containerized infrastructure.
+The objective is to understand how containerized infrastructure is built, distributed, connected, observed, troubleshot, secured, and eventually orchestrated across multiple hosts.
