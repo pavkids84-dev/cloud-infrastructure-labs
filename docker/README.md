@@ -2,7 +2,7 @@
 
 This directory documents my Docker and container-infrastructure studies as part of my cloud infrastructure engineering learning path.
 
-The focus is not only on Docker commands, but on understanding how containers are built from Linux kernel features, how images become running workloads, how reproducible images are built and distributed, and how container networking connects Linux networking to cloud-native application delivery.
+The focus is not only on Docker commands, but on understanding how containers are built from Linux kernel features, how images become running workloads, how reproducible images are built and distributed, how containers communicate, and how multi-container applications are defined as repeatable infrastructure.
 
 The learning path currently progresses through:
 
@@ -58,7 +58,8 @@ docker/
 ├── dockerfile-image-build-lab.md
 ├── container-management-lab.md
 ├── registry-management-lab.md
-└── docker-networking-lab.md
+├── docker-networking-lab.md
+└── docker-compose-lab.md
 ```
 
 Additional files will be added only after the corresponding topics are studied.
@@ -213,7 +214,6 @@ Repositories
 Tags
 Image IDs
 Digests
-Docker Hub
 Image Pull and Removal
 Containers
 Container Creation
@@ -226,6 +226,18 @@ Pause / Unpause
 Container Removal
 docker exec
 Image vs Container Lifecycle
+```
+
+The core relationship is:
+
+```text
+Registry
+   ↓
+Image
+   ↓
+Container
+   ↓
+Main Process
 ```
 
 A fundamental runtime principle is:
@@ -292,7 +304,7 @@ Image Layers
 Docker Image
 ```
 
-Multi-stage builds separate build tooling from the final runtime image.
+Multi-stage builds separate build tooling from the final runtime environment.
 
 ---
 
@@ -387,8 +399,6 @@ Registry
 Pull
     ↓
 Deployment Host
-    ↓
-Container
 ```
 
 ---
@@ -433,54 +443,80 @@ Host Network
 
 Docker networking directly reuses Linux and general networking concepts.
 
+---
+
+# 9. Docker Compose
+
+File:
+
 ```text
-Linux Network Namespace
-→ Container Network Isolation
-
-Linux Bridge
-→ Docker Bridge Networking
-
-IP Subnet
-→ Docker Network Addressing
-
-Gateway / Routing
-→ Container Reachability
-
-DNS / Naming
-→ Container Name Communication
-
-TCP / UDP Ports
-→ Container Services
+docker-compose-lab.md
 ```
 
-A custom network can group related containers into an intentional communication domain.
+Topics include:
 
 ```text
-Custom Docker Network
-       │
-       ├── Container A
-       └── Container B
+Docker Compose
+YAML
+Compose Projects
+Services
+Images
+Restart Policies
+Ports
+Volumes
+Environment Variables
+Service Discovery
+Service Names
+Multi-Container Applications
+Compose Lifecycle Commands
+WordPress
+MySQL
+Compose Troubleshooting
 ```
 
-Docker also supports intentionally sharing network namespaces.
+Compose changes the operational unit from an individual container to an application project.
 
 ```text
-Container A
-      ┐
-      ├── Shared Network Namespace
-Container B
-      ┘
+Compose Project
+├── Application Service
+├── Database Service
+├── Network
+└── Storage
 ```
 
-Host networking instead uses:
+The runtime definition can be represented as:
 
 ```text
-Container Process
+compose.yaml
       ↓
-Host Network Namespace
+docker compose up
+      ↓
+Multi-Container Application
 ```
 
-Overlay networking introduces the concept of container communication across multiple Docker hosts.
+Dockerfile and Compose solve different problems.
+
+```text
+Dockerfile
+→ How an image is built
+```
+
+```text
+Compose
+→ How application services run together
+```
+
+Service-name-based communication avoids unnecessary dependence on runtime container IP addresses.
+
+```text
+Application Service
+       ↓
+Service Name
+       ↓
+Dependent Service
+```
+
+Compose also establishes an important foundation for later container orchestration.
 
 ---
 
@@ -557,7 +593,7 @@ Linux Bridges
 Packet Analysis
 ```
 
-These concepts are now directly applied to:
+These concepts are directly applied to:
 
 ```text
 Docker Bridge Networks
@@ -568,9 +604,47 @@ Port Publishing
 Host Networking
 Overlay Networking
 Registry Connectivity
+Compose Service Discovery
 ```
 
-Docker networking should be understood as an application of existing networking fundamentals.
+---
+
+# Dockerfile, Registry, and Compose Relationship
+
+The application-delivery workflow can now be represented as:
+
+```text
+Source Code
+    ↓
+Dockerfile
+    ↓
+Image Build
+    ↓
+Container Image
+    ↓
+Registry
+    ↓
+Compose Definition
+    ↓
+Multi-Container Application
+```
+
+Each component has a different responsibility.
+
+```text
+Dockerfile
+→ Build artifact definition
+```
+
+```text
+Registry
+→ Artifact distribution
+```
+
+```text
+Compose
+→ Runtime application definition
+```
 
 ---
 
@@ -633,55 +707,47 @@ Process state
 Resource usage
 Docker network state
 Container addressing
+Service name resolution
 Routing
 Port mappings
 Volume configuration
+Compose service state
 Registry state
 ```
 
-Do not immediately recreate, restart, or rebuild a failing workload before collecting useful evidence.
-
 ---
 
-# Docker Network Troubleshooting
+# Compose Troubleshooting
 
-A container network problem should be investigated layer by layer.
-
-```text
-Container Running?
-      ↓
-Correct Docker Network?
-      ↓
-Correct Network Driver?
-      ↓
-Network Attachment Present?
-      ↓
-Container Addressing Correct?
-      ↓
-Route / Gateway Correct?
-      ↓
-Name Resolution Works?
-      ↓
-Socket Listening?
-      ↓
-Port Published if Required?
-      ↓
-Application Responding?
-```
-
-Useful tools can include:
+A multi-container application should be investigated as a project.
 
 ```text
-docker network ls
-docker network inspect
-docker inspect
-docker ps
-ip
-ss
-curl
-nc
-Packet Capture
+Compose Definition Valid?
+        ↓
+Images Available?
+        ↓
+docker compose ps
+        ↓
+Which Service Failed?
+        ↓
+docker compose logs
+        ↓
+Service Discovery?
+        ↓
+Environment Configuration?
+        ↓
+Network?
+        ↓
+Storage?
+        ↓
+Port Publishing?
+        ↓
+Application Ready?
 ```
+
+Do not assume that the user-facing container is the root cause.
+
+A dependency service may be responsible for the visible failure.
 
 ---
 
@@ -715,19 +781,20 @@ Application Logs
 Process State
 Docker Network
 Container Addressing
-Name Resolution
+Service Discovery
 Published Ports
 Mounted Storage
 Resource Usage
+Compose Dependency State
 ```
 
 A successful image build does not prove that a containerized application will run or communicate correctly.
 
 ---
 
-# Runtime vs Persistent State
+# Runtime vs Persistent Definition
 
-Container infrastructure reinforces the distinction:
+Container infrastructure repeatedly reinforces:
 
 ```text
 Runtime State
@@ -744,9 +811,9 @@ Dockerfile / Image
 ```
 
 ```text
-Runtime Network Attachment
+Manual docker run Options
 vs
-Declared Multi-Container Configuration
+Compose YAML
 ```
 
 ```text
@@ -755,7 +822,13 @@ vs
 Persistent Volume Data
 ```
 
-This distinction becomes increasingly important when Docker Compose is introduced.
+```text
+Expected Compose Services
+vs
+Observed Runtime State
+```
+
+This distinction is essential for reproducible infrastructure.
 
 ---
 
@@ -772,10 +845,12 @@ Image
     ↓
 Registry
     ↓
+Runtime Definition
+    ↓
 Container Deployment
 ```
 
-This supports repeatable deployment and connects directly to CI/CD and immutable-infrastructure practices.
+This connects directly to CI/CD and immutable-infrastructure practices.
 
 ---
 
@@ -794,50 +869,11 @@ docker top
 docker stats
 docker cp
 docker network inspect
+docker compose ps
+docker compose logs
 ```
 
 Different tools answer different questions.
-
-```text
-inspect
-→ What is the configured/runtime state?
-
-logs
-→ What did the application report?
-
-events
-→ What lifecycle actions occurred?
-
-diff
-→ What changed in the writable filesystem?
-
-top
-→ What processes are running?
-
-stats
-→ What resources are being consumed?
-
-network inspect
-→ How is the workload connected?
-```
-
----
-
-# Image Archive Models
-
-Docker provides different archive workflows.
-
-```text
-docker export / import
-→ Container filesystem
-```
-
-```text
-docker save / load
-→ Docker image
-```
-
-The selected workflow should match the Docker object that needs to be preserved or transferred.
 
 ---
 
@@ -862,6 +898,7 @@ Image Distribution
 Versioned Deployment
 CI/CD
 Multi-Host Infrastructure
+Compose Deployments
 Container Orchestration
 ```
 
@@ -920,7 +957,7 @@ Volume / External Storage
 → Persistent application data
 ```
 
-Host-path bind mounts and Docker-managed volumes are conceptually different and should be selected intentionally.
+Multi-container applications should also define which services require persistent data rather than assuming container-local storage is permanent.
 
 ---
 
@@ -934,13 +971,14 @@ Important principles include:
 Use trusted base images.
 Keep build contexts minimal.
 Do not expose secrets in Dockerfiles.
+Do not commit real secrets in Compose files.
 Treat Docker daemon access as highly privileged.
 Run applications with least privilege.
 Avoid unnecessary build tools in runtime images.
 Use multi-stage builds when appropriate.
 Review exposed and published ports.
 Use network modes intentionally.
-Do not use host networking only to bypass troubleshooting.
+Limit service connectivity to what is required.
 Keep persistent data separate from replaceable containers.
 Protect registry credentials.
 Use trusted registry sources.
@@ -973,6 +1011,8 @@ Volume IDs
 Registry Addresses
 Registry Authentication Results
 Push / Pull Results
+Compose Service States
+Database Connection Results
 Exit Codes
 Resource Metrics
 Command Output
@@ -998,7 +1038,9 @@ Historical parent/child image terminology
 Historical storage drivers
 MAINTAINER
 Historical Docker Hub repository quotas
-Historical network terminology
+docker-compose standalone CLI
+Compose version: "3"
+MySQL 5.7 example
 ```
 
 These are preserved as course context.
@@ -1061,18 +1103,24 @@ Host Networking
 Macvlan Fundamentals
 Overlay Network Fundamentals
 Docker Network Troubleshooting
+Docker Compose
+Compose YAML
+Compose Project Management
+Compose Service Discovery
+Compose Ports and Volumes
+Compose Environment Configuration
+Multi-Container WordPress / MySQL Architecture
+Compose Troubleshooting
 ```
 
 The next major topics are:
 
 ```text
-Docker Compose
-YAML
-Multi-Container Applications
-Compose Networking
-Compose Storage
 Container Clustering
 Docker Swarm
+Service Discovery in Clusters
+Cluster Scheduling
+High Availability
 Kubernetes Introduction
 ```
 
@@ -1100,4 +1148,4 @@ Infrastructure as Code
 Cloud Security
 ```
 
-The objective is to understand not only how to run containers, but how to build, connect, inspect, distribute, diagnose, secure, and operate containerized infrastructure.
+The objective is to understand not only how to run containers, but how to build, connect, compose, inspect, distribute, diagnose, secure, and operate containerized infrastructure.
