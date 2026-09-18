@@ -4,7 +4,7 @@ This directory documents my Kubernetes learning path as part of my cloud infrast
 
 The focus is not only on `kubectl` commands, but on understanding Kubernetes as an API-driven desired-state platform built on Linux, networking, container runtimes, distributed control-plane components, and declarative infrastructure.
 
-The learning path currently progresses through:
+The current learning path is:
 
 ```text
 Docker and Containers
@@ -13,9 +13,9 @@ Container Clustering
         ↓
 Kubernetes Architecture
         ↓
-Local Cluster with Minikube
+Minikube
         ↓
-Cluster Bootstrap with kubeadm
+kubeadm Cluster Bootstrap
         ↓
 kubectl
         ↓
@@ -46,7 +46,8 @@ Current files:
 kubernetes/
 ├── README.md
 ├── kubernetes-architecture-foundations-lab.md
-└── minikube-local-cluster-lab.md
+├── minikube-local-cluster-lab.md
+└── kubeadm-cluster-bootstrap-lab.md
 ```
 
 Additional files will be added only after the corresponding Kubernetes topics are actually studied.
@@ -120,52 +121,80 @@ Topics include:
 ```text
 Kubernetes Installation Methods
 Minikube
-Local Kubernetes Clusters
+Local Cluster
 minikube start
 minikube status
 kubectl
 kubeconfig
-kubectl cluster-info
-Kubernetes Nodes
+API Connectivity
 Node Ready State
-Minikube Host Access
 System Components
 Kubernetes Dashboard
 Local Cluster Troubleshooting
 ```
 
-The local-cluster workflow is:
-
-```text
-Install Minikube
-      ↓
-Start Cluster
-      ↓
-Verify Minikube
-      ↓
-Verify API Access
-      ↓
-Verify Node
-      ↓
-Inspect System Components
-```
-
-Minikube, Kubernetes, and `kubectl` have separate responsibilities.
+Minikube provides a local environment for Kubernetes learning.
 
 ```text
 Minikube
-→ Local cluster environment
-```
+→ Local Kubernetes environment
 
-```text
-Kubernetes
-→ Orchestration platform
-```
-
-```text
 kubectl
-→ API client
+→ Kubernetes API client
 ```
+
+---
+
+# 3. kubeadm Cluster Bootstrap
+
+File:
+
+```text
+kubeadm-cluster-bootstrap-lab.md
+```
+
+Topics include:
+
+```text
+Linux Node Preparation
+Control Plane Bootstrap
+Worker Node Preparation
+kubeadm
+kubelet
+kubectl
+kubeconfig
+Pod Network CIDR
+CNI
+Calico Course Example
+kubeadm init
+kubeadm join
+Bootstrap Trust
+Node Registration
+Node Ready State
+kube-system
+System Component Inspection
+Linux Process Inspection
+```
+
+The bootstrap workflow is:
+
+```text
+Prepare Nodes
+      ↓
+kubeadm init
+      ↓
+Configure kubeconfig
+      ↓
+Install CNI
+      ↓
+Verify Control Plane
+      ↓
+kubeadm join
+      ↓
+Verify Worker
+```
+
+This section connects Kubernetes cluster bootstrap directly to Linux administration and networking.
 
 ---
 
@@ -197,7 +226,7 @@ Desired State
 Current State
 ```
 
-Controllers continuously observe the cluster and attempt to reconcile differences.
+Controllers continuously observe the cluster and reconcile differences.
 
 ```text
 Observe
@@ -213,7 +242,7 @@ Observe Again
 
 # Control Plane
 
-The core control-plane responsibilities include:
+Core responsibilities include:
 
 ```text
 kube-apiserver
@@ -235,31 +264,21 @@ kube-controller-manager
 
 Worker nodes execute workloads.
 
-Core node components include:
-
 ```text
-kubelet
-kube-proxy
-Container Runtime
-```
-
-Conceptually:
-
-```text
-Control Plane
-     ↓
 Worker Node
-     ↓
-Pod
-     ↓
-Container
+├── kubelet
+├── kube-proxy
+├── Container Runtime
+└── Workloads
 ```
+
+A node must be both registered and operationally Ready before normal workload scheduling can be expected.
 
 ---
 
 # Container Runtime Architecture
 
-Kubernetes node execution is understood through the Container Runtime Interface.
+The conceptual execution path is:
 
 ```text
 kubelet
@@ -277,9 +296,41 @@ Docker images remain relevant even when Docker Engine is not the Kubernetes runt
 
 ---
 
-# kubeconfig and Client Context
+# kubeadm Architecture
 
-`kubectl` requires connection configuration.
+kubeadm is used for Kubernetes cluster bootstrap.
+
+```text
+Control Plane Node
+      ↓
+kubeadm init
+```
+
+```text
+Worker Node
+      ↓
+kubeadm join
+```
+
+kubeadm should be distinguished from:
+
+```text
+kubelet
+→ Node agent
+```
+
+and:
+
+```text
+kubectl
+→ Kubernetes API client
+```
+
+---
+
+# kubeconfig
+
+Kubernetes client access is configured through kubeconfig.
 
 ```text
 kubectl
@@ -293,35 +344,107 @@ Context
 API Server
 ```
 
-Client configuration and cluster health should be treated as separate troubleshooting layers.
+Client configuration should be investigated separately from cluster runtime health.
+
+---
+
+# Kubernetes Networking Foundation
+
+Cluster networking now includes multiple address domains.
+
+```text
+Node Network
+Pod Network
+Service Network
+```
+
+The course introduces Pod networking through a CNI implementation.
+
+```text
+Pod
+ ↓
+CNI
+ ↓
+Cluster Network
+```
+
+Detailed Kubernetes network behavior is studied later.
+
+---
+
+# CNI
+
+The course uses Calico as its CNI example.
+
+The architectural relationship is:
+
+```text
+Kubernetes
+    ↓
+CNI
+    ↓
+Pod Networking
+```
+
+Historical CNI manifest URLs from the course are not treated as current installation instructions.
 
 ---
 
 # Cluster Verification
 
-A local-cluster verification sequence is:
+Cluster bootstrap is not considered complete merely because installation commands returned successfully.
+
+A verification sequence is:
 
 ```text
-Environment Running?
-      ↓
 API Reachable?
+      ↓
+Control Plane Running?
+      ↓
+CNI Running?
       ↓
 Node Registered?
       ↓
 Node Ready?
       ↓
-System Components Running?
-      ↓
-Application Workloads
+System Workloads Running?
 ```
 
-Do not start application troubleshooting before confirming cluster foundations.
+---
+
+# Kubernetes and Linux
+
+Kubernetes abstractions map back to real operating-system behavior.
+
+```text
+Kubernetes Object
+       ↓
+Pod
+       ↓
+Container
+       ↓
+Runtime
+       ↓
+Linux Process
+```
+
+Troubleshooting can therefore require:
+
+```text
+kubectl
+systemd
+Linux Logs
+Processes
+Networking
+Filesystems
+Container Runtime
+```
 
 ---
 
 # Linux Foundations
 
-Kubernetes depends directly on concepts documented under:
+Relevant Linux studies are documented under:
 
 ```text
 ../linux/
@@ -331,22 +454,22 @@ Important relationships include:
 
 ```text
 Processes
-Namespaces
-cgroups
 systemd
+Users and Permissions
+Networking
+Routing
 Storage
 Filesystems
-Security
-Networking
+Firewall
+SELinux
+Logs
 ```
-
-A Kubernetes node remains a real operating-system environment.
 
 ---
 
 # Network Foundations
 
-General networking concepts are documented under:
+Networking fundamentals are documented under:
 
 ```text
 ../network/
@@ -356,12 +479,13 @@ Important Kubernetes relationships include:
 
 ```text
 IP Addressing
+Subnetting
 Routing
 DNS
 Ports
 Packet Analysis
-Service Connectivity
-Cluster Networking
+Node Connectivity
+Pod Networking
 ```
 
 ---
@@ -386,7 +510,7 @@ Multi-Container Applications
 Container Clustering
 ```
 
-Kubernetes extends these concepts from host-level container operation into cluster orchestration.
+Kubernetes extends these concepts from host-level operation into cluster-level orchestration.
 
 ---
 
@@ -441,7 +565,9 @@ Client Configuration
 Kubernetes API
 Control Plane
 Worker Node
+kubelet
 Container Runtime
+CNI
 Pod
 Controller
 Service
@@ -452,35 +578,35 @@ Application
 
 ---
 
-# Local Cluster Troubleshooting
+# Node Troubleshooting
 
-A Minikube-focused troubleshooting sequence is:
+A node problem can be investigated as:
 
 ```text
-Minikube Environment
-       ↓
-minikube status
-       ↓
-kubeconfig / Context
-       ↓
-kubectl cluster-info
-       ↓
-kubectl get nodes
-       ↓
-Node Ready
-       ↓
-System Components
-       ↓
-Application
+Linux Host Healthy?
+      ↓
+Network Reachable?
+      ↓
+Container Runtime Healthy?
+      ↓
+kubelet Healthy?
+      ↓
+API Reachable?
+      ↓
+CNI Healthy?
+      ↓
+Node Conditions?
+      ↓
+Node Ready?
 ```
 
-This separates local-environment failures from Kubernetes workload failures.
+This preserves the same layered infrastructure troubleshooting method used throughout the repository.
 
 ---
 
 # Runtime vs Desired State
 
-Kubernetes introduces an important distinction:
+Kubernetes introduces the distinction:
 
 ```text
 Desired State
@@ -488,18 +614,18 @@ vs
 Observed Runtime State
 ```
 
-A manifest describes intent.
+Configuration describes intent.
 
-Runtime observation determines what actually occurred.
+Runtime evidence proves what actually happened.
 
-Relevant evidence can later include:
+Useful evidence later includes:
 
 ```text
 kubectl get
 kubectl describe
 kubectl logs
 Events
-Node State
+Node Conditions
 ```
 
 ---
@@ -508,19 +634,26 @@ Node State
 
 Security should be treated as part of Kubernetes architecture.
 
+Current principles include:
+
+```text
+Do not publish bootstrap tokens.
+Do not commit kubeconfig credentials.
+Do not broadly disable host security controls as a generic fix.
+Use least privilege.
+Protect Kubernetes API credentials.
+```
+
 Future topics include:
 
 ```text
-API Authentication
+Authentication
 Authorization
 RBAC
 Service Accounts
 Secrets
-Least Privilege
 Workload Security
 ```
-
-Actual permissions and credentials must not be fabricated or committed to Git.
 
 ---
 
@@ -535,14 +668,13 @@ Cluster IDs
 Node Names
 Node Addresses
 Pod Addresses
+Bootstrap Tokens
+Certificate Hashes
 Container IDs
 API Server Addresses
 Runtime IDs
-Minikube Addresses
-Dashboard URLs
 Scheduler Decisions
-RBAC Results
-Storage IDs
+Node Status
 Command Output
 ```
 
@@ -552,21 +684,21 @@ Actual evidence must come from an authorized lab environment.
 
 # Historical Material Policy
 
-The Kubernetes course contains historical versions, tools, commands, and ecosystem components.
+The Kubernetes course contains historical installation procedures, versions, runtimes, and ecosystem components.
 
 Examples include:
 
 ```text
-Older Kubernetes versions
-Older Minikube versions
-VirtualBox-based Minikube examples
+Older Kubernetes repositories
+Older Ubuntu / CentOS releases
 Historical Docker runtime integration
+Older Calico manifests
 Heapster
 rkt
 Legacy Kubernetes API versions
 ```
 
-These are preserved as course context while current architectural concepts are distinguished when necessary.
+These are preserved as course context while architecture and modern concepts are distinguished where necessary.
 
 ---
 
@@ -595,28 +727,35 @@ CNI Introduction
 Cluster DNS Introduction
 Ingress Introduction
 Control Plane HA Introduction
-Kubernetes Installation Methods Overview
+Kubernetes Installation Methods
 Minikube
-Local Cluster Startup
+Local Cluster Verification
 kubeconfig Introduction
-Cluster API Verification
-Node Verification
-Minikube Host Inspection
-System Component Observation
-Kubernetes Dashboard Introduction
+kubeadm Cluster Bootstrap
+Linux Node Preparation
+Control Plane Initialization
+Pod Network CIDR
+CNI Installation
+Worker Node Join
+Node Ready Verification
+kube-system Introduction
+Kubernetes Component Observation
+Linux Process Correlation
 ```
 
 The next major topics are:
 
 ```text
-kubeadm
-Node Preparation
-Control Plane Bootstrap
-CNI Installation
-Worker Join
-Cluster Component Verification
 kubectl
-Pods
+API Resources
+API Versions
+kubectl Completion
+Imperative Pod Creation
+kubectl get
+kubectl describe
+Events
+Logs
+Pod Fundamentals
 ```
 
 ---
