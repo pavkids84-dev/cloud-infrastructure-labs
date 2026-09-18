@@ -2,7 +2,7 @@
 
 This directory documents my Kubernetes learning path as part of my cloud infrastructure engineering studies.
 
-The focus is not only on `kubectl` commands, but on understanding Kubernetes as an API-driven desired-state platform built on Linux, networking, container runtimes, distributed control-plane components, and declarative infrastructure.
+The focus is not only on `kubectl` commands, but on understanding Kubernetes as an API-driven desired-state platform built on Linux, networking, container runtimes, distributed control-plane components, declarative resources, and observable workload state.
 
 The current learning path is:
 
@@ -21,7 +21,9 @@ kubectl
         ↓
 Pods
         ↓
-Objects and Controllers
+Object Templates
+        ↓
+Controllers
         ↓
 Services
         ↓
@@ -47,7 +49,9 @@ kubernetes/
 ├── README.md
 ├── kubernetes-architecture-foundations-lab.md
 ├── minikube-local-cluster-lab.md
-└── kubeadm-cluster-bootstrap-lab.md
+├── kubeadm-cluster-bootstrap-lab.md
+├── kubectl-basic-control-lab.md
+└── pod-fundamentals-lab.md
 ```
 
 Additional files will be added only after the corresponding Kubernetes topics are actually studied.
@@ -135,14 +139,6 @@ Local Cluster Troubleshooting
 
 Minikube provides a local environment for Kubernetes learning.
 
-```text
-Minikube
-→ Local Kubernetes environment
-
-kubectl
-→ Kubernetes API client
-```
-
 ---
 
 # 3. kubeadm Cluster Bootstrap
@@ -194,7 +190,202 @@ kubeadm join
 Verify Worker
 ```
 
-This section connects Kubernetes cluster bootstrap directly to Linux administration and networking.
+---
+
+# 4. kubectl Basic Control
+
+File:
+
+```text
+kubectl-basic-control-lab.md
+```
+
+Topics include:
+
+```text
+kubectl
+Kubernetes API Client
+API Resources
+API Versions
+Resource Short Names
+Resource Scope
+Bash Completion
+Imperative Pod Creation
+kubectl get
+kubectl describe
+Kubernetes Events
+kubectl logs
+Basic Troubleshooting
+```
+
+The operational observation flow is:
+
+```text
+kubectl get
+      ↓
+Summary State
+      ↓
+kubectl describe
+      ↓
+Conditions / Events
+      ↓
+kubectl logs
+      ↓
+Application Evidence
+```
+
+Different commands expose different evidence and should not be treated as interchangeable.
+
+---
+
+# 5. Pod Fundamentals
+
+File:
+
+```text
+pod-fundamentals-lab.md
+```
+
+Topics include:
+
+```text
+Pod
+Scheduling Unit
+Pod IP
+Namespace
+Multi-Container Pods
+Shared Network Namespace
+Pause / Sandbox Container
+CNI
+Pod Networking
+Pod Storage
+Volumes
+PersistentVolume
+PersistentVolumeClaim
+ConfigMap
+Secret
+CSI
+YAML
+Pod Manifests
+Pod Events
+Pod Inspection
+```
+
+The Pod model is:
+
+```text
+Pod
+├── Shared Network Environment
+├── Volume Definitions
+├── Container A
+└── Container B
+```
+
+The Pod is the basic Kubernetes scheduling unit.
+
+---
+
+# Pod Networking
+
+The course introduces four communication categories:
+
+```text
+Container-to-Container
+Pod-to-Pod
+Pod-to-Service
+External-to-Service
+```
+
+Pod networking connects Kubernetes directly to earlier Linux and network studies.
+
+```text
+Linux Network Namespace
+       ↓
+Pod Network Namespace
+       ↓
+CNI
+       ↓
+Cluster Network
+```
+
+---
+
+# Pod Storage
+
+Pods can define volumes and mount them into containers.
+
+```text
+Pod
+ ↓
+Volume
+ ↓
+Container Mount
+```
+
+Storage concepts include:
+
+```text
+Ephemeral Volumes
+PersistentVolume
+PersistentVolumeClaim
+ConfigMap
+Secret
+CSI
+```
+
+Detailed persistent-storage behavior is studied later.
+
+---
+
+# Kubernetes Object Model
+
+Kubernetes manifests use API objects.
+
+A common object skeleton is:
+
+```yaml
+apiVersion:
+kind:
+metadata:
+spec:
+```
+
+Conceptually:
+
+```text
+apiVersion
+→ API schema
+
+kind
+→ Resource type
+
+metadata
+→ Resource identity
+
+spec
+→ Desired configuration
+```
+
+This structure becomes reusable across Pods, Deployments, Services, and other Kubernetes resources.
+
+---
+
+# YAML
+
+Kubernetes manifests commonly use YAML.
+
+Important concepts include:
+
+```text
+Mappings
+Lists
+Indentation
+Comments
+Multi-Line Text
+Nested Objects
+```
+
+YAML indentation represents data structure and should be treated as syntax rather than visual formatting.
 
 ---
 
@@ -212,7 +403,7 @@ kube-apiserver
 Kubernetes Objects
 ```
 
-The API server is the central interface for cluster state management.
+The API server remains the central interface for cluster state management.
 
 ---
 
@@ -226,59 +417,85 @@ Desired State
 Current State
 ```
 
-Controllers continuously observe the cluster and reconcile differences.
+A manifest expresses desired configuration.
 
-```text
-Observe
-   ↓
-Compare
-   ↓
-Act
-   ↓
-Observe Again
-```
+Cluster components work to make runtime state converge toward that configuration.
 
 ---
 
-# Control Plane
+# Workload Creation Flow
 
-Core responsibilities include:
-
-```text
-kube-apiserver
-→ Kubernetes API
-
-etcd
-→ Cluster state storage
-
-kube-scheduler
-→ Workload placement
-
-kube-controller-manager
-→ Desired-state reconciliation
-```
-
----
-
-# Worker Nodes
-
-Worker nodes execute workloads.
+The workload path can now be represented as:
 
 ```text
+YAML / kubectl
+      ↓
+Kubernetes API
+      ↓
+Pod Object
+      ↓
+Scheduler
+      ↓
 Worker Node
-├── kubelet
-├── kube-proxy
-├── Container Runtime
-└── Workloads
+      ↓
+kubelet
+      ↓
+Container Runtime
+      ↓
+Container
 ```
 
-A node must be both registered and operationally Ready before normal workload scheduling can be expected.
+Creating the API object and obtaining a healthy workload are separate verification stages.
+
+---
+
+# Kubernetes Events
+
+Pod startup can generate lifecycle evidence such as:
+
+```text
+Scheduled
+Pulling
+Pulled
+Created
+Started
+```
+
+Events help locate the stage at which workload startup failed.
+
+They should be correlated with resource state and application logs.
+
+---
+
+# Runtime Observation
+
+A useful first-level workload investigation is:
+
+```text
+get
+ ↓
+describe
+ ↓
+events
+ ↓
+logs
+```
+
+If the evidence points below the Pod layer, continue into:
+
+```text
+Node
+kubelet
+Container Runtime
+CNI
+Linux
+```
 
 ---
 
 # Container Runtime Architecture
 
-The conceptual execution path is:
+The conceptual execution path remains:
 
 ```text
 kubelet
@@ -292,65 +509,13 @@ OCI Runtime
 Linux Container
 ```
 
-Docker images remain relevant even when Docker Engine is not the Kubernetes runtime integration layer.
-
----
-
-# kubeadm Architecture
-
-kubeadm is used for Kubernetes cluster bootstrap.
-
-```text
-Control Plane Node
-      ↓
-kubeadm init
-```
-
-```text
-Worker Node
-      ↓
-kubeadm join
-```
-
-kubeadm should be distinguished from:
-
-```text
-kubelet
-→ Node agent
-```
-
-and:
-
-```text
-kubectl
-→ Kubernetes API client
-```
-
----
-
-# kubeconfig
-
-Kubernetes client access is configured through kubeconfig.
-
-```text
-kubectl
-   ↓
-kubeconfig
-   ↓
-Cluster
-User
-Context
-   ↓
-API Server
-```
-
-Client configuration should be investigated separately from cluster runtime health.
+Kubernetes abstractions ultimately result in real container and Linux process activity.
 
 ---
 
 # Kubernetes Networking Foundation
 
-Cluster networking now includes multiple address domains.
+Cluster networking includes multiple domains.
 
 ```text
 Node Network
@@ -358,87 +523,9 @@ Pod Network
 Service Network
 ```
 
-The course introduces Pod networking through a CNI implementation.
+Pod networking is provided through the CNI architecture.
 
-```text
-Pod
- ↓
-CNI
- ↓
-Cluster Network
-```
-
-Detailed Kubernetes network behavior is studied later.
-
----
-
-# CNI
-
-The course uses Calico as its CNI example.
-
-The architectural relationship is:
-
-```text
-Kubernetes
-    ↓
-CNI
-    ↓
-Pod Networking
-```
-
-Historical CNI manifest URLs from the course are not treated as current installation instructions.
-
----
-
-# Cluster Verification
-
-Cluster bootstrap is not considered complete merely because installation commands returned successfully.
-
-A verification sequence is:
-
-```text
-API Reachable?
-      ↓
-Control Plane Running?
-      ↓
-CNI Running?
-      ↓
-Node Registered?
-      ↓
-Node Ready?
-      ↓
-System Workloads Running?
-```
-
----
-
-# Kubernetes and Linux
-
-Kubernetes abstractions map back to real operating-system behavior.
-
-```text
-Kubernetes Object
-       ↓
-Pod
-       ↓
-Container
-       ↓
-Runtime
-       ↓
-Linux Process
-```
-
-Troubleshooting can therefore require:
-
-```text
-kubectl
-systemd
-Linux Logs
-Processes
-Networking
-Filesystems
-Container Runtime
-```
+Service networking is studied later.
 
 ---
 
@@ -454,6 +541,7 @@ Important relationships include:
 
 ```text
 Processes
+Namespaces
 systemd
 Users and Permissions
 Networking
@@ -486,6 +574,7 @@ Ports
 Packet Analysis
 Node Connectivity
 Pod Networking
+Service Connectivity
 ```
 
 ---
@@ -505,12 +594,12 @@ Container Images
 Container Runtime
 Registry
 Container Networking
-Persistent Storage
+Volumes
 Multi-Container Applications
 Container Clustering
 ```
 
-Kubernetes extends these concepts from host-level operation into cluster-level orchestration.
+Kubernetes extends these concepts into API-driven cluster orchestration.
 
 ---
 
@@ -563,14 +652,14 @@ Potential layers include:
 ```text
 Client Configuration
 Kubernetes API
-Control Plane
+Controller
+Scheduler
+Pod
+Container
 Worker Node
 kubelet
 Container Runtime
 CNI
-Pod
-Controller
-Service
 Network
 Storage
 Application
@@ -578,35 +667,36 @@ Application
 
 ---
 
-# Node Troubleshooting
+# Pod Troubleshooting
 
-A node problem can be investigated as:
+A practical starting workflow is:
 
 ```text
-Linux Host Healthy?
+kubectl get pod
       ↓
-Network Reachable?
+kubectl describe pod
       ↓
-Container Runtime Healthy?
+Events
       ↓
-kubelet Healthy?
-      ↓
-API Reachable?
-      ↓
-CNI Healthy?
-      ↓
-Node Conditions?
-      ↓
-Node Ready?
+kubectl logs
 ```
 
-This preserves the same layered infrastructure troubleshooting method used throughout the repository.
+Potential evidence then determines whether investigation should continue into:
+
+```text
+Image / Registry
+Scheduler
+Node
+Runtime
+CNI
+Application
+```
 
 ---
 
 # Runtime vs Desired State
 
-Kubernetes introduces the distinction:
+Kubernetes distinguishes:
 
 ```text
 Desired State
@@ -614,19 +704,11 @@ vs
 Observed Runtime State
 ```
 
-Configuration describes intent.
+A YAML object describes intent.
 
-Runtime evidence proves what actually happened.
+Runtime evidence shows what actually happened.
 
-Useful evidence later includes:
-
-```text
-kubectl get
-kubectl describe
-kubectl logs
-Events
-Node Conditions
-```
+This distinction is central to reliable Kubernetes administration.
 
 ---
 
@@ -639,6 +721,7 @@ Current principles include:
 ```text
 Do not publish bootstrap tokens.
 Do not commit kubeconfig credentials.
+Do not commit real application secrets.
 Do not broadly disable host security controls as a generic fix.
 Use least privilege.
 Protect Kubernetes API credentials.
@@ -667,14 +750,15 @@ Do not fabricate:
 Cluster IDs
 Node Names
 Node Addresses
+Pod Names
 Pod Addresses
-Bootstrap Tokens
-Certificate Hashes
 Container IDs
 API Server Addresses
+Events
 Runtime IDs
 Scheduler Decisions
 Node Status
+Application Logs
 Command Output
 ```
 
@@ -684,7 +768,7 @@ Actual evidence must come from an authorized lab environment.
 
 # Historical Material Policy
 
-The Kubernetes course contains historical installation procedures, versions, runtimes, and ecosystem components.
+The Kubernetes course contains historical installation procedures, runtime assumptions, API versions, and networking implementation details.
 
 Examples include:
 
@@ -692,13 +776,15 @@ Examples include:
 Older Kubernetes repositories
 Older Ubuntu / CentOS releases
 Historical Docker runtime integration
+docker0-based Pod diagrams
+Historical kubelet CNI flags
 Older Calico manifests
 Heapster
 rkt
 Legacy Kubernetes API versions
 ```
 
-These are preserved as course context while architecture and modern concepts are distinguished where necessary.
+These are preserved as course context while reusable Kubernetes architecture is documented separately.
 
 ---
 
@@ -734,28 +820,39 @@ kubeconfig Introduction
 kubeadm Cluster Bootstrap
 Linux Node Preparation
 Control Plane Initialization
-Pod Network CIDR
 CNI Installation
 Worker Node Join
 Node Ready Verification
-kube-system Introduction
-Kubernetes Component Observation
-Linux Process Correlation
+kubectl Fundamentals
+API Resource Discovery
+API Version Discovery
+Pod Creation
+Pod Fundamentals
+Pod Network Namespace
+Kubernetes Network Communication Types
+CNI Pod Networking
+Pod Volume Introduction
+PV / PVC Introduction
+ConfigMap / Secret Volume Introduction
+CSI Introduction
+Kubernetes Object Structure
+YAML Fundamentals
+Pod Events
+Pod Description
+Pod Logs
+Basic Pod Troubleshooting
 ```
 
 The next major topics are:
 
 ```text
-kubectl
-API Resources
-API Versions
-kubectl Completion
-Imperative Pod Creation
-kubectl get
-kubectl describe
-Events
-Logs
-Pod Fundamentals
+Pod Command Execution
+Pod Connection
+Detailed Pod YAML
+Object YAML Inspection
+Resource Templates
+dry-run
+Controllers
 ```
 
 ---
