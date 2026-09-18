@@ -51,7 +51,8 @@ kubernetes/
 ├── minikube-local-cluster-lab.md
 ├── kubeadm-cluster-bootstrap-lab.md
 ├── kubectl-basic-control-lab.md
-└── pod-fundamentals-lab.md
+├── pod-fundamentals-lab.md
+└── object-template-generation-lab.md
 ```
 
 Additional files will be added only after the corresponding Kubernetes topics are actually studied.
@@ -269,6 +270,10 @@ YAML
 Pod Manifests
 Pod Events
 Pod Inspection
+Pod Conditions
+kubectl exec
+Interactive Shell
+Live Object YAML
 ```
 
 The Pod model is:
@@ -281,7 +286,45 @@ Pod
 └── Container B
 ```
 
-The Pod is the basic Kubernetes scheduling unit.
+The Pod is the basic Kubernetes scheduling unit. This lab also introduces Pod conditions, container command execution, and live-object YAML inspection.
+
+---
+
+# 6. Object Template Generation
+
+File:
+
+```text
+object-template-generation-lab.md
+```
+
+Topics include:
+
+```text
+Resource Templates
+kubectl get -o yaml
+Server-Managed Metadata
+Reusable Pod Manifests
+kubectl create --dry-run=client
+Deployment YAML
+Selectors and Pod Labels
+Deployment / ReplicaSet / Pod
+Resource Verification
+```
+
+The course introduces two ways to prepare manifests: export an existing object and review the YAML, or generate a definition with client-side dry run.
+
+```text
+Existing Object / kubectl create
+              ↓
+          YAML Template
+              ↓
+         Review and Edit
+              ↓
+       Resource Creation
+              ↓
+          Verification
+```
 
 ---
 
@@ -841,17 +884,16 @@ Pod Events
 Pod Description
 Pod Logs
 Basic Pod Troubleshooting
+Pod Conditions and Container Commands
+Live Object YAML
+Object Template Generation
+Client-Side Dry Run
+Deployment / ReplicaSet / Pod Observation
 ```
 
 The next major topics are:
 
 ```text
-Pod Command Execution
-Pod Connection
-Detailed Pod YAML
-Object YAML Inspection
-Resource Templates
-dry-run
 Controllers
 ```
 
