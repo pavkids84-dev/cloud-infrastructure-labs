@@ -115,7 +115,8 @@ cloud-infrastructure-labs/
     ├── kubeadm-cluster-bootstrap-lab.md
     ├── kubectl-basic-control-lab.md
     ├── pod-fundamentals-lab.md
-    └── object-template-generation-lab.md
+    ├── controller-fundamentals-lab.md
+    └── service-fundamentals-lab.md
 ```
 
 Future top-level directories should be created only after the corresponding areas are actually studied.
@@ -272,6 +273,16 @@ Live Object YAML
 Object Template Generation
 Client-Side Dry Run
 Deployment / ReplicaSet / Pod Observation
+Controller Reconciliation
+Controller Roles
+Deployment / ReplicaSet / Pod / Node Relationship
+Deployment / ReplicaSet Object Details
+Managed Pod Replacement and Cascade Behavior
+Replica Scale Out and Scale In
+Namespace and Resource Scope
+Service Fundamentals and Exposure
+Service Selector and Backend Addresses
+Service Types and kubectl expose
 ```
 
 The core progression is:
@@ -404,7 +415,47 @@ Desired Configuration
 
 YAML therefore becomes part of the infrastructure definition model rather than merely a configuration-file format.
 
-The [Object Template Generation Lab](./kubernetes/object-template-generation-lab.md) covers YAML export, client-side dry run, and review of Deployment labels and selectors.
+The [kubectl Basic Control Lab](./kubernetes/kubectl-basic-control-lab.md) consolidates YAML export, client-side dry run, reusable manifests, namespace-scoped queries, and resource deletion safeguards.
+
+---
+
+# Kubernetes Controller Fundamentals
+
+The [Controller Fundamentals Lab](./kubernetes/controller-fundamentals-lab.md) covers reconciliation, controller responsibilities, the Deployment–ReplicaSet–Pod relationship, owned-Pod replacement, cascading deletion, and replica scaling in the course.
+
+```text
+Desired State / spec
+        ↓
+Controller Reconciliation
+        ↓
+Deployment → ReplicaSet → Pod → Node
+        ↓
+Observe Resource State
+```
+
+Service-based workload access is a separate relationship from Deployment or ReplicaSet ownership. The course's diagram is conceptual, not evidence of a completed personal rollout.
+
+The same Controller Lab includes Deployment/ReplicaSet YAML fields, ownerReferences, replacement of a deleted managed Pod, cascading deletion, and Scale Out/In. These are course examples and proposed checks, not personal cluster output.
+
+---
+
+# Kubernetes Namespaces and Service Fundamentals
+
+Namespace targeting and safe resource deletion from course pp.79–80 are consolidated into the [kubectl Basic Control Lab](./kubernetes/kubectl-basic-control-lab.md).
+
+The [Service Fundamentals and Exposure Lab](./kubernetes/service-fundamentals-lab.md) documents Pod IP reachability, Service selectors and backends, the Service types, and `kubectl expose` from course pages 81–88.
+
+```text
+Namespaced Workloads
+       ↓
+Service Selector
+       ↓
+Matching Pod Backends
+       ↓
+Client Connectivity Verification
+```
+
+These are course-based explanations and proposed observations. The slide screenshots are not personal lab evidence.
 
 ---
 
@@ -706,6 +757,15 @@ Live Object YAML
 Object Template Generation
 Client-Side Dry Run
 Deployment / ReplicaSet / Pod Observation
+Controller Reconciliation
+Controller Roles
+Deployment / ReplicaSet / Pod / Node Relationship
+Deployment / ReplicaSet Object Details
+Managed Pod Replacement and Cascade Behavior
+Replica Scale Out and Scale In
+Namespace and Resource Scope
+Service Fundamentals and Exposure
+Service Selectors and Service Types
 ```
 
 The current learning area is:
@@ -717,9 +777,10 @@ Kubernetes
 The next topics are:
 
 ```text
-Controllers
-Services
-Deployments
+NodePort Access and Service Routing
+kube-proxy
+Labels and Selectors
+Deployment RollingUpdate
 Security
 Storage
 High Availability
