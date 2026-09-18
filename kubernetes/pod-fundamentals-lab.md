@@ -35,13 +35,11 @@ Pod Events
 Pod Description
 Pod Logs
 Pod Conditions
-Pod Tolerations
 kubectl exec
 Interactive Container Shell
-Container Exit Status
-Example Pod Manifest
-Live Object YAML
-Manifest Export Limitations
+Container Tool Availability
+BusyBox Pod Manifest
+Live Object YAML Inspection
 ```
 
 ---
@@ -829,65 +827,73 @@ Logs should be correlated with Kubernetes state and events.
 
 ---
 
-# Pod Conditions and Events (Course p.53)
+# Pod Conditions and Startup Events
 
-The course continues its `kubectl describe pod` example with Pod conditions and startup events.
-
-The example shows `Initialized`, `Ready`, `ContainersReady`, and `PodScheduled` as `True`. It also shows a Secret-backed volume, a `BestEffort` QoS class, and tolerations for nodes that are temporarily not ready or unreachable.
-
-These are **course screenshot values**, not observations from the author's own cluster.
-
-A diagnostic interpretation is:
+The course continues its `kubectl describe pod` example with a summary of Pod conditions.
 
 ```text
-Conditions
-  -> summarize aspects of current Pod state
-Events
-  -> record relevant scheduling and container-start activity
+Initialized       True
+Ready             True
+ContainersReady   True
+PodScheduled      True
 ```
 
-The example events progress through `Scheduled`, `Pulling`, `Pulled`, `Created`, and `Started`. A successful start event does not, by itself, prove that the application is serving requests correctly.
+These values belong to the course example, not to an observed Pod in my own cluster.
+
+Conditions describe different aspects of the Pod state. Scheduling, container readiness, and application-level service behavior must not be treated as identical.
+
+The example also shows the following startup events:
+
+```text
+Scheduled
+    ↓
+Pulling
+    ↓
+Pulled
+    ↓
+Created
+    ↓
+Started
+```
+
+The events help locate where startup succeeded or stalled. A `Started` event alone does not establish that the application is serving requests correctly.
 
 ---
 
-# Execute a Command in a Pod (Course pp.54-55)
+# Execute Commands Inside a Pod
 
-The course introduces the `kubectl exec` interface:
-
-```bash
-kubectl exec POD_NAME -- COMMAND [ARG...]
-```
-
-For a Pod with multiple containers, select one explicitly when needed:
+The course introduces `kubectl exec` to execute a command inside a container belonging to a Pod.
 
 ```bash
-kubectl exec POD_NAME -c CONTAINER_NAME -- COMMAND [ARG...]
+kubectl exec POD_NAME -- COMMAND
 ```
 
-The `--` separates options for `kubectl` from the command and its arguments inside the container.
+The `--` separates kubectl options from the command to run inside the container.
 
-`kubectl exec` executes a **new command in a running container**; it is not a direct login to the worker node and does not replace the container's main process.
-
-Example commands, **not recorded execution results**:
+If the Pod has multiple containers, select the target container:
 
 ```bash
-kubectl exec myapp-pod -- /bin/sh -c 'pwd; ls /'
-kubectl exec myapp-pod -- /bin/sh -c 'env'
+kubectl exec POD_NAME -c CONTAINER_NAME -- COMMAND
 ```
 
-The target Pod and requested executable must exist in the actual lab environment.
+Example commands using the Pod defined later in this lab:
+
+```bash
+kubectl exec myapp-pod -- pwd
+kubectl exec myapp-pod -c myapp-container -- ls /
+```
+
+The Pod name, container name, and executables must exist in the actual practice environment. These commands are examples, not recorded execution output.
 
 ---
 
-# Interactive Container Access (Course pp.55-57)
+# Interactive Container Shell
 
-The course uses `-i` for standard input and `-t` for a terminal, and shows an interactive shell session:
+The course uses `-i` to connect standard input and `-t` to allocate a terminal.
 
 ```bash
 kubectl exec -it myapp-pod -- /bin/sh
 ```
-
-The course screenshot uses `/bin/bash` with its example image; a different image may provide `/bin/sh` but not Bash. Choose the shell actually installed in the container.
 
 Conceptually:
 
@@ -896,44 +902,60 @@ Local Terminal
       ↓
 kubectl exec -it
       ↓
-Pod / Container Shell
+Container Shell
       ↓
-Inspect environment, paths, and files
+Inspect the Container Environment
 ```
 
-Use `exit` to leave the interactive shell. Commands entered here operate inside the selected container's environment, not the host's ordinary shell environment.
+The course's screenshot uses `/bin/bash` for its example image. A different container image might provide `/bin/sh` without Bash. Choose a shell that actually exists inside the image.
+
+Example commands for an interactive session:
+
+```bash
+pwd
+env
+ls /
+exit
+```
+
+These commands run inside the container, not in the worker node's ordinary host environment.
 
 ---
 
-# Missing Commands and Exit Status (Course p.57)
+# Container Tools and Exit Status
 
-The course screenshot shows `ps` and `ip` failing with `command not found` inside a container; the session finishes with exit code `127`.
-
-This is evidence about **which utilities are available inside that particular container**, not proof that the Pod network is broken or that the worker host lacks those utilities.
-
-A controlled investigation sequence is:
+The course's container session shows that `ps` and `ip` are unavailable:
 
 ```text
-Command fails inside container
-    ↓
-Check the exact error and command path
-    ↓
-Check what the container image contains
-    ↓
-Choose an available diagnostic command or an authorized debug method
-    ↓
-Verify the actual question under investigation
+ps: command not found
+ip: command not found
 ```
 
-The specific missing utilities and exit code are from the course example, not personal lab evidence.
+The displayed session ends with exit code `127` after an unavailable command. The screenshot is course evidence, not my own execution result.
+
+A missing command inside a container does not, by itself, mean that the worker node or Pod network has failed.
+
+The useful investigation sequence is:
+
+```text
+Command Not Found
+      ↓
+Check the Error and Executable Path
+      ↓
+Check Which Utilities Exist in the Image
+      ↓
+Use an Available Command or Authorized Debug Method
+      ↓
+Verify the Actual Infrastructure Question
+```
+
+This connects container-image contents to practical Kubernetes troubleshooting.
 
 ---
 
-# Course Example: BusyBox Pod Manifest (Course p.58)
+# BusyBox Pod Manifest
 
-The slide defines a Pod with a label, a single BusyBox container, and a command that prints a greeting before sleeping.
-
-A clean, indentation-correct representation of that slide is:
+The course defines a single-container Pod using BusyBox. The following YAML preserves its fields and command with valid indentation:
 
 ```yaml
 apiVersion: v1
@@ -949,19 +971,9 @@ spec:
       command: ['sh', '-c', 'echo Hello Kubernetes! && sleep 3600']
 ```
 
-The intended roles are:
+The `command` prints a greeting and then keeps the container running for a limited period. This is an example manifest; it does not demonstrate that a Pod was created in an actual cluster.
 
-```text
-metadata.name       -> Pod identity
-metadata.labels     -> Pod metadata for selection and organization
-spec.containers     -> Container definitions
-image               -> Container image to run
-command             -> Process to execute in the container
-```
-
-The `sleep 3600` keeps the example process alive for a limited period so that the Pod can be inspected. The example is instructional and is not evidence of a successful deployment.
-
-For an authorized disposable lab, save this example as `myapp-pod.yaml` and verify the actual result with:
+The corresponding practice workflow is:
 
 ```bash
 kubectl create -f myapp-pod.yaml
@@ -970,38 +982,57 @@ kubectl describe pod myapp-pod
 kubectl logs myapp-pod
 ```
 
-These are steps to perform, **not results already obtained**.
+Save the YAML as `myapp-pod.yaml` before using these commands. The Pod can exit after the sleep period; its state must be observed rather than assumed.
 
 ---
 
-# Inspect a Live Object as YAML (Course p.59)
+# Inspect a Live Object as YAML
 
-The course shows viewing a Pod's object representation:
-
-```bash
-kubectl get pod myapp-pod -o yaml
-```
-
-It also illustrates exporting a Pod object to a file:
+The course retrieves a Pod object in YAML format:
 
 ```bash
-kubectl get pod myapp-pod -o yaml > myapp-pod-observed.yaml
+kubectl get pod POD_NAME -o yaml
 ```
 
-A retrieved live object can contain more than the user's original manifest:
+To save an existing Pod object to a file:
+
+```bash
+kubectl get pod myapp-pod -o yaml > myapp-pod-export.yaml
+```
+
+A live-object export can contain more information than the original manifest:
 
 ```text
-apiVersion / kind
-metadata (including server-assigned fields)
-spec (desired configuration and defaults)
-status (observed runtime state)
+apiVersion
+kind
+metadata
+spec
+status
 ```
 
-The slide's larger example also shows annotations, owner references, node placement, tolerations, and volume information. Its concrete addresses and identifiers belong to the course's sample cluster.
+The course screenshot also includes annotations, ownership information, scheduling settings, tolerations, and volume-related fields from its example cluster. Those sample names, addresses, timestamps, and IDs must not be reused as personal evidence.
 
-**Additional operational caution:** a raw `kubectl get -o yaml` export is useful as evidence, but it is not automatically a reusable creation manifest. Review server-assigned metadata and observed `status`, and be especially careful not to treat an automatically controller-owned Pod as an independent durable workload. Preserve the intentionally written manifest as the clean source of desired configuration.
+---
 
-The course additionally demonstrates deleting and recreating a Pod from a saved YAML file. Do not perform that destructive step on an existing application Pod merely to inspect it; reserve it for your own disposable lab resources after confirming ownership and effects.
+# Exported Object vs Reusable Manifest
+
+The course illustrates saving an existing Pod as YAML and creating a Pod from an edited file. A raw export is not automatically a clean manifest for a new resource.
+
+Before reusing a live-object export, review:
+
+```text
+metadata.name
+metadata.uid
+metadata.resourceVersion
+metadata.creationTimestamp
+metadata.ownerReferences
+spec fields assigned or injected by the cluster
+status
+```
+
+Keep the desired configuration, remove server-generated metadata and observed state where appropriate, and review controller ownership before creating a new resource.
+
+Do not delete an existing application Pod merely to test YAML export. The next lab studies this template-cleanup workflow in detail.
 
 ---
 
@@ -1111,11 +1142,10 @@ Actual evidence must come from an authorized Kubernetes environment.
 - Pod startup events were connected to lifecycle observation.
 - Pod description and application logs were distinguished.
 - A layered Pod troubleshooting workflow was established.
-- Pod conditions and events from the course example were distinguished.
+- Pod conditions and startup events were distinguished.
 - `kubectl exec` and interactive container-shell access were introduced.
-- Missing tools inside a container were distinguished from host/network failures.
-- The course BusyBox Pod YAML example was reviewed as a proposed lab manifest.
-- Live-object YAML was distinguished from a clean reusable manifest.
+- Unavailable commands inside a container were distinguished from host or network failures.
+- The course BusyBox manifest and live-object YAML export were reviewed.
 
 ## What I Learned
 
@@ -1126,5 +1156,5 @@ Actual evidence must come from an authorized Kubernetes environment.
 - YAML manifests describe the desired configuration of Kubernetes objects.
 - Creating a Pod object and having a healthy running workload are separate states.
 - Events, descriptions, and logs provide different layers of troubleshooting evidence.
-- `kubectl exec` inspects a container environment rather than the worker host.
-- A live-object YAML export may include server-managed fields and observed state not appropriate for a clean creation manifest.
+- `kubectl exec` runs commands in a selected container, not on the worker host.
+- Live-object YAML must be reviewed before it is reused as a new manifest.
