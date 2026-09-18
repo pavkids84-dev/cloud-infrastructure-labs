@@ -114,7 +114,8 @@ cloud-infrastructure-labs/
     ├── minikube-local-cluster-lab.md
     ├── kubeadm-cluster-bootstrap-lab.md
     ├── kubectl-basic-control-lab.md
-    └── pod-fundamentals-lab.md
+    ├── pod-fundamentals-lab.md
+    └── object-template-generation-lab.md
 ```
 
 Future top-level directories should be created only after the corresponding areas are actually studied.
@@ -266,6 +267,11 @@ Pod Networking
 Pod Storage Introduction
 Kubernetes YAML
 Basic Pod Troubleshooting
+Pod Conditions and Container Commands
+Live Object YAML
+Object Template Generation
+Client-Side Dry Run
+Deployment / ReplicaSet / Pod Observation
 ```
 
 The core progression is:
@@ -397,6 +403,8 @@ Desired Configuration
 ```
 
 YAML therefore becomes part of the infrastructure definition model rather than merely a configuration-file format.
+
+The [Object Template Generation Lab](./kubernetes/object-template-generation-lab.md) covers YAML export, client-side dry run, and review of Deployment labels and selectors.
 
 ---
 
@@ -693,6 +701,11 @@ Pod Events
 Pod Description
 Pod Logs
 Basic Pod Troubleshooting
+Pod Conditions and Container Commands
+Live Object YAML
+Object Template Generation
+Client-Side Dry Run
+Deployment / ReplicaSet / Pod Observation
 ```
 
 The current learning area is:
@@ -704,12 +717,6 @@ Kubernetes
 The next topics are:
 
 ```text
-Pod Command Execution
-Pod Connection
-Detailed Pod YAML
-Object YAML Inspection
-Resource Templates
-dry-run
 Controllers
 Services
 Deployments
