@@ -2,7 +2,7 @@
 
 This repository documents my hands-on learning path toward cloud infrastructure engineering.
 
-The repository is organized around three current foundations:
+The current foundation consists of:
 
 ```text
 Linux System Administration
@@ -10,11 +10,13 @@ Linux System Administration
 Network Fundamentals and Troubleshooting
         ↓
 Containers and Docker
+        ↓
+Kubernetes
 ```
 
 The focus is not simply on memorizing commands.
 
-Each topic is studied through:
+Each topic is approached through:
 
 ```text
 Concept
@@ -30,16 +32,7 @@ Troubleshooting
 Verification
 ```
 
-The long-term goal is to build practical infrastructure skills that can later extend into:
-
-```text
-Kubernetes
-Cloud Platforms
-Infrastructure as Code
-Observability
-Automation
-Cloud Security
-```
+The long-term goal is to develop practical skills in infrastructure operation, automation, troubleshooting, and security.
 
 ---
 
@@ -102,18 +95,29 @@ cloud-infrastructure-labs/
 │   ├── network-troubleshooting-lab.md
 │   └── packet-analysis-lab.md
 │
-└── docker/
+├── docker/
+│   ├── README.md
+│   ├── virtualization-container-foundations-lab.md
+│   ├── cloud-computing-cloud-native-foundations-lab.md
+│   ├── docker-engine-foundations-lab.md
+│   ├── image-container-lifecycle-lab.md
+│   ├── dockerfile-image-build-lab.md
+│   ├── container-management-lab.md
+│   ├── registry-management-lab.md
+│   ├── docker-networking-lab.md
+│   ├── docker-compose-lab.md
+│   └── container-clustering-foundations-lab.md
+│
+└── kubernetes/
     ├── README.md
-    ├── virtualization-container-foundations-lab.md
-    ├── cloud-computing-cloud-native-foundations-lab.md
-    ├── docker-engine-foundations-lab.md
-    ├── image-container-lifecycle-lab.md
-    ├── dockerfile-image-build-lab.md
-    ├── container-management-lab.md
-    └── registry-management-lab.md
+    ├── kubernetes-architecture-foundations-lab.md
+    ├── minikube-local-cluster-lab.md
+    ├── kubeadm-cluster-bootstrap-lab.md
+    ├── kubectl-basic-control-lab.md
+    └── pod-fundamentals-lab.md
 ```
 
-Future directories will be added only after the corresponding topics are actually studied or reproduced.
+Future top-level directories should be created only after the corresponding areas are actually studied.
 
 ---
 
@@ -125,28 +129,22 @@ Directory:
 linux/
 ```
 
-The Linux section establishes the operating-system foundation required for infrastructure engineering.
+Linux provides the operating-system foundation for infrastructure engineering.
 
-Topics currently covered include:
+Current areas include:
 
 ```text
-System Information
-Files and Directories
-Permissions
-vi
-Shell Fundamentals
-Shell Environment
-Search
-Archive and Compression
-Text Processing
+System Fundamentals
+Files and Permissions
+Shell
 Bash Scripting
 Processes
-systemd Services
+systemd
 OpenSSH
-Package Management
+Packages
 Users and Groups
 Job Scheduling
-Disk and Partition Management
+Storage
 Filesystems
 LVM
 RAID
@@ -154,7 +152,7 @@ Memory and Swap
 Boot and Kernel
 Backup and Recovery
 Logging
-firewalld
+Firewall
 SELinux
 Linux Networking
 Network Teaming
@@ -162,40 +160,12 @@ NFS
 Linux Bridge
 AutoFS
 Samba / CIFS
-Apache HTTP Server
+Apache
 BIND / Unbound
-Host Network Security Hardening
+Host Network Security
 ```
 
-The section emphasizes the difference between:
-
-```text
-Runtime State
-and
-Persistent Configuration
-```
-
-Examples include:
-
-```text
-systemctl start
-vs
-systemctl enable
-
-ip addr
-vs
-NetworkManager configuration
-
-mount
-vs
-/etc/fstab
-
-firewalld runtime rules
-vs
-permanent rules
-```
-
-Linux administration is treated as the base layer for later container and cloud infrastructure work.
+Linux administration remains the base layer for container and cloud infrastructure work.
 
 ---
 
@@ -207,62 +177,40 @@ Directory:
 network/
 ```
 
-General networking theory is intentionally separated from Linux-specific network administration.
+General networking theory is separated from operating-system-specific network administration.
 
-The network section covers:
+Current areas include:
 
 ```text
 OSI Model
-Network Types and Protocols
 Ethernet
 IPv4
 IPv6
 ARP
 Routing
-Dynamic Routing Protocols
-Network Standards
+Routing Protocols
 DNS
 Network Troubleshooting
 Packet Analysis
 ```
 
-The networking model progresses from protocol theory toward observable traffic.
+The progression is:
 
 ```text
-OSI Model
-    ↓
-Ethernet
-    ↓
-IP
-    ↓
-Routing
-    ↓
-DNS
-    ↓
-Transport
-    ↓
-Troubleshooting
-    ↓
+Protocol Theory
+      ↓
+Traffic Flow
+      ↓
+System Observation
+      ↓
 Packet Capture
+      ↓
+Stream / Flow Analysis
+      ↓
+Troubleshooting
 ```
 
-Packet analysis introduces practical use of concepts such as:
-
-```text
-Ethernet Headers
-IPv4 / IPv6 Headers
-TCP Flags
-Sequence and Acknowledgment Numbers
-ARP Request / Reply
-ICMP
-IGMP
-Wireshark Filters
-Follow Stream
-Flow Graph
-Latency Analysis
-```
-
-This section provides the networking foundation required for Docker networking, Kubernetes networking, cloud VPCs, load balancers, and network security.
+This foundation supports Docker networking, Kubernetes networking, cloud networking, and security.
 
 ---
 
@@ -274,512 +222,279 @@ Directory:
 docker/
 ```
 
-The Docker section extends the Linux and networking foundations into containerized infrastructure.
-
-The current learning path covers:
+The completed Docker learning path covers:
 
 ```text
 Virtualization
-    ↓
-VM vs Container
-    ↓
 Cloud Computing
-    ↓
-Cloud-Native Architecture
-    ↓
-Linux Container Foundations
-    ↓
+Cloud Native
+Linux Container Isolation
 Docker Engine
-    ↓
-Images
-    ↓
-Containers
-    ↓
+Images and Containers
 Dockerfile
-    ↓
-Image Build
-    ↓
-Persistent Data
-    ↓
+Storage
 Container Management
-    ↓
 Registry
+Docker Networking
+Docker Compose
+Container Clustering
 ```
+
+Docker provides the direct container foundation for Kubernetes.
 
 ---
 
-# Virtualization Foundations
+# Kubernetes
 
-The Docker learning path begins with virtualization concepts including:
-
-```text
-Emulation
-QEMU
-KVM
-Hypervisors
-Full Virtualization
-Paravirtualization
-libvirt
-RAW
-QCOW2
-Snapshots
-VM Migration
-```
-
-The key architectural distinction is:
+Directory:
 
 ```text
-Virtual Machine
-→ Hardware virtualization
-→ Separate guest kernel
+kubernetes/
 ```
+
+Kubernetes expands container infrastructure from host-level operation toward API-driven cluster orchestration.
+
+Current completed areas include:
+
+```text
+Kubernetes Architecture
+Minikube
+kubeadm Cluster Bootstrap
+kubectl Fundamentals
+Pod Fundamentals
+Pod Networking
+Pod Storage Introduction
+Kubernetes YAML
+Basic Pod Troubleshooting
+```
+
+The core progression is:
 
 ```text
 Container
-→ OS-level isolation
-→ Shared host kernel
+    ↓
+Pod
+    ↓
+Kubernetes API
+    ↓
+Scheduler / Controllers
+    ↓
+Worker Node
+    ↓
+Container Runtime
 ```
-
-This provides the foundation for understanding why containers behave differently from virtual machines.
 
 ---
 
-# Cloud-Native Foundations
+# Kubernetes API and kubectl
 
-The Docker section also connects containers to cloud architecture.
-
-Topics include:
-
-```text
-IaaS
-PaaS
-SaaS
-Cloud Responsibility Models
-Private Cloud
-Public Cloud
-Hybrid Cloud
-Microservices
-REST / HTTP APIs
-DevOps
-CI/CD
-Infrastructure as Code
-Serverless
-Containers
-```
-
-A simplified progression is:
-
-```text
-Cloud Infrastructure
-        ↓
-Cloud-Native Application
-        ↓
-Decoupled Services
-        ↓
-Containers
-        ↓
-Automated Delivery
-```
-
-Containers are studied as part of a wider cloud-native architecture rather than as an isolated Docker technology.
-
----
-
-# Linux Container Foundations
-
-Docker builds directly on Linux kernel concepts.
-
-```text
-Namespaces
-→ Isolation and visibility
-```
-
-```text
-cgroups
-→ Resource accounting and control
-```
-
-Examples include:
-
-```text
-PID Namespace
-Network Namespace
-Mount Namespace
-UTS Namespace
-IPC Namespace
-```
-
-This reinforces an important principle:
-
-```text
-Container
-!=
-Small Virtual Machine
-```
-
-A container is better understood as an isolated process environment using the host kernel.
-
----
-
-# Docker Engine Architecture
-
-The Docker architecture studied so far is:
+Kubernetes infrastructure is centered around API resources.
 
 ```text
 User
  ↓
-Docker CLI
+kubectl
  ↓
-Docker API
+kubeconfig
  ↓
-Docker Daemon
- ├── Images
- ├── Containers
- ├── Networks
- └── Volumes
-       ↕
-    Registry
+kube-apiserver
+ ↓
+Kubernetes Object
 ```
 
-This architecture connects Docker commands to the actual objects being managed.
+Useful operational evidence now includes:
+
+```text
+kubectl get
+kubectl describe
+Kubernetes Events
+kubectl logs
+```
+
+These commands expose different layers of workload state.
 
 ---
 
-# Image and Container Lifecycle
+# Kubernetes Pods
 
-Docker images and containers are treated as separate objects.
+A Pod is the basic Kubernetes scheduling unit.
 
 ```text
-Image
-→ Reusable artifact
+Pod
+├── Shared Network Environment
+├── Volume Definitions
+├── Container A
+└── Container B
 ```
 
+The Pod connects multiple previously studied infrastructure concepts.
+
 ```text
+Linux Namespace
+→ Pod isolation
+
+Container Runtime
+→ Container execution
+
+CNI
+→ Pod networking
+
+Volumes / CSI
+→ Storage integration
+
+Scheduler
+→ Node placement
+```
+
+---
+
+# Kubernetes Networking
+
+The current Kubernetes networking foundation includes:
+
+```text
+Container-to-Container
+Pod-to-Pod
+Pod-to-Service
+External-to-Service
+CNI
+Pod Network Namespace
+Pod IP
+```
+
+The relationship with previous studies is:
+
+```text
+Linux Networking
+       ↓
+Container Networking
+       ↓
+Docker Networking
+       ↓
+Kubernetes Pod Networking
+```
+
+---
+
+# Kubernetes Object Definitions
+
+Kubernetes resource definitions commonly use:
+
+```yaml
+apiVersion:
+kind:
+metadata:
+spec:
+```
+
+These fields represent:
+
+```text
+API Schema
+Resource Type
+Object Identity
+Desired Configuration
+```
+
+YAML therefore becomes part of the infrastructure definition model rather than merely a configuration-file format.
+
+---
+
+# Desired State and Runtime State
+
+Kubernetes extends the repository's recurring state-management principle.
+
+Earlier infrastructure introduced:
+
+```text
+Runtime State
+!=
+Persistent Configuration
+```
+
+Kubernetes adds:
+
+```text
+Desired State
+!=
+Observed State
+```
+
+A manifest defines what should exist.
+
+The cluster API and runtime evidence reveal what actually exists.
+
+---
+
+# Workload Creation Flow
+
+The workload path can now be represented as:
+
+```text
+YAML / kubectl
+      ↓
+Kubernetes API
+      ↓
+Pod
+      ↓
+Scheduler
+      ↓
+Worker Node
+      ↓
+kubelet
+      ↓
+Container Runtime
+      ↓
 Container
-→ Runtime instance created from an image
 ```
 
-The relationship is:
+A successful object creation request does not by itself prove application readiness.
+
+---
+
+# Linux, Network, Docker, and Kubernetes Relationship
+
+The repository areas intentionally build on one another.
 
 ```text
+Linux Processes
+      ↓
+Container Processes
+      ↓
+Kubernetes Workloads
+```
+
+```text
+Linux Namespaces
+      ↓
+Container Isolation
+      ↓
+Pod Network Namespace
+```
+
+```text
+IP / Routing / DNS
+      ↓
+Docker Networking
+      ↓
+Kubernetes CNI Networking
+```
+
+```text
+Docker Images
+      ↓
 Registry
-   ↓
-Image
-   ↓
-Container
-   ↓
-Main Process
-```
-
-A fundamental runtime rule is:
-
-```text
-Main Process Running
-→ Container Running
-```
-
-```text
-Main Process Exits
-→ Container Exits
-```
-
-This process model is important for both Docker and later Kubernetes troubleshooting.
-
----
-
-# Dockerfile and Image Build
-
-Dockerfiles are used to create reproducible images.
-
-```text
-Project Files
-     ↓
-.dockerignore
-     ↓
-Build Context
-     ↓
-Dockerfile
-     ↓
-docker build
-     ↓
-Image Layers
-     ↓
-Docker Image
-```
-
-Instructions currently studied include:
-
-```text
-FROM
-RUN
-COPY
-ADD
-ENV
-USER
-EXPOSE
-ENTRYPOINT
-CMD
-VOLUME
-```
-
-Important distinctions include:
-
-```text
-RUN
-→ Build time
-```
-
-```text
-CMD / ENTRYPOINT
-→ Container runtime
-```
-
-and:
-
-```text
-EXPOSE
-→ Port metadata
-```
-
-```text
--p
-→ Host-to-container port publishing
-```
-
----
-
-# Image Build Optimization
-
-Docker image construction is also studied from an operational perspective.
-
-Topics include:
-
-```text
-Build Context
-.dockerignore
-Image Layers
-Build Cache
-Instruction Ordering
-Multi-Stage Builds
-Least-Privilege Runtime Users
-Minimal Runtime Images
-```
-
-A multi-stage build separates build tools from the final runtime image.
-
-```text
-Build Environment
       ↓
-Application Artifact
+Kubernetes Pod Containers
+```
+
+```text
+Container Clustering
       ↓
-Runtime Environment
-```
-
-Potential benefits include:
-
-```text
-Smaller Images
-Reduced Build Tooling
-Reduced Attack Surface
-Clear Build / Runtime Separation
-```
-
----
-
-# Persistent Data
-
-Container runtime and persistent application data have separate lifecycles.
-
-```text
-Container
-→ Replaceable runtime
-```
-
-```text
-Volume / External Storage
-→ Persistent data
-```
-
-Concepts currently introduced include:
-
-```text
-Dockerfile VOLUME
-Bind Mounts
-Shared Container Data
-Image vs Data Lifecycle
-```
-
-Persistent data should not depend only on a disposable container writable layer.
-
----
-
-# Container Management and Troubleshooting
-
-Docker container state is investigated using evidence before destructive recovery actions.
-
-Relevant tools currently include:
-
-```text
-docker ps
-docker inspect
-docker logs
-docker events
-docker top
-docker stats
-docker diff
-docker cp
-docker system df
-```
-
-A useful investigation sequence is:
-
-```text
-Container Problem
+Kubernetes Scheduling
       ↓
-docker ps -a
-      ↓
-docker inspect
-      ↓
-docker logs
-      ↓
-docker top
-      ↓
-docker stats
-      ↓
-docker diff
+Desired-State Reconciliation
 ```
-
-Additional evidence can be collected before restarting, rebuilding, or removing the failed container.
-
----
-
-# Container and Image Archives
-
-Docker provides different archive workflows.
-
-```text
-docker export
-docker import
-→ Container filesystem workflow
-```
-
-```text
-docker save
-docker load
-→ Docker image workflow
-```
-
-These operations should not be treated as equivalent.
-
----
-
-# Docker Registry
-
-Container images can be distributed through registries.
-
-```text
-Source Code
-    ↓
-Dockerfile
-    ↓
-docker build
-    ↓
-Image
-    ↓
-docker tag
-    ↓
-docker push
-    ↓
-Registry
-    ↓
-docker pull
-    ↓
-Deployment Host
-```
-
-Current registry topics include:
-
-```text
-Docker Hub
-Public Repositories
-Private Repositories
-Image References
-Tags
-Digests
-docker login
-docker push
-docker pull
-Private Registry
-Multi-Host Image Distribution
-```
-
-Registry infrastructure is also connected to future CI/CD and Kubernetes workflows.
-
----
-
-# Linux, Network, and Docker Relationship
-
-The three current repository areas are intentionally connected.
-
-```text
-Linux
-→ Processes
-→ Filesystems
-→ Users
-→ Services
-→ Storage
-→ Security
-
-Network
-→ Ethernet
-→ IP
-→ Routing
-→ DNS
-→ Ports
-→ Packet Analysis
-
-Docker
-→ Namespaces
-→ cgroups
-→ Images
-→ Containers
-→ Storage
-→ Registries
-```
-
-For example:
-
-```text
-Linux Process Management
-        ↓
-Container Process Model
-```
-
-```text
-Linux Bridge
-        ↓
-Docker Bridge Networking
-```
-
-```text
-Linux Users and Permissions
-        ↓
-Docker USER / Least Privilege
-```
-
-```text
-Network Ports
-        ↓
-Container Port Publishing
-```
-
-```text
-DNS and Routing
-        ↓
-Container and Registry Connectivity
-```
-
-The goal is to understand Docker as an extension of Linux and networking concepts rather than as an isolated command-line tool.
 
 ---
 
@@ -799,190 +514,98 @@ Resolution
 Verification
 ```
 
-The process begins by observing state rather than immediately changing configuration.
+The first action should normally be observation rather than immediate configuration changes.
 
 ---
 
-# Layered Troubleshooting
+# Kubernetes Troubleshooting
 
-A general infrastructure troubleshooting model is:
+A basic Pod investigation now follows:
 
 ```text
-Physical / Host
+kubectl get pod
       ↓
-Operating System
+Current State
       ↓
-Network
+kubectl describe pod
       ↓
-Service / Runtime
+Conditions / Events
       ↓
+kubectl logs
+      ↓
+Application Evidence
+```
+
+If required, investigation continues downward:
+
+```text
+Pod
+ ↓
 Container
-      ↓
-Application
-```
-
-For network-oriented failures:
-
-```text
-Interface
-   ↓
-Address
-   ↓
-Neighbor
-   ↓
-Route
-   ↓
-DNS
-   ↓
-Port
-   ↓
-Service
-   ↓
-Application
-```
-
-For Docker-oriented failures:
-
-```text
-Docker Service
-      ↓
-Docker Daemon
-      ↓
-Image
-      ↓
-Container State
-      ↓
-Main Process
-      ↓
-Network / Storage
-      ↓
-Application
+ ↓
+Container Runtime
+ ↓
+kubelet
+ ↓
+Worker Node
+ ↓
+Linux / Network
 ```
 
 ---
 
-# Service Troubleshooting
+# Service State vs Reachability
 
-A running service is not automatically reachable.
-
-A useful model is:
+A running process or Pod does not prove that an application is reachable.
 
 ```text
-Process Running
+Pod Running
+      ↓
+Container Running
       ↓
 Socket Listening
       ↓
-Firewall
-      ↓
-Routing / Network Path
-      ↓
-Security Policy
+Service / Network
       ↓
 Application Protocol
 ```
 
-This principle applies to Linux services, Docker containers, and later cloud workloads.
-
----
-
-# Runtime vs Persistent Configuration
-
-A recurring infrastructure principle is:
-
-```text
-Runtime State
-!=
-Persistent Definition
-```
-
-Examples include:
-
-```text
-systemctl start
-vs
-systemctl enable
-```
-
-```text
-ip addr
-vs
-NetworkManager configuration
-```
-
-```text
-mount
-vs
-/etc/fstab
-```
-
-```text
-Running Container
-vs
-Dockerfile / Image
-```
-
-```text
-Container Writable Layer
-vs
-Persistent Volume Data
-```
-
-Understanding which state survives restart or recreation is essential for reliable infrastructure operations.
-
----
-
-# Immutable Infrastructure
-
-Container infrastructure reinforces the idea of rebuilding and replacing workloads instead of repeatedly modifying them in place.
-
-```text
-Definition Change
-      ↓
-New Image
-      ↓
-Validation
-      ↓
-Deployment
-      ↓
-Replacement
-```
-
-This helps reduce configuration drift and improves reproducibility.
+This principle continues from Linux and Docker into Kubernetes.
 
 ---
 
 # Security Approach
 
-Security is treated as part of infrastructure operation rather than as a separate final step.
+Security is treated as part of every infrastructure layer.
 
-Current principles include:
+Current and upcoming areas include:
 
 ```text
-Least Privilege
-Minimal Installed Software
-Trusted Package and Image Sources
-Restricted Service Exposure
-Firewall Enforcement
+Linux Permissions
 SELinux
-SSH Hardening
-Non-Root Container Execution
-Minimal Runtime Images
-Protected Secrets
-Protected Registry Credentials
-Trusted Container Images
+Firewall
+SSH
+Container Least Privilege
+Registry Security
+Kubernetes API Security
+Authentication
+Authorization
+RBAC
+Service Accounts
+Secrets
 ```
 
-Containers should not automatically be assumed to provide a complete security boundary.
+Kubernetes manifests and kubeconfig files can contain sensitive infrastructure information and should be managed intentionally.
 
 ---
 
 # Evidence Policy
 
-Course screenshots and example command output are educational examples.
+Course screenshots and example output are educational examples.
 
-They are not recorded as real lab evidence.
+They are not recorded as actual runtime evidence.
 
-This repository does not fabricate:
+Do not fabricate:
 
 ```text
 IP Addresses
@@ -990,42 +613,45 @@ MAC Addresses
 Process IDs
 Container IDs
 Image IDs
-Image Digests
-Network IDs
-Volume IDs
-Routes
 Packet Captures
 Registry Results
-Exit Codes
-Resource Metrics
+Node Names
+Pod Names
+Pod Addresses
+Cluster IDs
+Events
+Scheduler Decisions
+RBAC Results
+Application Logs
 Command Output
 ```
 
-Actual environment-specific evidence should come from the system where the exercise was performed.
+Actual evidence must come from the environment where the exercise was performed.
 
 ---
 
 # Historical Material Policy
 
-Training materials can contain historical commands, versions, products, and terminology.
+Training materials can contain historical commands, versions, products, and ecosystem terminology.
 
-Examples encountered so far include:
+Examples encountered include:
 
 ```text
-ifconfig
-route
-arp
-netstat
+Legacy Linux Networking Commands
 Docker Toolbox
 Boot2Docker
-Older Docker CE / EE models
-Older Docker version requirements
-Historical Docker storage drivers
-MAINTAINER
-Historical Docker Hub policies
+Older Docker Models
+Historical Docker Runtime Integration
+rkt
+Heapster
+Older Kubernetes Versions
+Legacy Kubernetes API Versions
+docker0-Based Kubernetes Networking Examples
+Historical kubelet CNI Options
+Older Calico Installation Procedures
 ```
 
-Historical material is preserved for context while modern concepts and alternatives are distinguished where relevant.
+Historical material is preserved for context while reusable architectural concepts are documented separately.
 
 ---
 
@@ -1036,68 +662,80 @@ Completed major areas include:
 ```text
 Linux Fundamentals
 Linux System Administration
-Linux Service Administration
-Linux Storage
-Linux Security
-Linux Networking
+Linux Networking and Security
+
 Network Fundamentals
-IPv4 / IPv6
-ARP
 Routing
 DNS
 Network Troubleshooting
 Packet Analysis
-Virtualization Foundations
-Cloud Computing Foundations
+
+Virtualization
+Cloud Computing
 Cloud-Native Concepts
-Linux Container Foundations
-Docker Engine Architecture
-Docker Image Lifecycle
-Docker Container Lifecycle
-Dockerfile
-Image Build and Cache
-Multi-Stage Builds
-Persistent Storage Fundamentals
-Docker Container Management
-Docker Registry Fundamentals
+Docker
+Docker Networking
+Docker Compose
+Container Clustering
+
+Kubernetes Introduction
+Kubernetes Architecture
+Minikube
+kubeadm Cluster Bootstrap
+kubectl Fundamentals
+API Resource Discovery
+Pod Fundamentals
+Pod Networking
+CNI
+Pod Storage Introduction
+Kubernetes YAML
+Pod Events
+Pod Description
+Pod Logs
+Basic Pod Troubleshooting
 ```
 
-The next Docker topics are:
+The current learning area is:
 
 ```text
-Docker Networking
-Custom Networks
-Shared Network Namespaces
-Host Networking
-Docker Compose
-YAML
-Multi-Container Applications
-Docker Clustering
-Docker Swarm
-Kubernetes Introduction
+Kubernetes
+```
+
+The next topics are:
+
+```text
+Pod Command Execution
+Pod Connection
+Detailed Pod YAML
+Object YAML Inspection
+Resource Templates
+dry-run
+Controllers
+Services
+Deployments
+Security
+Storage
+High Availability
 ```
 
 ---
 
 # Planned Expansion
 
-As the learning path continues, additional top-level areas can be created when enough actual study and lab evidence exists.
+Additional top-level areas should be created only after enough actual study exists.
 
-Potential future areas include:
+Potential later areas include:
 
 ```text
-kubernetes/
 aws/
 terraform/
 ```
 
-They should not be created only as placeholders.
+They should not exist only as placeholders.
 
 ---
 
 # Long-Term Infrastructure Path
-
-The current learning path is:
 
 ```text
 Linux
@@ -1117,13 +755,13 @@ Infrastructure as Code
 Cloud Security
 ```
 
-The objective is to develop the ability to understand, operate, troubleshoot, automate, and secure infrastructure rather than only memorize individual tools.
+The objective is to develop the ability to understand, operate, troubleshoot, automate, and secure infrastructure across each layer.
 
 ---
 
 # What This Repository Demonstrates
 
-This repository documents progression from basic operating-system knowledge toward infrastructure-level reasoning.
+This repository documents progression from operating-system fundamentals toward distributed cloud infrastructure reasoning.
 
 ```text
 Theory
@@ -1139,9 +777,11 @@ Troubleshooting
 Verification
    ↓
 Automation
+   ↓
+Orchestration
 ```
 
-The central questions throughout the repository are:
+The central questions remain:
 
 ```text
 What should happen?
@@ -1155,4 +795,6 @@ What evidence supports the conclusion?
 What change resolves the issue?
 
 How was recovery verified?
+
+How should the same workload be defined, reproduced, observed, and operated at cluster scale?
 ```
