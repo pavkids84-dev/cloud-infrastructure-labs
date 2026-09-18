@@ -2,7 +2,9 @@
 
 ## Objective
 
-Understand the Pod as the basic Kubernetes scheduling unit, including shared networking, shared volumes, Pod IP addressing, CNI networking, basic storage concepts, YAML resource definitions, and Pod runtime observation.
+Understand the Pod as the basic Kubernetes scheduling unit and learn how to define, observe, inspect, enter, and troubleshoot Pod workloads.
+
+This lab connects Pod networking, storage, YAML definitions, runtime state, Kubernetes events, container command execution, and live API object inspection.
 
 ## Scope
 
@@ -29,11 +31,22 @@ YAML
 apiVersion
 kind
 metadata
+labels
 spec
+containers
+command
 Pod Creation
+Pod Conditions
 Pod Events
 Pod Description
 Pod Logs
+kubectl exec
+Container Runtime Inspection
+Environment Inspection
+Live Object YAML
+kubectl get -o yaml
+Manifest Reuse
+Pod Troubleshooting
 ```
 
 ---
@@ -74,7 +87,7 @@ Pod
 One or More Containers
 ```
 
-Kubernetes scheduling operates on the Pod rather than independently scheduling each container inside the same Pod.
+Kubernetes schedules the Pod rather than independently scheduling each container inside the same Pod.
 
 ---
 
@@ -92,7 +105,7 @@ Scheduler
 Worker Node
 ```
 
-Containers inside the same Pod are associated with the same scheduled Pod placement.
+Containers inside the same Pod follow the same Pod placement.
 
 ---
 
@@ -107,13 +120,13 @@ Namespace
 └── Pod
 ```
 
-Namespace behavior and resource isolation are studied in more detail later in the learning path.
+Namespace behavior and resource isolation are studied in more detail later in the Kubernetes learning path.
 
 ---
 
 # Pod IP
 
-The course introduces the principle that a Pod receives an IP address.
+A Pod receives a network identity.
 
 Conceptually:
 
@@ -122,7 +135,7 @@ Pod
 └── Pod IP
 ```
 
-Containers inside the Pod participate in the Pod networking environment rather than each being treated as an independently scheduled Pod endpoint.
+Containers inside the same Pod participate in the shared Pod networking environment.
 
 ---
 
@@ -130,21 +143,19 @@ Containers inside the Pod participate in the Pod networking environment rather t
 
 Containers in the same Pod share the Pod networking environment.
 
-Conceptually:
-
 ```text
 Pod Network Namespace
 ├── Container A
 └── Container B
 ```
 
-This means cooperating containers can communicate through the shared network namespace.
+This allows cooperating containers to communicate through the same network namespace.
 
 ---
 
 # Container-to-Container Communication
 
-Containers in the same Pod can communicate using the shared Pod network environment.
+Containers in the same Pod can communicate through the shared network environment.
 
 Conceptually:
 
@@ -156,13 +167,13 @@ localhost
 Container B
 ```
 
-This differs from communication between separate Pods.
+This is different from communication between separate Pods.
 
 ---
 
 # Pause / Sandbox Container
 
-The course introduces a pause container as an infrastructure container associated with the Pod's namespace.
+The course introduces the pause container as infrastructure associated with the Pod namespace.
 
 Conceptually:
 
@@ -174,7 +185,7 @@ Network Namespace
 Container A    Container B
 ```
 
-The important concept is the shared Pod sandbox/network namespace rather than the pause process as an application workload.
+The important concept is the shared Pod sandbox and namespace rather than treating the pause process as an application workload.
 
 ---
 
@@ -221,8 +232,6 @@ Shared Network Namespace
 Container A ↔ Container B
 ```
 
-The shared Pod environment handles communication between cooperating containers.
-
 ---
 
 # Pod-to-Pod
@@ -251,8 +260,6 @@ Backend Pod
 
 Detailed Service behavior is studied later.
 
-At this stage, the important concept is that workloads can address a stable service abstraction rather than directly depend on individual backend Pod identities.
-
 ---
 
 # External-to-Service
@@ -265,7 +272,7 @@ Kubernetes Service Layer
 Application Pods
 ```
 
-Detailed external exposure methods are studied later with Kubernetes Services and Ingress.
+Detailed external exposure methods are studied later with Services and Ingress.
 
 ---
 
@@ -310,7 +317,7 @@ IP Address
 Routing / Connectivity
 ```
 
-This connects Kubernetes directly to previously studied Linux and networking concepts.
+This connects Kubernetes directly to Linux and networking fundamentals.
 
 ---
 
@@ -351,7 +358,7 @@ Linux Interfaces
 IP Addressing
 ```
 
-This reinforces that Kubernetes networking remains dependent on Linux networking underneath the API abstraction.
+Kubernetes networking remains dependent on Linux networking underneath the API abstraction.
 
 ---
 
@@ -380,8 +387,6 @@ This allows containers in a Pod to use explicitly defined storage.
 # Volume Mounts
 
 A Pod volume becomes available inside a container through a mount.
-
-Conceptually:
 
 ```text
 Pod Volume
@@ -432,15 +437,13 @@ PersistentVolumeClaim
 PersistentVolume / Storage Backend
 ```
 
-Detailed PV/PVC behavior is studied later in the storage section.
+Detailed PV/PVC behavior is studied later.
 
 ---
 
 # ConfigMap and Secret Volume Sources
 
 ConfigMaps and Secrets can be exposed to Pod containers through volume mounts.
-
-They should not be confused with persistent block or filesystem storage.
 
 Conceptually:
 
@@ -452,13 +455,13 @@ Volume Projection
 Container Files
 ```
 
-Their primary role is application configuration or sensitive data delivery.
+They should not be confused with persistent block or filesystem storage.
 
 ---
 
 # Volume Types
 
-The course lists multiple volume backends and sources, including concepts such as:
+The course lists multiple volume backends and sources, including:
 
 ```text
 emptyDir
@@ -495,7 +498,7 @@ CSI
 → Container Storage Interface model
 ```
 
-Both support extensible infrastructure integrations around Kubernetes workloads.
+Both support extensible infrastructure integration around Kubernetes workloads.
 
 ---
 
@@ -532,8 +535,6 @@ Example:
 apiVersion: v1
 ```
 
-API versions should be selected according to the resource and Kubernetes version being used.
-
 ---
 
 # `kind`
@@ -546,30 +547,20 @@ Example:
 kind: Pod
 ```
 
-Conceptually:
-
-```text
-API Version
-+
-Kind
-```
-
-tell the API server how the submitted object should be interpreted.
-
 ---
 
 # `metadata`
 
 `metadata` identifies and describes the Kubernetes object.
 
-A minimal example can include:
+Example:
 
 ```yaml
 metadata:
   name: mypod
 ```
 
-Later topics add metadata such as:
+Metadata can also contain information such as:
 
 ```text
 Labels
@@ -577,6 +568,24 @@ Annotations
 Namespace
 Ownership
 ```
+
+---
+
+# Labels
+
+The course introduces labels in a Pod manifest.
+
+Example:
+
+```yaml
+metadata:
+  labels:
+    app: myapp
+```
+
+Labels provide key/value metadata associated with Kubernetes objects.
+
+Detailed label and selector behavior is studied later.
 
 ---
 
@@ -591,7 +600,7 @@ spec:
   containers:
 ```
 
-defines the container workload that Kubernetes should maintain for the Pod.
+defines the container workload Kubernetes should maintain.
 
 This connects manifest configuration directly to the desired-state model.
 
@@ -616,83 +625,69 @@ This is an example definition, not evidence that a Pod was successfully created 
 
 ---
 
-# YAML
+# Pod Command
 
-Kubernetes manifests commonly use YAML.
-
-Important course syntax includes:
-
-```text
-key: value
-Indentation
-Lists
-Objects
-Comments
-Document Markers
-Multi-Line Text
-```
-
-Indentation represents hierarchy.
-
-Tabs should not be used for YAML indentation.
-
----
-
-# YAML Lists
-
-A block-style list can be written as:
-
-```yaml
-items:
-  - value1
-  - value2
-```
-
-A flow-style representation can be:
-
-```yaml
-items: [value1, value2]
-```
-
----
-
-# YAML Objects
-
-Nested mappings represent structured objects.
+The course demonstrates defining a container command in the Pod manifest.
 
 Example:
 
 ```yaml
+apiVersion: v1
+kind: Pod
 metadata:
-  name: mypod
+  name: myapp-pod
+  labels:
+    app: myapp
+spec:
+  containers:
+    - name: myapp-container
+      image: busybox
+      command:
+        - sh
+        - -c
+        - echo Hello Kubernetes! && sleep 3600
 ```
+
+This overrides the runtime command used by the container for this Pod definition.
+
+---
+
+# Container Main Process
+
+The command executed by a container is directly related to the container lifecycle.
 
 Conceptually:
 
 ```text
-metadata
-└── name
+Main Process Running
+→ Container Running
 ```
+
+```text
+Main Process Exits
+→ Container State Changes
+```
+
+The course uses `sleep` to keep the example workload running after producing output.
 
 ---
 
-# YAML Multi-Line Text
+# YAML
 
-The course introduces:
+Kubernetes manifests commonly use YAML.
 
-```text
-|
-→ Preserve line-oriented text
-```
-
-and:
+Important concepts include:
 
 ```text
->
-→ Fold line-oriented text
+Mappings
+Lists
+Indentation
+Comments
+Multi-Line Text
+Nested Objects
 ```
 
-These forms can later be useful for configuration and embedded scripts.
+YAML indentation represents data structure and should be treated as syntax rather than visual formatting.
 
 ---
 
@@ -720,8 +715,6 @@ Submitting the object does not mean the workload is instantly ready.
 
 After Pod creation, the workload can transition through runtime states.
 
-Conceptually:
-
 ```text
 Object Created
       ↓
@@ -737,6 +730,29 @@ Running
 ```
 
 A successful API creation request and a healthy running application are different verification steps.
+
+---
+
+# Pod Conditions
+
+Detailed Pod inspection can expose conditions such as:
+
+```text
+Initialized
+Ready
+ContainersReady
+PodScheduled
+```
+
+A Pod phase and individual conditions should not be treated as identical concepts.
+
+For example:
+
+```text
+Running
+```
+
+does not by itself describe every readiness condition of the workload.
 
 ---
 
@@ -760,29 +776,6 @@ Events provide evidence about what Kubernetes attempted during Pod startup.
 
 ---
 
-# Event-Based Failure Localization
-
-Different event stages can suggest different investigation areas.
-
-```text
-Scheduling Failure
-→ Node / scheduler / capacity investigation
-```
-
-```text
-Image Pull Failure
-→ Registry / image / network / credentials investigation
-```
-
-```text
-Container Start Failure
-→ Runtime / command / configuration investigation
-```
-
-The event itself is evidence, not automatic proof of the final root cause.
-
----
-
 # Pod Description
 
 Detailed Pod inspection can expose information such as:
@@ -801,7 +794,7 @@ Conditions
 Events
 ```
 
-This provides significantly more operational context than a summary listing.
+This provides more operational context than a summary listing.
 
 ---
 
@@ -821,119 +814,62 @@ Logs should be correlated with Kubernetes state and events.
 
 ---
 
-# Pod Troubleshooting Workflow
+# `kubectl exec`
 
-A useful initial workflow is:
+`kubectl exec` runs an additional command inside a container belonging to a running Pod.
 
-```text
-kubectl get pod
-      ↓
-Pod Status
-      ↓
-kubectl describe pod
-      ↓
-Conditions / Events
-      ↓
-kubectl logs
-      ↓
-Application Evidence
-```
-
-If Kubernetes-level evidence points downward, continue into:
+Conceptually:
 
 ```text
-Worker Node
-kubelet
-Container Runtime
-CNI
-Linux Networking
-Host Resources
+Running Pod
+    ↓
+Selected Container
+    ↓
+Additional Process
 ```
+
+It does not create another Pod or another container.
 
 ---
 
-# Infrastructure Relationship
+# `kubectl exec` Command Boundary
 
-Pod operation combines several previously studied infrastructure domains.
+The command structure can be represented as:
 
 ```text
-Linux Namespace
-→ Pod isolation
-
-Container Runtime
-→ Container execution
-
-CNI
-→ Pod networking
-
-CSI / Volumes
-→ Storage integration
-
-Scheduler
-→ Node placement
-
-kubelet
-→ Node-level workload management
+kubectl exec [kubectl options] POD -- COMMAND [arguments]
 ```
+
+The `--` separator distinguishes kubectl arguments from the command that should execute inside the container.
 
 ---
 
-# Evidence Policy
+# Interactive Container Access
 
-Course screenshots and sample runtime values are educational examples.
-
-Do not record them as actual personal lab evidence.
-
-Do not fabricate:
+Interactive execution can use:
 
 ```text
-Pod Names
-Pod IP Addresses
-Node Assignments
-Container IDs
-Image IDs
-Events
-Restart Counts
-Volume Mount Results
-CNI Addresses
-Application Logs
-Command Output
+-i
+→ Standard input
 ```
 
-Actual evidence must come from an authorized Kubernetes environment.
+```text
+-t
+→ Terminal allocation
+```
+
+A common structure is:
+
+```bash
+kubectl exec -it POD_NAME -- /bin/bash
+```
+
+Actual shell availability depends on the container image.
 
 ---
 
-# Verification Checklist
+# Multi-Container Pod Execution
 
-- Pod and container were distinguished.
-- The Pod was understood as the basic scheduling unit.
-- Pod namespace scope was introduced.
-- Pod IP addressing was introduced.
-- Multi-container Pod networking was connected to a shared network namespace.
-- The pause/sandbox container concept was reviewed.
-- The historical `docker0` diagram was not generalized to all Kubernetes networking.
-- Four Kubernetes communication categories were identified.
-- CNI was connected to Pod networking.
-- Historical kubelet CNI options were treated as course-version context.
-- Pod volumes and container mounts were introduced.
-- Ephemeral and persistent storage concepts were distinguished.
-- PV and PVC were introduced.
-- ConfigMap and Secret volume projection was distinguished from persistent storage.
-- CSI was introduced.
-- Pod object fields were reviewed.
-- YAML indentation and collection syntax were reviewed.
-- Manifest submission was distinguished from workload readiness.
-- Pod startup events were connected to lifecycle observation.
-- Pod description and application logs were distinguished.
-- A layered Pod troubleshooting workflow was established.
+If a Pod contains multiple containers, the target container can be selected.
 
-## What I Learned
-
-- Kubernetes schedules Pods rather than individual containers inside a Pod.
-- Containers in the same Pod share the Pod networking environment.
-- CNI provides the integration model for Pod networking.
-- Kubernetes volumes can provide both ephemeral and persistent-storage-related behavior depending on the volume type.
-- YAML manifests describe the desired configuration of Kubernetes objects.
-- Creating a Pod object and having a healthy running workload are separate states.
-- Events, descriptions, and logs provide different layers of troubleshooting evidence.
+Concept
