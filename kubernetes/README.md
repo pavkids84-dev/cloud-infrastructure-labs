@@ -2,7 +2,7 @@
 
 This directory documents my Kubernetes learning path as part of my cloud infrastructure engineering studies.
 
-The focus is on understanding Kubernetes as an API-driven desired-state platform built on Linux, networking, container runtimes, declarative resources, controller reconciliation, and service networking.
+The focus is on understanding Kubernetes as an API-driven desired-state platform built on Linux, networking, container runtimes, declarative resources, reconciliation, service networking, scheduling metadata, and controlled application rollouts.
 
 ## Learning Path
 
@@ -27,7 +27,9 @@ Services
    ↓
 Labels and Selectors
    ↓
-Deployments and Rolling Updates
+Deployment Updates
+   ↓
+Rolling Updates
    ↓
 Monitoring
    ↓
@@ -52,23 +54,18 @@ kubernetes/
 ├── pod-fundamentals-lab.md
 ├── resource-object-template-lab.md
 ├── controller-fundamentals-lab.md
-└── service-fundamentals-lab.md
+├── service-fundamentals-lab.md
+├── label-selector-scheduling-lab.md
+└── deployment-rolling-update-lab.md
 ```
 
 Additional files should be added only after the related topics are actually studied.
 
-## 1. Kubernetes Architecture Foundations
+## Kubernetes Architecture
 
-File:
-
-```text
-kubernetes-architecture-foundations-lab.md
-```
-
-Covers:
+Architecture topics include:
 
 ```text
-Container Orchestration
 Control Plane
 Worker Nodes
 kube-apiserver
@@ -78,143 +75,73 @@ Controller Manager
 kubelet
 kube-proxy
 CRI
-containerd
-CRI-O
-OCI Runtime
 CNI
 Cluster DNS
-Ingress Introduction
-High Availability Introduction
 ```
 
-## 2. Minikube Local Cluster
+## Cluster Bootstrap
 
-File:
-
-```text
-minikube-local-cluster-lab.md
-```
-
-Covers local Kubernetes startup, kubeconfig, API connectivity, node readiness, system-component inspection, and Dashboard context.
-
-## 3. kubeadm Cluster Bootstrap
-
-File:
+The repository covers both:
 
 ```text
-kubeadm-cluster-bootstrap-lab.md
-```
-
-Covers Linux node preparation, control-plane bootstrap, CNI installation, worker join, node readiness, kube-system observation, and the relationship between Kubernetes objects and Linux processes.
-
-## 4. kubectl Basic Control
-
-File:
-
-```text
-kubectl-basic-control-lab.md
-```
-
-Covers resource discovery, API versions, imperative Pod creation, `get`, `describe`, events, logs, and the first Kubernetes troubleshooting workflow.
-
-## 5. Pod Fundamentals
-
-File:
-
-```text
-pod-fundamentals-lab.md
-```
-
-Covers:
-
-```text
-Pod Scheduling
-Pod IP
-Shared Network Namespace
-Pause / Sandbox Context
-CNI
-Pod Volumes
-PV / PVC Introduction
-ConfigMap / Secret Volume Sources
-CSI Introduction
-YAML
-Pod Conditions
-Events
-Logs
-kubectl exec
-Container Environment
-Exit Codes
-Labels Introduction
-Live Object YAML
-spec vs status
-```
-
-A practical Pod investigation starts with:
-
-```text
-kubectl get
-      ↓
-kubectl describe
-      ↓
-Events
-      ↓
-kubectl logs
-      ↓
-kubectl exec
-```
-
-## 6. Resource Object Templates
-
-File:
-
-```text
-resource-object-template-lab.md
-```
-
-Covers the difference between:
-
-```text
-kubectl get -o yaml
-→ derive from an existing live object
+Minikube
+→ local learning environment
 ```
 
 and:
 
 ```text
+kubeadm
+→ multi-node cluster bootstrap
+```
+
+## kubectl and Pod Fundamentals
+
+Current operational observation includes:
+
+```text
+kubectl get
+kubectl describe
+Kubernetes Events
+kubectl logs
+kubectl exec
+kubectl get -o yaml
+```
+
+Pod topics include:
+
+```text
+Scheduling Unit
+Pod IP
+Shared Network Namespace
+CNI
+Volumes
+YAML
+Conditions
+Events
+Logs
+Container Execution
+spec vs status
+```
+
+## Resource Object Templates
+
+Resource templates can be prepared from:
+
+```text
+Existing Object
+→ kubectl get -o yaml
+```
+
+or generated through:
+
+```text
 --dry-run=client -o yaml
-→ generate a new manifest without creating it
 ```
 
-Live-object state and reusable desired-state manifests should not be treated as identical.
+Live runtime objects and reusable desired-state manifests should not be treated as identical.
 
-## 7. Controller Fundamentals
-
-File:
-
-```text
-controller-fundamentals-lab.md
-```
-
-Covers:
-
-```text
-Reconciliation
-Desired State
-Observed State
-ReplicaSet
-Deployment
-StatefulSet
-DaemonSet
-Job
-Node Controller
-Service Controller
-PersistentVolume Controller
-Owner References
-Cascading Deletion
-Scale Out
-Scale In
-Namespaces
-```
+## Controller Fundamentals
 
 Core model:
 
@@ -230,47 +157,38 @@ Reconciliation
 status
 ```
 
-A common workload hierarchy is:
+Controller topics include:
 
 ```text
-Deployment
-     ↓
 ReplicaSet
-     ↓
-Pod
+Deployment
+StatefulSet
+DaemonSet
+Job
+Scaling
+Owner References
+Cascading Deletion
+Namespaces
 ```
 
-## 8. Service Fundamentals
+## Service Fundamentals
 
-File:
-
-```text
-service-fundamentals-lab.md
-```
-
-Covers:
+Service networking covers:
 
 ```text
-Service
-Stable Service Identity
-Labels and Selectors
-Service DNS
-port
-targetPort
 ClusterIP
 NodePort
 LoadBalancer
 ExternalName
-Endpoints
-EndpointSlice Context
-kubectl expose
+Service Selectors
+Backend Endpoints
+Cluster DNS
 kube-proxy
 iptables
 IPVS
-Service Troubleshooting
 ```
 
-Core networking model:
+Core model:
 
 ```text
 Client
@@ -282,125 +200,140 @@ Selected Backends
 Pods
 ```
 
-Services provide stable network and name identities in front of dynamic Pod backends.
+## Labels, Selectors, and Node Scheduling
 
-## API-Driven Architecture
+File:
 
 ```text
-kubectl / Automation
-        ↓
-kube-apiserver
-        ↓
-Kubernetes Objects
+label-selector-scheduling-lab.md
 ```
 
-The API server remains the central interface for desired-state management.
-
-## Desired State and Reconciliation
+Labels are operational metadata used to connect Kubernetes objects.
 
 ```text
-Desired State
+Label
+   ↓
+Selector
+   ↓
+Matching Resource Set
+```
+
+Current relationships include:
+
+```text
+ReplicaSet selector
+→ Pod labels
+
+Service selector
+→ Pod labels
+
+nodeSelector
+→ Node labels
+```
+
+The course introduces node labeling and `nodeSelector` as a simple scheduling constraint.
+
+```text
+Pod Requirement
       ↓
+nodeSelector
+      ↓
+Matching Node Label
+      ↓
+Scheduler Candidate
+```
+
+## Deployment and Rolling Update
+
+File:
+
+```text
+deployment-rolling-update-lab.md
+```
+
+Deployment updates include:
+
+```text
+kubectl set image
+kubectl edit
+kubectl apply
+```
+
+A Pod-template change can create a new ReplicaSet revision.
+
+```text
+Deployment
+     ↓
+Old ReplicaSet
+     ↓
+Pod Revision A
+
+Deployment Update
+     ↓
+New ReplicaSet
+     ↓
+Pod Revision B
+```
+
+## RollingUpdate
+
+Conceptually:
+
+```text
+Old Pods
+   ↓
+Gradual Replacement
+   ↓
+New Pods
+```
+
+The course also introduces:
+
+```text
+Recreate
+Blue/Green
+Rollout History
+Rollback
+Rollout Status
+Pause
+Resume
+Restart
+```
+
+## Desired State and Runtime State
+
+A recurring Kubernetes distinction is:
+
+```text
+spec
+→ Desired State
+```
+
+```text
+status
+→ Observed State
+```
+
+Controllers reconcile differences between the two.
+
+## Controller, Scheduler, and kubelet
+
+```text
 Controller
-      ↓
-Observe Current State
-      ↓
-Reconcile Difference
-```
-
-This model is now visible in workload replica management, deployment revisions, and controller-managed resources.
-
-## Kubernetes Networking
-
-Current networking concepts include:
-
-```text
-Node Network
-Pod Network
-Service Network
-CNI
-Cluster DNS
-Service Selectors
-Backend Endpoints
-kube-proxy
-iptables
-IPVS
-```
-
-The Service path should be reasoned about separately from direct Pod access.
-
-## Service Types
-
-```text
-ClusterIP
-→ Cluster-internal Service identity
+→ What should exist?
 ```
 
 ```text
-NodePort
-→ Node address plus exposed node port
+Scheduler
+→ Where should a new Pod run?
 ```
 
 ```text
-LoadBalancer
-→ External load-balancer integration where supported
+kubelet
+→ How is the Pod executed on the selected node?
 ```
 
-```text
-ExternalName
-→ DNS mapping toward an external name
-```
-
-## Linux Relationship
-
-Kubernetes still depends on Linux fundamentals:
-
-```text
-Processes
-Namespaces
-systemd
-Networking
-Routing
-Netfilter
-Storage
-Filesystems
-Security
-Logs
-```
-
-## Network Relationship
-
-Relevant networking foundations include:
-
-```text
-IP Addressing
-Subnetting
-Routing
-DNS
-TCP / UDP
-Ports
-Load Balancing
-Packet Analysis
-```
-
-These remain necessary for Pod and Service troubleshooting.
-
-## Docker Relationship
-
-Docker studies provide the immediate container foundation:
-
-```text
-Images
-Container Processes
-Runtime
-Networking
-Volumes
-Registry
-Multi-Container Applications
-Clustering
-```
-
-Kubernetes adds API-driven scheduling and reconciliation.
+Labels can influence both controller relationships and scheduler eligibility, but these component responsibilities remain distinct.
 
 ## Troubleshooting Method
 
@@ -418,44 +351,40 @@ Resolution
 Verification
 ```
 
-Potential Kubernetes layers now include:
+## Scheduling Troubleshooting
 
 ```text
-Application
-Container
-Pod
-Controller
-Service
-Backend Endpoints
-kube-proxy / Dataplane
-CNI
-Worker Node
-Container Runtime
-kubelet
-Control Plane
-Kubernetes API
+Pod Pending?
+      ↓
+Inspect nodeSelector
+      ↓
+Inspect node labels
+      ↓
+Check scheduler events
+      ↓
+Correct requirement or labels
+      ↓
+Verify placement
 ```
 
-## Service Troubleshooting
-
-A useful Service workflow is:
+## Deployment Rollout Troubleshooting
 
 ```text
-Application listening?
+Deployment updated?
       ↓
-Pod Ready?
+New ReplicaSet created?
       ↓
-Pod labels correct?
+New Pods created?
       ↓
-Service selector correct?
+Scheduled?
       ↓
-Backend endpoints present?
+Image pulled?
       ↓
-port / targetPort correct?
+Container started?
       ↓
-Service type correct?
+Ready?
       ↓
-Node / external path reachable?
+Application healthy?
 ```
 
 ## Security Principles
@@ -463,12 +392,12 @@ Node / external path reachable?
 Current principles include:
 
 ```text
+Use least privilege.
 Do not publish kubeconfig credentials.
 Do not publish bootstrap tokens.
 Do not commit real application secrets.
-Use least privilege.
+Review exported API objects before publishing them.
 Do not disable host security controls as a generic fix.
-Review exported live-object YAML before publishing it.
 ```
 
 ## Evidence Policy
@@ -479,17 +408,14 @@ Do not fabricate:
 
 ```text
 Node Names
+Labels
 Pod Names
-Pod IP Addresses
-Service IP Addresses
-NodePort Values
-Endpoint Addresses
-Container IDs
+ReplicaSet Names
+Deployment Names
+Revision Numbers
+Image Versions
 Events
-Logs
-DNS Results
-iptables Rules
-IPVS Tables
+Rollout Results
 Command Output
 ```
 
@@ -497,33 +423,32 @@ Actual evidence must come from an authorized lab environment.
 
 ## Historical Material Policy
 
-The course contains historical implementation details.
+Historical course material is preserved with clear context.
 
 Examples encountered include:
 
 ```text
-Older Kubernetes package repositories
+Legacy Kubernetes package repositories
 Historical Docker runtime integration
 Heapster
 rkt
-docker0-based diagrams
-Historical kubelet CNI flags
+docker0-based networking diagrams
+Historical CNI flags
 Older Calico manifests
-apps/v1beta1 Deployment examples
+apps/v1beta1 examples
 Endpoints-focused Service material
+kubectl --record
 ```
-
-Historical source material should be preserved while reusable architecture and newer concepts are clearly distinguished.
 
 ## Current Learning Progress
 
-Completed through Kubernetes PDF:
+Completed through:
 
 ```text
-p.94
+p.100
 ```
 
-Completed areas include:
+Current completed topics include:
 
 ```text
 Kubernetes Architecture
@@ -532,34 +457,39 @@ kubeadm
 kubectl
 Pods
 CNI
-Pod Storage Introduction
 YAML
-Pod Runtime Inspection
-Live Object Inspection
+Object Inspection
 Resource Templates
 Controller Reconciliation
 ReplicaSet
-Deployment Introduction
 Scaling
 Namespaces
-Service Fundamentals
+Services
 Service Types
-Endpoints
 kube-proxy
 iptables
 IPVS
+Labels
+Selectors
+nodeSelector
+Deployment Image Updates
+RollingUpdate
+Recreate
+Blue/Green Introduction
+Rollout History
+Rollback
 ```
 
 Next topic:
 
 ```text
-Labels and Selectors
+Monitoring
 ```
 
 The course continues from:
 
 ```text
-p.95
+p.101
 ```
 
 ## Long-Term Infrastructure Path
