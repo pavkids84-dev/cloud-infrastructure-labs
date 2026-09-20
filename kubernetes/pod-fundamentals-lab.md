@@ -1158,3 +1158,210 @@ Actual evidence must come from an authorized Kubernetes environment.
 - Events, descriptions, and logs provide different layers of troubleshooting evidence.
 - `kubectl exec` runs commands in a selected container, not on the worker host.
 - Live-object YAML must be reviewed before it is reused as a new manifest.
+
+
+---
+
+# Pod Runtime Operations
+
+## Checking Pod Status
+
+Pod runtime state can be observed using:
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Important sections include:
+
+```text
+Conditions
+Events
+Containers
+Volumes
+```
+
+The main Pod conditions include:
+
+```text
+Initialized
+Ready
+ContainersReady
+PodScheduled
+```
+
+These conditions describe different stages of Pod preparation and workload readiness.
+
+---
+
+## Pod Events
+
+Events provide a timeline of Kubernetes actions.
+
+Example lifecycle:
+
+```text
+Scheduled
+    ↓
+Pulled
+    ↓
+Created
+    ↓
+Started
+```
+
+Events are especially useful during troubleshooting because they show whether failures occurred during scheduling, image retrieval, container creation, or startup.
+
+---
+
+# Executing Commands Inside Containers
+
+`kubectl exec` allows commands to be executed inside a running container.
+
+Basic syntax:
+
+```bash
+kubectl exec <pod-name> -- <command>
+```
+
+Example:
+
+```bash
+kubectl exec nginx-pod -- hostname
+```
+
+---
+
+## Interactive Container Shell
+
+A shell session can be opened with:
+
+```bash
+kubectl exec -it <pod-name> -- /bin/bash
+```
+
+Options:
+
+```text
+-i
+Interactive stdin
+
+-t
+Allocate terminal
+```
+
+The command enters the container environment, not the Kubernetes Node operating system.
+
+---
+
+## Container Tool Availability
+
+Not every container image includes debugging tools.
+
+Examples:
+
+```text
+bash
+ip
+ps
+netstat
+```
+
+may not exist inside minimal images.
+
+For troubleshooting, tools should be considered according to the container image design.
+
+---
+
+# Pod YAML Manifest
+
+Kubernetes objects are represented as YAML manifests.
+
+Example:
+
+```yaml
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+
+spec:
+  containers:
+  - name: myapp-container
+    image: busybox
+    command:
+    - sh
+    - -c
+    - echo Hello Kubernetes! && sleep 3600
+```
+
+Main object fields:
+
+```text
+apiVersion
+kind
+metadata
+spec
+```
+
+---
+
+# Inspecting Live Object YAML
+
+The current Kubernetes object state can be viewed with:
+
+```bash
+kubectl get pod <pod-name> -o yaml
+```
+
+The generated YAML may contain Kubernetes-managed fields:
+
+```text
+uid
+resourceVersion
+creationTimestamp
+status
+```
+
+Therefore:
+
+```text
+Created Manifest
+        !=
+Current Object Representation
+```
+
+---
+
+# Object Template Generation
+
+Kubernetes resource templates can be created using existing resources or dry-run generation.
+
+## Method 1: Export Existing Object
+
+```bash
+kubectl get pod <pod-name> -o yaml > template.yaml
+```
+
+The exported YAML can be reviewed and adapted.
+
+---
+
+## Method 2: Use dry-run
+
+Example:
+
+```bash
+kubectl create deployment nginx \
+--image=nginx \
+--dry-run=client \
+-o yaml
+```
+
+`--dry-run=client` generates the manifest without creating the resource.
+
+This is useful when building reusable Kubernetes YAML templates.
+
