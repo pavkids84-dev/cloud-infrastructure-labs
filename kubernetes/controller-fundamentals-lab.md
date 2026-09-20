@@ -701,3 +701,209 @@ Record actual results only after completing approved experiments and collecting 
 - Ownership and cascade behavior determine which dependent resources are removed together.
 - Scaling changes the desired replica count; actual Pod creation, termination, and readiness must be observed separately.
 - Verification depends on the cluster's observed resource state, not on sample output in the course PDF.
+
+---
+
+# Object Template Generation and Controller Relationship
+
+## Generating Templates from Existing Objects
+
+Kubernetes objects can be exported as YAML templates using:
+
+```bash
+kubectl get <resource> <name> -o yaml > template.yaml
+```
+
+Example:
+
+```bash
+kubectl get pod mypod -o yaml > mypod.yaml
+```
+
+The exported YAML represents the current object representation stored in Kubernetes. Before reuse, runtime-generated fields should be reviewed and removed.
+
+Common fields that should not be copied into reusable templates:
+
+```yaml
+metadata:
+  creationTimestamp:
+  resourceVersion:
+  uid:
+
+status:
+```
+
+The difference between desired and observed state is important:
+
+```text
+spec
+ ↓
+Desired State defined by user
+
+status
+ ↓
+Observed State maintained by Kubernetes
+```
+
+---
+
+# Creating Templates with --dry-run
+
+A resource manifest can also be generated without creating the resource.
+
+Example:
+
+```bash
+kubectl create deployment nginx \
+--image=nginx \
+--dry-run=client \
+-o yaml
+```
+
+The command only outputs YAML.
+
+Workflow:
+
+```text
+kubectl command
+        ↓
+--dry-run=client
+        ↓
+Generated YAML
+        ↓
+Review / Modify
+        ↓
+ kubectl apply
+```
+
+This workflow is commonly used when preparing Kubernetes manifests for Git-based deployment workflows.
+
+---
+
+# Controller Reconciliation Loop
+
+Kubernetes controllers continuously compare the desired state with the observed state.
+
+```text
+Desired State
+(spec)
+
+      ↓
+
+Controller
+
+      ↓
+
+Observed State
+(status)
+
+      ↓
+
+Difference Detection
+
+      ↓
+
+Corrective Action
+```
+
+The controller does not simply execute a command once. It continuously watches resources and attempts to keep the cluster state aligned with the declared configuration.
+
+---
+
+# Deployment, ReplicaSet, and Pod Relationship
+
+The most important controller relationship is:
+
+```text
+Deployment
+      ↓
+ReplicaSet
+      ↓
+Pod
+      ↓
+Container
+```
+
+Deployment manages ReplicaSets.
+
+ReplicaSet maintains the required number of Pods.
+
+Pods execute containers.
+
+Example:
+
+```yaml
+spec:
+  replicas: 3
+```
+
+means the controller attempts to maintain three matching Pods.
+
+If one Pod fails:
+
+```text
+Current State:
+2 Pods
+
+Desired State:
+3 Pods
+
+Controller Action:
+Create 1 Pod
+```
+
+---
+
+# Deployment Rollout Concept
+
+When the Pod template changes, Deployment creates a new ReplicaSet version.
+
+Example:
+
+```text
+Deployment
+
+ ├── ReplicaSet v1
+ │       └── Pods
+ │
+ └── ReplicaSet v2
+         └── New Pods
+```
+
+During RollingUpdate:
+
+```text
+Old ReplicaSet scale down
+
+New ReplicaSet scale up
+
+Application transition completed
+```
+
+This enables controlled application updates without replacing all Pods simultaneously.
+
+---
+
+# Controller Types Summary
+
+| Controller | Purpose |
+|---|---|
+| ReplicaSet Controller | Maintain Pod replica count |
+| Deployment Controller | Manage ReplicaSet rollout |
+| StatefulSet Controller | Manage stateful Pods and storage relationships |
+| DaemonSet Controller | Maintain Pod placement across nodes |
+| Job Controller | Manage batch workload completion |
+| Node Controller | Monitor node lifecycle |
+| Service Controller | Handle Service-related reconciliation |
+| PersistentVolume Controller | Manage storage binding lifecycle |
+
+---
+
+# What I Learned
+
+- Kubernetes does not directly manage containers through user commands.
+- Controllers continuously reconcile desired state and current state.
+- Deployment manages ReplicaSet, and ReplicaSet manages Pods.
+- YAML templates should remove Kubernetes-generated runtime fields before reuse.
+- `--dry-run=client -o yaml` is useful for generating manifests safely.
+- Understanding controllers is essential for troubleshooting Kubernetes workloads.
