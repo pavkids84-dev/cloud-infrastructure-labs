@@ -2,7 +2,7 @@
 
 This repository documents my hands-on learning path toward cloud infrastructure engineering.
 
-The current technical progression is:
+The current progression is:
 
 ```text
 Linux System Administration
@@ -14,7 +14,7 @@ Containers and Docker
 Kubernetes
 ```
 
-The repository emphasizes architecture, runtime observation, troubleshooting, verification, and security rather than command memorization alone.
+The repository emphasizes architecture, runtime observation, troubleshooting, verification, reproducible configuration, and security.
 
 ## Repository Structure
 
@@ -22,67 +22,11 @@ The repository emphasizes architecture, runtime observation, troubleshooting, ve
 cloud-infrastructure-labs/
 ├── README.md
 ├── linux/
-│   ├── README.md
-│   ├── system-information-lab.md
-│   ├── file-directory-permission-lab.md
-│   ├── vi-basic-lab.md
-│   ├── shell-basics-lab.md
-│   ├── shell-environment-lab.md
-│   ├── search-archive-compression-lab.md
-│   ├── text-processing-lab.md
-│   ├── process-management-lab.md
-│   ├── service-management-lab.md
-│   ├── ssh-basic-lab.md
-│   ├── package-management-lab.md
-│   ├── user-management-lab.md
-│   ├── job-scheduling-lab.md
-│   ├── storage-management-lab.md
-│   ├── filesystem-management-lab.md
-│   ├── lvm-management-lab.md
-│   ├── raid-management-lab.md
-│   ├── memory-swap-management-lab.md
-│   ├── boot-kernel-management-lab.md
-│   ├── backup-recovery-lab.md
-│   ├── log-management-lab.md
-│   ├── firewall-management-lab.md
-│   ├── selinux-management-lab.md
-│   ├── network-management-lab.md
-│   ├── network-teaming-lab.md
-│   ├── nfs-management-lab.md
-│   ├── linux-bridge-lab.md
-│   ├── autofs-management-lab.md
-│   ├── samba-cifs-management-lab.md
-│   ├── apache-httpd-management-lab.md
-│   ├── dns-bind-unbound-management-lab.md
-│   ├── host-network-security-hardening-lab.md
-│   └── shell-script/
-│       └── README.md
+│   └── ...
 ├── network/
-│   ├── README.md
-│   ├── osi-model-lab.md
-│   ├── network-types-protocols-lab.md
-│   ├── ethernet-lab.md
-│   ├── ipv4-addressing-lab.md
-│   ├── ipv6-addressing-lab.md
-│   ├── arp-rarp-lab.md
-│   ├── routing-fundamentals-lab.md
-│   ├── routing-protocols-lab.md
-│   ├── network-standards-lab.md
-│   ├── dns-fundamentals-lab.md
-│   ├── network-troubleshooting-lab.md
-│   └── packet-analysis-lab.md
+│   └── ...
 ├── docker/
-│   ├── README.md
-│   ├── virtualization-container-foundations-lab.md
-│   ├── cloud-computing-cloud-native-foundations-lab.md
-│   ├── docker-engine-foundations-lab.md
-│   ├── image-container-lifecycle-lab.md
-│   ├── dockerfile-image-build-lab.md
-│   ├── container-management-lab.md
-│   ├── registry-management-lab.md
-│   ├── docker-networking-lab.md
-│   ├── docker-compose-lab.md
-│   └── container-clustering-foundations-lab.md
+│   └── ...
 └── kubernetes/
     ├── README.md
     ├── kubernetes-architecture-foundations-lab.md
@@ -92,14 +36,16 @@ cloud-infrastructure-labs/
     ├── pod-fundamentals-lab.md
     ├── resource-object-template-lab.md
     ├── controller-fundamentals-lab.md
-    └── service-fundamentals-lab.md
+    ├── service-fundamentals-lab.md
+    ├── label-selector-scheduling-lab.md
+    └── deployment-rolling-update-lab.md
 ```
 
 Future top-level areas should be created only after actual study exists.
 
 ## Linux System Administration
 
-The Linux area provides the operating-system foundation for infrastructure work.
+Linux provides the operating-system foundation for infrastructure engineering.
 
 Key areas include:
 
@@ -112,18 +58,19 @@ SSH
 Packages
 Users and Groups
 Scheduling
-Storage and Filesystems
+Storage
+Filesystems
 LVM
 RAID
-Memory and Swap
-Boot and Kernel
-Backup and Recovery
+Memory
+Boot
+Backup
 Logging
 Firewall
 SELinux
 Networking
 NFS
-Samba / CIFS
+Samba
 Apache
 DNS
 Host Hardening
@@ -131,55 +78,47 @@ Host Hardening
 
 ## Network Fundamentals and Troubleshooting
 
-The network area covers:
+Network studies include:
 
 ```text
 OSI
 Ethernet
-IPv4 / IPv6
+IPv4
+IPv6
 ARP
 Routing
-Routing Protocols
 DNS
 Troubleshooting
 Wireshark
 Packet Analysis
-Follow Stream
-Flow Graph
+Flow Analysis
 Latency Analysis
 Capture Filters
 Display Filters
-TCP Analysis
 ```
-
-General networking remains separate from Linux-specific network administration.
 
 ## Docker and Containers
 
-The completed Docker path covers:
+Docker studies include:
 
 ```text
 Virtualization
 Cloud Computing
 Cloud Native
 Container Isolation
-Docker Engine
 Images
 Container Lifecycle
 Dockerfile
 Storage
-Container Management
 Registry
-Docker Networking
-Docker Compose
+Networking
+Compose
 Container Clustering
 ```
 
-Docker provides the immediate container foundation for Kubernetes.
-
 ## Kubernetes
 
-Current Kubernetes studies include:
+Current Kubernetes study has progressed through:
 
 ```text
 Architecture
@@ -191,31 +130,32 @@ CNI
 Pod Storage Introduction
 YAML
 Runtime Inspection
-Live Object YAML
-Resource Templates
+Object Templates
 Controllers
 ReplicaSet
-Deployment Introduction
 Scaling
 Namespaces
 Services
-Service Types
-Endpoints
 kube-proxy
-iptables
-IPVS
+Labels
+Selectors
+nodeSelector
+Deployment Updates
+Rolling Updates
+Rollback
+Blue/Green Introduction
 ```
 
-The current course position is:
+Current course position:
 
 ```text
-Completed through p.94
+Completed through p.100
 ```
 
-The next topic is:
+Next:
 
 ```text
-Labels and Selectors
+Monitoring
 ```
 
 ## Kubernetes Desired-State Model
@@ -230,21 +170,9 @@ status
 → Observed State
 ```
 
-Controllers reconcile differences between desired and observed state.
-
-```text
-Desired State
-      ↓
-Controller
-      ↓
-Observed State
-      ↓
-Reconciliation
-```
+Controllers reconcile the difference.
 
 ## Kubernetes Workload Hierarchy
-
-A common application hierarchy is:
 
 ```text
 Deployment
@@ -258,28 +186,7 @@ Container
 Linux Process
 ```
 
-Controller, scheduler, and kubelet roles should remain distinct.
-
-```text
-Controller
-→ Determine what state is required
-```
-
-```text
-Scheduler
-→ Choose where new Pods run
-```
-
-```text
-kubelet
-→ Manage Pod execution on a node
-```
-
 ## Kubernetes Service Networking
-
-Pods are dynamic workload objects.
-
-Services provide stable access identities in front of changing Pod backends.
 
 ```text
 Client
@@ -291,7 +198,7 @@ Selected Backends
 Pods
 ```
 
-Current Service types studied:
+Current Service types:
 
 ```text
 ClusterIP
@@ -300,65 +207,86 @@ LoadBalancer
 ExternalName
 ```
 
-Important relationships:
+## Labels and Selectors
+
+Labels connect Kubernetes resources through selector relationships.
 
 ```text
-Labels
-→ Service Selector
-→ Backend Endpoints
+Service selector
+→ Pod labels
 ```
 
 ```text
-Service port
-→ targetPort
-→ Application port
-```
-
-Service traffic handling in the course includes:
-
-```text
-kube-proxy
-iptables
-IPVS
-```
-
-## Linux, Network, Docker, and Kubernetes Relationship
-
-```text
-Linux Processes
-      ↓
-Container Processes
-      ↓
-Kubernetes Workloads
+ReplicaSet selector
+→ Pod labels
 ```
 
 ```text
-Linux Namespaces
-      ↓
-Container Isolation
-      ↓
-Pod Network Namespace
+nodeSelector
+→ Node labels
 ```
 
-```text
-IP / Routing / DNS
-      ↓
-Docker Networking
-      ↓
-Kubernetes Pod and Service Networking
-```
+Label changes can therefore affect networking, controller membership, and scheduling.
+
+## Kubernetes Scheduling Constraints
+
+The current scheduling constraint introduced by the course is:
 
 ```text
-Docker Images
+Pod nodeSelector
       ↓
-Registry
+Matching Node Labels
       ↓
-Kubernetes Workloads
+Scheduler Candidate Nodes
+```
+
+A mismatch can leave a Pod unscheduled.
+
+## Deployment Updates
+
+Deployment image changes update the desired Pod template.
+
+```text
+Deployment Update
+      ↓
+New ReplicaSet Revision
+      ↓
+New Pods
+```
+
+The course introduces three update workflows:
+
+```text
+kubectl set image
+kubectl edit
+kubectl apply
+```
+
+## RollingUpdate
+
+```text
+Old Revision
+      ↓
+Controlled Replacement
+      ↓
+New Revision
+```
+
+Current rollout concepts include:
+
+```text
+RollingUpdate
+Recreate
+Rollout History
+Rollback
+Rollout Status
+Pause
+Resume
+Restart
+Blue/Green Introduction
 ```
 
 ## Troubleshooting Method
-
-The repository uses:
 
 ```text
 Symptom
@@ -372,65 +300,48 @@ Resolution
 Verification
 ```
 
-Observation should normally come before configuration changes.
+## Kubernetes Troubleshooting Layers
 
-## Kubernetes Troubleshooting
-
-A Pod investigation can begin with:
+Current layers include:
 
 ```text
-kubectl get
-      ↓
-kubectl describe
-      ↓
-Events
-      ↓
-kubectl logs
-      ↓
-kubectl exec
+Application
+Container
+Pod
+ReplicaSet
+Deployment
+Service
+Backend Endpoints
+Scheduler
+Node
+kubelet
+Runtime
+CNI
+Control Plane
+API
 ```
 
-A Service investigation can continue with:
+## Rollout Troubleshooting
 
 ```text
-Application listening?
+Deployment Desired State
       ↓
-Pod Ready?
+ReplicaSet
       ↓
-Labels correct?
+Pod Creation
       ↓
-Service selector correct?
+Scheduling
       ↓
-Backend endpoints present?
+Image Pull
       ↓
-port / targetPort correct?
+Container Start
       ↓
-Service type and network path correct?
+Readiness
+      ↓
+Application Verification
 ```
-
-## Runtime vs Persistent and Desired State
-
-A recurring infrastructure principle is:
-
-```text
-Runtime State
-!=
-Persistent Configuration
-```
-
-Kubernetes extends this into:
-
-```text
-Desired State
-!=
-Observed State
-```
-
-Version-controlled manifests describe intent, while runtime inspection provides evidence of actual state.
 
 ## Security Approach
-
-Security is part of each infrastructure layer.
 
 Current principles include:
 
@@ -438,43 +349,27 @@ Current principles include:
 Use least privilege.
 Do not publish kubeconfig credentials.
 Do not publish bootstrap tokens.
-Do not commit real application secrets.
+Do not commit real secrets.
+Review exported objects before publishing them.
 Do not disable host security controls as a generic fix.
-Review exported Kubernetes objects before publishing them.
-```
-
-Future Kubernetes security topics include:
-
-```text
-Authentication
-Authorization
-RBAC
-Service Accounts
-Secrets
-Workload Security
 ```
 
 ## Evidence Policy
-
-Course screenshots and example outputs are educational examples.
 
 Do not fabricate:
 
 ```text
 IP Addresses
-MAC Addresses
-Process IDs
-Container IDs
-Image IDs
 Node Names
+Labels
 Pod Names
-Pod IP Addresses
-Service IP Addresses
-NodePort Values
-Endpoint Addresses
+ReplicaSet Names
+Deployment Names
+Revision Numbers
+Image Versions
 Events
 Logs
-Packet Captures
+Rollout Results
 Command Output
 ```
 
@@ -482,27 +377,27 @@ Actual evidence must come from the environment where the exercise was performed.
 
 ## Historical Material Policy
 
-Training material can contain historical commands, versions, products, and implementation assumptions.
+Training material can contain historical commands and implementation assumptions.
 
-Examples encountered include:
+Examples include:
 
 ```text
 Legacy Linux networking commands
 Docker Toolbox
 Boot2Docker
 Historical Docker runtime integration
-rkt
 Heapster
+rkt
 Older Kubernetes repositories
-Legacy API versions
-docker0-based Kubernetes diagrams
-Historical kubelet CNI flags
+Legacy Kubernetes API versions
+docker0-based diagrams
+Historical kubelet CNI options
 Older Calico procedures
-apps/v1beta1 Deployment examples
-Endpoints-focused Service material
+apps/v1beta1 examples
+kubectl --record
 ```
 
-Historical examples are preserved for context while reusable architecture and current conceptual corrections are clearly distinguished.
+Historical examples are preserved for context while modern reusable concepts are separated clearly.
 
 ## Current Progress
 
@@ -533,20 +428,15 @@ kubeadm
 kubectl
 Pods
 CNI
-Kubernetes YAML
-Pod Troubleshooting
-Resource Templates
-Controller Reconciliation
-ReplicaSet
-Deployment Introduction
-Scaling
-Namespaces
-Service Fundamentals
-Service Types
-Endpoints
-kube-proxy
-iptables
-IPVS
+Object Templates
+Controllers
+Services
+Labels and Selectors
+Node Scheduling Constraints
+Deployment Updates
+Rolling Updates
+Rollback
+Blue/Green Introduction
 ```
 
 Current learning area:
@@ -555,10 +445,10 @@ Current learning area:
 Kubernetes
 ```
 
-Next:
+Next topic:
 
 ```text
-Labels and Selectors
+Monitoring
 ```
 
 ## Planned Expansion
@@ -591,5 +481,3 @@ Infrastructure as Code
    ↓
 Cloud Security
 ```
-
-The objective is to understand, operate, troubleshoot, automate, and secure infrastructure across each layer.
