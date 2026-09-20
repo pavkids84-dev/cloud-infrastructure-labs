@@ -115,8 +115,7 @@ cloud-infrastructure-labs/
     ├── kubeadm-cluster-bootstrap-lab.md
     ├── kubectl-basic-control-lab.md
     ├── pod-fundamentals-lab.md
-    ├── controller-fundamentals-lab.md
-    └── service-fundamentals-lab.md
+    └── controller-fundamentals-lab.md
 ```
 
 Future top-level directories should be created only after the corresponding areas are actually studied.
