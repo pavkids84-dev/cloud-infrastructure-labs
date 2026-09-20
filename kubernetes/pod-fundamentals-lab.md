@@ -2,7 +2,7 @@
 
 ## Objective
 
-Understand the Pod as the basic Kubernetes scheduling unit, including shared networking, shared volumes, Pod IP addressing, CNI networking, basic storage concepts, YAML resource definitions, and Pod runtime observation.
+Understand the Pod as the basic Kubernetes scheduling unit, including shared networking, shared volumes, Pod IP addressing, CNI networking, YAML resource definitions, runtime inspection, container command execution, and evidence-based Pod troubleshooting.
 
 ## Scope
 
@@ -30,10 +30,17 @@ apiVersion
 kind
 metadata
 spec
+status
 Pod Creation
+Pod Conditions
 Pod Events
 Pod Description
 Pod Logs
+kubectl exec
+Interactive Container Access
+Container Environment
+Container Exit Codes
+Object YAML Inspection
 ```
 
 ---
@@ -174,7 +181,7 @@ Network Namespace
 Container A    Container B
 ```
 
-The important concept is the shared Pod sandbox/network namespace rather than the pause process as an application workload.
+The important concept is the shared Pod sandbox and network namespace rather than the pause process as an application workload.
 
 ---
 
@@ -432,7 +439,7 @@ PersistentVolumeClaim
 PersistentVolume / Storage Backend
 ```
 
-Detailed PV/PVC behavior is studied later in the storage section.
+Detailed PV and PVC behavior is studied later in the storage section.
 
 ---
 
@@ -452,7 +459,7 @@ Volume Projection
 Container Files
 ```
 
-Their primary role is application configuration or sensitive data delivery.
+Their primary role is application configuration or sensitive-data delivery.
 
 ---
 
@@ -487,12 +494,12 @@ It can be remembered alongside:
 
 ```text
 CNI
-→ Container Networking Interface model
+→ Container networking integration
 ```
 
 ```text
 CSI
-→ Container Storage Interface model
+→ Container storage integration
 ```
 
 Both support extensible infrastructure integrations around Kubernetes workloads.
@@ -569,7 +576,7 @@ metadata:
   name: mypod
 ```
 
-Later topics add metadata such as:
+Additional metadata can include:
 
 ```text
 Labels
@@ -638,64 +645,6 @@ Tabs should not be used for YAML indentation.
 
 ---
 
-# YAML Lists
-
-A block-style list can be written as:
-
-```yaml
-items:
-  - value1
-  - value2
-```
-
-A flow-style representation can be:
-
-```yaml
-items: [value1, value2]
-```
-
----
-
-# YAML Objects
-
-Nested mappings represent structured objects.
-
-Example:
-
-```yaml
-metadata:
-  name: mypod
-```
-
-Conceptually:
-
-```text
-metadata
-└── name
-```
-
----
-
-# YAML Multi-Line Text
-
-The course introduces:
-
-```text
-|
-→ Preserve line-oriented text
-```
-
-and:
-
-```text
->
-→ Fold line-oriented text
-```
-
-These forms can later be useful for configuration and embedded scripts.
-
----
-
 # Declarative Pod Creation
 
 A manifest can be submitted to Kubernetes.
@@ -740,6 +689,29 @@ A successful API creation request and a healthy running application are differen
 
 ---
 
+# Pod Conditions
+
+A Pod exposes multiple conditions rather than only one summary status.
+
+Examples can include:
+
+```text
+Initialized
+Ready
+ContainersReady
+PodScheduled
+```
+
+These conditions provide more detailed evidence about workload state.
+
+```text
+Pod Running
+```
+
+should not automatically be treated as sufficient proof that every readiness condition is satisfied.
+
+---
+
 # Pod Events
 
 The course demonstrates a startup event sequence such as:
@@ -760,29 +732,6 @@ Events provide evidence about what Kubernetes attempted during Pod startup.
 
 ---
 
-# Event-Based Failure Localization
-
-Different event stages can suggest different investigation areas.
-
-```text
-Scheduling Failure
-→ Node / scheduler / capacity investigation
-```
-
-```text
-Image Pull Failure
-→ Registry / image / network / credentials investigation
-```
-
-```text
-Container Start Failure
-→ Runtime / command / configuration investigation
-```
-
-The event itself is evidence, not automatic proof of the final root cause.
-
----
-
 # Pod Description
 
 Detailed Pod inspection can expose information such as:
@@ -796,8 +745,9 @@ Container Image
 Container State
 Ready State
 Restart Count
-Mounts
 Conditions
+Volumes
+Mounts
 Events
 ```
 
@@ -821,6 +771,278 @@ Logs should be correlated with Kubernetes state and events.
 
 ---
 
+# `kubectl exec`
+
+The course introduces `kubectl exec` for executing commands inside a container of a running Pod.
+
+A general structure is:
+
+```bash
+kubectl exec POD_NAME -- COMMAND
+```
+
+For a multi-container Pod, a target container can be selected.
+
+```bash
+kubectl exec POD_NAME -c CONTAINER_NAME -- COMMAND
+```
+
+---
+
+# Interactive Container Access
+
+The course demonstrates interactive execution using:
+
+```bash
+kubectl exec -it POD_NAME -- /bin/bash
+```
+
+Conceptually:
+
+```text
+Local Terminal
+      ↕
+kubectl
+      ↕
+Kubernetes API
+      ↕
+Running Container Process
+```
+
+This is process execution inside the running container and should not be confused with SSH login.
+
+---
+
+# `-i` and `-t`
+
+For interactive execution:
+
+```text
+-i
+→ Keep stdin connected
+```
+
+```text
+-t
+→ Allocate a terminal
+```
+
+They are commonly combined for an interactive shell session.
+
+---
+
+# Command Separator
+
+The `--` separator distinguishes kubectl options from the command that should execute inside the container.
+
+```text
+kubectl options
+      ↓
+--
+      ↓
+container command
+```
+
+This makes command parsing boundaries explicit.
+
+---
+
+# Container Environment
+
+The course inspects the environment inside a running container.
+
+Useful categories can include:
+
+```text
+HOSTNAME
+PATH
+Application Environment
+Kubernetes-Related Service Environment
+```
+
+The container environment is distinct from the host environment.
+
+---
+
+# Minimal Container Images
+
+The course demonstrates commands such as `ps` and `ip` being unavailable inside an application container.
+
+This reinforces:
+
+```text
+Container Image
+!=
+Complete General-Purpose Linux Host
+```
+
+An application image may intentionally exclude administrative utilities.
+
+A missing diagnostic command should not automatically be interpreted as a Kubernetes failure.
+
+---
+
+# Exit Code 127
+
+The course example shows a failed command followed by exit code `127`.
+
+This is commonly associated with a command that could not be found.
+
+Exit codes are useful runtime evidence.
+
+Conceptually:
+
+```text
+Container Command Failure
+       ↓
+Exit Code
+       ↓
+Application / Runtime Investigation
+```
+
+---
+
+# Pod Command Example
+
+The course provides a Pod manifest using BusyBox and a shell command.
+
+Conceptually:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+spec:
+  containers:
+    - name: myapp-container
+      image: busybox
+      command:
+        - sh
+        - -c
+        - echo Hello Kubernetes! && sleep 3600
+```
+
+The example demonstrates explicit container command configuration.
+
+---
+
+# Main Process Lifetime
+
+The Pod example keeps the container process alive using a sleep command.
+
+This connects directly to the container lifecycle principle:
+
+```text
+Main Process Running
+→ Container Running
+```
+
+```text
+Main Process Exits
+→ Container Exits
+```
+
+Kubernetes orchestration does not remove the underlying container-process lifecycle.
+
+---
+
+# Labels
+
+The Pod example introduces metadata labels.
+
+Conceptually:
+
+```text
+Pod
+└── Label
+    └── app=myapp
+```
+
+Labels provide metadata used to classify and later select Kubernetes resources.
+
+Detailed label and selector behavior is studied later.
+
+---
+
+# Object YAML Inspection
+
+The course demonstrates:
+
+```bash
+kubectl get pod POD_NAME -o yaml
+```
+
+to inspect the full API representation of a Pod.
+
+This exposes significantly more data than the default summary output.
+
+---
+
+# Desired and Observed State
+
+The full object representation helps reveal an important distinction:
+
+```text
+spec
+→ Desired configuration
+```
+
+```text
+status
+→ Observed runtime state
+```
+
+This distinction is central to Kubernetes resource management.
+
+---
+
+# Server-Generated Object Data
+
+A live Kubernetes object can contain fields that were not written in the original manifest.
+
+Examples can include:
+
+```text
+creationTimestamp
+resourceVersion
+uid
+nodeName
+runtime annotations
+status
+```
+
+These fields reflect API-server, controller, scheduler, or runtime-managed state.
+
+They should not automatically be treated as reusable desired-state configuration.
+
+---
+
+# Exporting Object YAML
+
+A live object can be written to a file.
+
+Conceptually:
+
+```bash
+kubectl get pod POD_NAME -o yaml > pod.yaml
+```
+
+This can be useful for:
+
+```text
+Inspection
+Troubleshooting
+Learning Object Structure
+Template Preparation
+```
+
+A live-object export should be reviewed before it is reused as a new manifest.
+
+---
+
 # Pod Troubleshooting Workflow
 
 A useful initial workflow is:
@@ -837,6 +1059,10 @@ Conditions / Events
 kubectl logs
       ↓
 Application Evidence
+      ↓
+kubectl exec
+      ↓
+Targeted Runtime Inspection
 ```
 
 If Kubernetes-level evidence points downward, continue into:
@@ -874,6 +1100,9 @@ Scheduler
 
 kubelet
 → Node-level workload management
+
+Linux Process Lifecycle
+→ Container lifecycle
 ```
 
 ---
@@ -894,6 +1123,8 @@ Container IDs
 Image IDs
 Events
 Restart Counts
+Exit Codes
+Environment Values
 Volume Mount Results
 CNI Addresses
 Application Logs
@@ -915,25 +1146,33 @@ Actual evidence must come from an authorized Kubernetes environment.
 - The historical `docker0` diagram was not generalized to all Kubernetes networking.
 - Four Kubernetes communication categories were identified.
 - CNI was connected to Pod networking.
-- Historical kubelet CNI options were treated as course-version context.
 - Pod volumes and container mounts were introduced.
 - Ephemeral and persistent storage concepts were distinguished.
 - PV and PVC were introduced.
 - ConfigMap and Secret volume projection was distinguished from persistent storage.
 - CSI was introduced.
 - Pod object fields were reviewed.
-- YAML indentation and collection syntax were reviewed.
+- YAML manifest structure was reviewed.
 - Manifest submission was distinguished from workload readiness.
-- Pod startup events were connected to lifecycle observation.
+- Pod conditions and startup events were connected to runtime observation.
 - Pod description and application logs were distinguished.
+- `kubectl exec` was connected to in-container process execution.
+- Interactive execution options were reviewed.
+- Minimal container images were distinguished from full Linux hosts.
+- Exit codes were recognized as runtime evidence.
+- Labels were introduced.
+- `spec` and `status` were distinguished.
+- Live-object YAML inspection was introduced.
+- Server-generated fields were distinguished from reusable desired-state configuration.
 - A layered Pod troubleshooting workflow was established.
 
 ## What I Learned
 
-- Kubernetes schedules Pods rather than individual containers inside a Pod.
-- Containers in the same Pod share the Pod networking environment.
-- CNI provides the integration model for Pod networking.
-- Kubernetes volumes can provide both ephemeral and persistent-storage-related behavior depending on the volume type.
-- YAML manifests describe the desired configuration of Kubernetes objects.
-- Creating a Pod object and having a healthy running workload are separate states.
-- Events, descriptions, and logs provide different layers of troubleshooting evidence.
+- Kubernetes schedules Pods while containers remain the underlying runtime processes.
+- Pod conditions provide more detailed evidence than a single summary status.
+- `kubectl exec` provides targeted runtime inspection inside a running container.
+- Application containers may not contain general Linux diagnostic tools.
+- Container exit codes provide useful troubleshooting evidence.
+- `kubectl get -o yaml` exposes the full Kubernetes object representation.
+- `spec` represents desired configuration while `status` represents observed state.
+- Live-object YAML can contain server-generated fields that should be reviewed before reuse.
