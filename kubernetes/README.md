@@ -25,7 +25,7 @@ Object Templates and Namespace Operations
         ↓
 Controllers and Deployment / ReplicaSet Lifecycle
         ↓
-Service Fundamentals
+Service Fundamentals (Next Learning Topic)
         ↓
 Security
         ↓
@@ -50,8 +50,7 @@ kubernetes/
 ├── kubeadm-cluster-bootstrap-lab.md
 ├── kubectl-basic-control-lab.md
 ├── pod-fundamentals-lab.md
-├── controller-fundamentals-lab.md
-└── service-fundamentals-lab.md
+└── controller-fundamentals-lab.md
 ```
 
 Additional files will be added only after the corresponding Kubernetes topics are actually studied.
