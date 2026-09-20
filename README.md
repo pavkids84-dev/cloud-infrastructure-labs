@@ -32,7 +32,7 @@ Troubleshooting
 Verification
 ```
 
-The long-term goal is to develop practical skills in infrastructure operation, automation, troubleshooting, and security.
+The long-term goal is to develop practical skills in infrastructure operation, automation, troubleshooting, orchestration, and security.
 
 ---
 
@@ -114,7 +114,8 @@ cloud-infrastructure-labs/
     ├── minikube-local-cluster-lab.md
     ├── kubeadm-cluster-bootstrap-lab.md
     ├── kubectl-basic-control-lab.md
-    └── pod-fundamentals-lab.md
+    ├── pod-fundamentals-lab.md
+    └── resource-object-template-lab.md
 ```
 
 Future top-level directories should be created only after the corresponding areas are actually studied.
@@ -183,12 +184,14 @@ Current areas include:
 
 ```text
 OSI Model
+Network Types
 Ethernet
 IPv4
 IPv6
 ARP
 Routing
 Routing Protocols
+Network Standards
 DNS
 Network Troubleshooting
 Packet Analysis
@@ -208,6 +211,24 @@ Packet Capture
 Stream / Flow Analysis
       ↓
 Troubleshooting
+```
+
+Packet analysis includes:
+
+```text
+Ethernet Headers
+IPv4 / IPv6 Headers
+TCP Headers and Flags
+ARP
+ICMP
+IGMP
+Wireshark
+Follow Stream
+Flow Graph
+Latency Analysis
+Capture Filters
+Display Filters
+TCP Analysis Filters
 ```
 
 This foundation supports Docker networking, Kubernetes networking, cloud networking, and security.
@@ -242,6 +263,16 @@ Container Clustering
 
 Docker provides the direct container foundation for Kubernetes.
 
+```text
+Image
+   ↓
+Container Runtime
+   ↓
+Container
+```
+
+Kubernetes expands these concepts into multi-node desired-state orchestration.
+
 ---
 
 # Kubernetes
@@ -265,10 +296,13 @@ Pod Fundamentals
 Pod Networking
 Pod Storage Introduction
 Kubernetes YAML
-Basic Pod Troubleshooting
+Pod Runtime Inspection
+Live Object Inspection
+Resource Object Templates
+Client-Side Dry Run
 ```
 
-The core progression is:
+The current progression is:
 
 ```text
 Container
@@ -276,6 +310,8 @@ Container
 Pod
     ↓
 Kubernetes API
+    ↓
+Desired State
     ↓
 Scheduler / Controllers
     ↓
@@ -302,16 +338,18 @@ kube-apiserver
 Kubernetes Object
 ```
 
-Useful operational evidence now includes:
+Operational evidence currently includes:
 
 ```text
 kubectl get
 kubectl describe
 Kubernetes Events
 kubectl logs
+kubectl exec
+kubectl get -o yaml
 ```
 
-These commands expose different layers of workload state.
+Each exposes a different part of resource or runtime state.
 
 ---
 
@@ -348,6 +386,42 @@ Scheduler
 
 ---
 
+# Pod Runtime Observation
+
+Pod state should not be reduced to only:
+
+```text
+Running
+```
+
+Useful evidence also includes:
+
+```text
+Conditions
+Container State
+Ready State
+Restart Count
+Events
+Logs
+Exit Codes
+```
+
+A practical investigation can progress through:
+
+```text
+kubectl get
+      ↓
+kubectl describe
+      ↓
+Events
+      ↓
+kubectl logs
+      ↓
+kubectl exec
+```
+
+---
+
 # Kubernetes Networking
 
 The current Kubernetes networking foundation includes:
@@ -376,6 +450,34 @@ Kubernetes Pod Networking
 
 ---
 
+# Kubernetes Storage Introduction
+
+The current Kubernetes storage foundation includes:
+
+```text
+Pod Volumes
+emptyDir
+PersistentVolume
+PersistentVolumeClaim
+ConfigMap
+Secret
+CSI
+```
+
+A key distinction is:
+
+```text
+Pod Volume
+!=
+Automatically Persistent Storage
+```
+
+Volume lifecycle depends on the selected storage type.
+
+Detailed storage management is studied later.
+
+---
+
 # Kubernetes Object Definitions
 
 Kubernetes resource definitions commonly use:
@@ -396,15 +498,139 @@ Object Identity
 Desired Configuration
 ```
 
-YAML therefore becomes part of the infrastructure definition model rather than merely a configuration-file format.
+A live API object can additionally contain:
+
+```text
+status
+```
+
+representing observed state.
+
+---
+
+# `spec` and `status`
+
+Kubernetes introduces a central desired-state distinction.
+
+```text
+spec
+→ What should exist?
+```
+
+```text
+status
+→ What currently exists?
+```
+
+This relationship provides the foundation for controller reconciliation.
+
+```text
+Desired State
+      ↓
+Controller
+      ↓
+Observe Runtime State
+      ↓
+Reconcile Difference
+```
+
+The controller implementation is the next major study area.
+
+---
+
+# Live Object Inspection
+
+A live Kubernetes object can be inspected as YAML.
+
+```text
+API Object
+    ↓
+kubectl get -o yaml
+    ↓
+Full Object Representation
+```
+
+This can include:
+
+```text
+Desired Configuration
+Server-Generated Metadata
+Scheduler Information
+Runtime Annotations
+Observed Status
+```
+
+Live-object YAML should therefore be reviewed before it is reused as a new manifest.
+
+---
+
+# Kubernetes Resource Templates
+
+Two resource-template workflows have been introduced.
+
+Existing object:
+
+```text
+Existing Kubernetes Object
+        ↓
+kubectl get -o yaml
+        ↓
+Remove Runtime-Specific Fields
+        ↓
+Edit
+        ↓
+Reusable Manifest
+```
+
+New object:
+
+```text
+kubectl create
+        ↓
+--dry-run=client
+        ↓
+-o yaml
+        ↓
+Manifest Template
+```
+
+The distinction is:
+
+```text
+get -o yaml
+→ Inspect or derive from an existing object
+```
+
+```text
+dry-run
+→ Generate a new definition without creating it
+```
+
+---
+
+# Deployment Hierarchy Introduction
+
+The resource-template exercise introduces:
+
+```text
+Deployment
+     ↓
+ReplicaSet
+     ↓
+Pod
+```
+
+This is the transition from directly managing a Pod toward controller-managed workloads.
+
+The next course section expands controller behavior in detail.
 
 ---
 
 # Desired State and Runtime State
 
-Kubernetes extends the repository's recurring state-management principle.
+The repository's recurring state-management principle evolves through each layer.
 
-Earlier infrastructure introduced:
+Linux and Docker introduced:
 
 ```text
 Runtime State
@@ -420,9 +646,11 @@ Desired State
 Observed State
 ```
 
-A manifest defines what should exist.
+A manifest describes intent.
 
-The cluster API and runtime evidence reveal what actually exists.
+The Kubernetes API and runtime evidence show what actually exists.
+
+Controllers reconcile the difference.
 
 ---
 
@@ -435,9 +663,9 @@ YAML / kubectl
       ↓
 Kubernetes API
       ↓
-Pod
+Pod or Controller Object
       ↓
-Scheduler
+Scheduler / Controllers
       ↓
 Worker Node
       ↓
@@ -446,9 +674,11 @@ kubelet
 Container Runtime
       ↓
 Container
+      ↓
+Linux Process
 ```
 
-A successful object creation request does not by itself prove application readiness.
+A successful API request does not by itself prove application readiness.
 
 ---
 
@@ -520,20 +750,24 @@ The first action should normally be observation rather than immediate configurat
 
 # Kubernetes Troubleshooting
 
-A basic Pod investigation now follows:
+A basic workload investigation now follows:
 
 ```text
-kubectl get pod
+kubectl get
       ↓
 Current State
       ↓
-kubectl describe pod
+kubectl describe
       ↓
 Conditions / Events
       ↓
 kubectl logs
       ↓
 Application Evidence
+      ↓
+kubectl exec
+      ↓
+Targeted Runtime Inspection
 ```
 
 If required, investigation continues downward:
@@ -574,6 +808,28 @@ This principle continues from Linux and Docker into Kubernetes.
 
 ---
 
+# Configuration as Code
+
+Kubernetes manifests introduce another infrastructure-definition layer.
+
+```text
+Desired Configuration
+       ↓
+YAML Manifest
+       ↓
+Git
+       ↓
+API Submission
+       ↓
+Runtime State
+```
+
+A clean desired-state manifest is more appropriate for version control than a raw API object containing transient runtime metadata.
+
+This forms a foundation for later automation and GitOps concepts.
+
+---
+
 # Security Approach
 
 Security is treated as part of every infrastructure layer.
@@ -595,7 +851,16 @@ Service Accounts
 Secrets
 ```
 
-Kubernetes manifests and kubeconfig files can contain sensitive infrastructure information and should be managed intentionally.
+Current Kubernetes security principles include:
+
+```text
+Do not commit kubeconfig credentials.
+Do not publish bootstrap tokens.
+Do not commit real application secrets.
+Review exported object YAML before publishing it.
+Use least privilege.
+Do not disable host security controls as a generic troubleshooting solution.
+```
 
 ---
 
@@ -620,6 +885,7 @@ Pod Names
 Pod Addresses
 Cluster IDs
 Events
+Exit Codes
 Scheduler Decisions
 RBAC Results
 Application Logs
@@ -649,6 +915,7 @@ Legacy Kubernetes API Versions
 docker0-Based Kubernetes Networking Examples
 Historical kubelet CNI Options
 Older Calico Installation Procedures
+apps/v1beta1 Deployment Examples
 ```
 
 Historical material is preserved for context while reusable architectural concepts are documented separately.
@@ -689,10 +956,23 @@ Pod Networking
 CNI
 Pod Storage Introduction
 Kubernetes YAML
+Pod Conditions
 Pod Events
 Pod Description
 Pod Logs
-Basic Pod Troubleshooting
+kubectl exec
+Container Runtime Inspection
+Live Object YAML Inspection
+spec vs status
+Resource Object Templates
+dry-run
+Deployment Resource Hierarchy Introduction
+```
+
+The current Kubernetes course position is:
+
+```text
+Completed through p.65
 ```
 
 The current learning area is:
@@ -701,18 +981,24 @@ The current learning area is:
 Kubernetes
 ```
 
-The next topics are:
+The next topic is:
 
 ```text
-Pod Command Execution
-Pod Connection
-Detailed Pod YAML
-Object YAML Inspection
-Resource Templates
-dry-run
 Controllers
+```
+
+Upcoming areas include:
+
+```text
+Controller Reconciliation
+ReplicaSet
+DaemonSet
+Job
+Deployment
+StatefulSet
 Services
-Deployments
+Labels / Selectors
+Rolling Updates
 Security
 Storage
 High Availability
@@ -731,7 +1017,7 @@ aws/
 terraform/
 ```
 
-They should not exist only as placeholders.
+They should not exist only as empty placeholders.
 
 ---
 
