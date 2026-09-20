@@ -21,11 +21,13 @@ kubectl
         ↓
 Pods
         ↓
-Object Templates and Namespace Operations
+Object Templates
         ↓
-Controllers and Deployment / ReplicaSet Lifecycle
+Controllers
         ↓
-Service Fundamentals (Next Learning Topic)
+Services
+        ↓
+Deployments
         ↓
 Security
         ↓
@@ -49,8 +51,7 @@ kubernetes/
 ├── minikube-local-cluster-lab.md
 ├── kubeadm-cluster-bootstrap-lab.md
 ├── kubectl-basic-control-lab.md
-├── pod-fundamentals-lab.md
-└── controller-fundamentals-lab.md
+└── pod-fundamentals-lab.md
 ```
 
 Additional files will be added only after the corresponding Kubernetes topics are actually studied.
@@ -215,12 +216,6 @@ kubectl describe
 Kubernetes Events
 kubectl logs
 Basic Troubleshooting
-Resource Template Generation
-kubectl get -o yaml
-Client-Side Dry Run
-Deployment Manifest Preparation
-Namespace-Specific Queries
-Namespace and Resource Deletion Scope
 ```
 
 The operational observation flow is:
@@ -240,8 +235,6 @@ Application Evidence
 ```
 
 Different commands expose different evidence and should not be treated as interchangeable.
-
-The same Lab also contains the course's p.60–65 manifest-export and dry-run workflow, plus p.79–80 namespace targeting and deletion-scope checks. No separate Lab files are needed for these short extensions.
 
 ---
 
@@ -276,10 +269,6 @@ YAML
 Pod Manifests
 Pod Events
 Pod Inspection
-Pod Conditions
-kubectl exec
-Interactive Shell
-Live Object YAML
 ```
 
 The Pod model is:
@@ -292,67 +281,7 @@ Pod
 └── Container B
 ```
 
-The Pod is the basic Kubernetes scheduling unit. This lab also introduces Pod conditions, container command execution, and live-object YAML inspection.
-
----
-
-# 6. Controller Fundamentals
-
-File:
-
-```text
-controller-fundamentals-lab.md
-```
-
-Topics include:
-
-```text
-Desired State and Observed State
-Controller Reconciliation
-Kubernetes API
-Controller Types
-Deployment Controller
-ReplicaSet
-StatefulSet Controller
-Node Controller
-Service Controller
-PersistentVolume Controller
-Deployment / ReplicaSet / Pod / Node
-Pod / ReplicaSet / Deployment / Service
-Deployment Object and ReplicaSet Ownership
-Pod Replacement and Cascading Deletion
-Scale Out / Scale In
-Desired, Current, Ready and Available
-```
-
-The course introduces controller reconciliation and the different lifecycles managed by Kubernetes controllers. The Deployment diagram connects versioned ReplicaSets with Pods scheduled on worker nodes; it is course material rather than evidence of a completed personal rollout.
-
-This Lab also contains the course's p.71–78 Deployment and ReplicaSet YAML, managed-Pod replacement, cascading deletion/orphaning, replica scaling, and verification workflows. They are proposed lab procedures rather than recorded execution results.
-
----
-
-# 7. Service Fundamentals and Exposure
-
-File:
-
-```text
-service-fundamentals-lab.md
-```
-
-Topics include:
-
-```text
-Pod IP Access vs Service Access
-Internal vs External Reachability
-Service Selector and Pod Labels
-Service port / targetPort
-Endpoint Controller Course Model
-ClusterIP / NodePort / LoadBalancer / ExternalName
-kubectl expose
-Service and Endpoint Inspection
-```
-
-Course pages 81–88 introduce Services and their creation. The network addresses and example output belong to the course, not to personal lab evidence.
+The Pod is the basic Kubernetes scheduling unit.
 
 ---
 
@@ -596,7 +525,7 @@ Service Network
 
 Pod networking is provided through the CNI architecture.
 
-Service foundations and exposure are documented in `service-fundamentals-lab.md`; NodePort access and kube-proxy details follow in later course pages.
+Service networking is studied later.
 
 ---
 
@@ -912,30 +841,18 @@ Pod Events
 Pod Description
 Pod Logs
 Basic Pod Troubleshooting
-Pod Conditions and Container Commands
-Live Object YAML
-Object Template Generation
-Client-Side Dry Run
-Deployment / ReplicaSet / Pod Observation
-Controller Reconciliation
-Controller Roles
-Deployment / ReplicaSet / Pod / Node Relationship
-Deployment / ReplicaSet Object Details
-Managed Pod Replacement and Cascade Behavior
-Replica Scale Out and Scale In
-Namespace and Resource Scope
-Service Fundamentals and Exposure
-Service Selector and Backend Addresses
-Service Types and kubectl expose
 ```
 
 The next major topics are:
 
 ```text
-NodePort Access and Service Routing
-kube-proxy
-Labels and Selectors
-Deployment RollingUpdate
+Pod Command Execution
+Pod Connection
+Detailed Pod YAML
+Object YAML Inspection
+Resource Templates
+dry-run
+Controllers
 ```
 
 ---
