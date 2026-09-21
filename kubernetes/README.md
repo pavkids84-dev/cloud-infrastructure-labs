@@ -56,7 +56,9 @@ kubernetes/
 ├── controller-fundamentals-lab.md
 ├── service-fundamentals-lab.md
 ├── label-selector-scheduling-lab.md
-└── deployment-rolling-update-lab.md
+├── deployment-rolling-update-lab.md
+├── monitoring-dashboard-foundations-lab.md
+└── api-security-rbac-foundations-lab.md
 ```
 
 Additional files should be added only after the related topics are actually studied.
@@ -387,6 +389,64 @@ Ready?
 Application healthy?
 ```
 
+## Monitoring and Dashboard
+
+File:
+
+```text
+monitoring-dashboard-foundations-lab.md
+```
+
+The course introduces Kubernetes resource monitoring through:
+
+```text
+kubelet resource metrics
+      ↓
+Metrics Server
+      ↓
+Resource Metrics API
+      ↓
+kubectl top
+```
+
+Current topics include:
+
+```text
+Resource Requests
+Resource Limits
+Node Metrics
+Pod Metrics
+Container Metrics
+Metrics Server
+kubectl top
+HPA Context
+Long-Term Monitoring
+Grafana
+Prometheus
+ELK / EFK Context
+Kubernetes Dashboard
+```
+
+`kubectl top` should be treated as current resource observation rather than a historical monitoring database.
+
+The course also contains historical Heapster context, which should not be treated as a current default Kubernetes monitoring component.
+
+## Monitoring Troubleshooting
+
+```text
+Metrics Missing?
+      ↓
+Metrics Server Running?
+      ↓
+Node Metrics Reachable?
+      ↓
+Resource Metrics API Available?
+      ↓
+RBAC / TLS / Network Evidence
+```
+
+Resource metrics should be correlated with Pod state, events, logs, and application behavior rather than used as isolated proof of root cause.
+
 ## Security Principles
 
 Current principles include:
@@ -399,6 +459,84 @@ Do not commit real application secrets.
 Review exported API objects before publishing them.
 Do not disable host security controls as a generic fix.
 ```
+
+## API Security and RBAC
+
+File:
+
+```text
+api-security-rbac-foundations-lab.md
+```
+
+The Kubernetes API security flow is:
+
+```text
+Client Request
+      ↓
+Authentication
+      ↓
+Authorization
+      ↓
+Admission Control
+      ↓
+API Operation
+```
+
+Current security topics include:
+
+```text
+ServiceAccount
+RBAC
+Role
+RoleBinding
+ClusterRole
+ClusterRoleBinding
+Subjects
+Verbs
+Namespace Scope
+Cluster Scope
+Least Privilege
+Predefined ClusterRoles
+```
+
+A core distinction is:
+
+```text
+Authentication
+→ Who are you?
+```
+
+```text
+Authorization
+→ What are you allowed to do?
+```
+
+```text
+Admission
+→ Is the authorized request acceptable under cluster policy?
+```
+
+Namespace and cluster scopes should be kept explicit to avoid unnecessarily broad permissions.
+
+## RBAC Troubleshooting
+
+```text
+Identity Correct?
+      ↓
+Authentication Successful?
+      ↓
+Role Rules Correct?
+      ↓
+Binding Correct?
+      ↓
+Namespace / Cluster Scope Correct?
+      ↓
+Verb and Resource Correct?
+      ↓
+Admission Policy?
+```
+
+Authorization problems should not be solved by automatically granting `cluster-admin`.
 
 ## Evidence Policy
 
@@ -445,7 +583,7 @@ kubectl --record
 Completed through:
 
 ```text
-p.100
+p.116
 ```
 
 Current completed topics include:
@@ -478,18 +616,32 @@ Recreate
 Blue/Green Introduction
 Rollout History
 Rollback
+Monitoring Foundations
+Metrics Server
+kubectl top
+Resource Metrics
+Dashboard Introduction
+API Server Security
+Authentication
+Authorization
+Admission Control
+ServiceAccount
+RBAC
+Role / RoleBinding
+ClusterRole / ClusterRoleBinding
+Least Privilege
 ```
 
 Next topic:
 
 ```text
-Monitoring
+Helm
 ```
 
 The course continues from:
 
 ```text
-p.101
+p.117
 ```
 
 ## Long-Term Infrastructure Path
