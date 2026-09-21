@@ -38,7 +38,9 @@ cloud-infrastructure-labs/
     ├── controller-fundamentals-lab.md
     ├── service-fundamentals-lab.md
     ├── label-selector-scheduling-lab.md
-    └── deployment-rolling-update-lab.md
+    ├── deployment-rolling-update-lab.md
+    ├── monitoring-dashboard-foundations-lab.md
+    └── api-security-rbac-foundations-lab.md
 ```
 
 Future top-level areas should be created only after actual study exists.
@@ -144,18 +146,31 @@ Deployment Updates
 Rolling Updates
 Rollback
 Blue/Green Introduction
+Monitoring Foundations
+Metrics Server
+kubectl top
+Kubernetes Dashboard Introduction
+API Server Security
+Authentication
+Authorization
+Admission Control
+ServiceAccount
+RBAC
+Role / RoleBinding
+ClusterRole / ClusterRoleBinding
+Least Privilege
 ```
 
 Current course position:
 
 ```text
-Completed through p.100
+Completed through p.116
 ```
 
 Next:
 
 ```text
-Monitoring
+Helm
 ```
 
 ## Kubernetes Desired-State Model
@@ -284,7 +299,46 @@ Pause
 Resume
 Restart
 Blue/Green Introduction
+Monitoring Foundations
+Metrics Server
+kubectl top
+Dashboard Introduction
+API Security
+ServiceAccount
+RBAC
+Least Privilege
 ```
+
+## Kubernetes Monitoring
+
+The current monitoring foundation includes:
+
+```text
+Resource Requests
+Resource Limits
+Metrics Server
+kubectl top
+Node Metrics
+Pod Metrics
+Container Metrics
+HPA Context
+Long-Term Monitoring Concepts
+Kubernetes Dashboard
+```
+
+Conceptually:
+
+```text
+Node / Pod Resource Usage
+        ↓
+Metrics Pipeline
+        ↓
+Metrics Server
+        ↓
+kubectl top / Autoscaling Consumers
+```
+
+Current resource snapshots and long-term observability should be treated as different capabilities.
 
 ## Troubleshooting Method
 
@@ -340,6 +394,39 @@ Readiness
       ↓
 Application Verification
 ```
+
+## Kubernetes API Security and RBAC
+
+The current API security model includes:
+
+```text
+Client
+   ↓
+Authentication
+   ↓
+Authorization
+   ↓
+Admission
+   ↓
+Kubernetes API Operation
+```
+
+Current RBAC concepts include:
+
+```text
+ServiceAccount
+Role
+RoleBinding
+ClusterRole
+ClusterRoleBinding
+Subjects
+Verbs
+Namespace Scope
+Cluster Scope
+Least Privilege
+```
+
+A RoleBinding and a ClusterRoleBinding should not be treated as equivalent because their permission scope can be very different.
 
 ## Security Approach
 
@@ -448,7 +535,7 @@ Kubernetes
 Next topic:
 
 ```text
-Monitoring
+Helm
 ```
 
 ## Planned Expansion
