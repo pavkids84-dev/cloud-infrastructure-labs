@@ -37,7 +37,10 @@ Migration
 ```text
 aws/
 ├── README.md
-└── cloud-computing-foundations-lab.md
+├── cloud-computing-foundations-lab.md
+├── global-infrastructure-foundations-lab.md
+├── iam-security-foundations-lab.md
+└── ec2-compute-foundations-lab.md
 ```
 
 Additional files should be added only after the corresponding AWS topics are actually studied.
@@ -230,6 +233,177 @@ Public Cloud
 
 Private cloud refers to cloud-style resource management and virtualization deployed for a dedicated organization, commonly in an on-premises or dedicated environment.
 
+## 2. Global Infrastructure Foundations
+
+File:
+
+```text
+global-infrastructure-foundations-lab.md
+```
+
+Current topics include:
+
+```text
+AWS Global Infrastructure
+Region
+Availability Zone
+Region Selection
+Multi-AZ Design
+Edge Location
+CloudFront
+Outposts
+AWS Management Console
+AWS CLI
+AWS SDK
+CloudFormation
+Infrastructure as Code
+```
+
+Core hierarchy:
+
+```text
+AWS Global Infrastructure
+        ↓
+Regions
+        ↓
+Availability Zones
+        ↓
+Data Centers
+```
+
+Additional infrastructure extends AWS toward users and customer facilities:
+
+```text
+Edge Locations
+Outposts
+```
+
+AWS access methods introduced by the course are:
+
+```text
+Management Console
+CLI
+SDK
+CloudFormation
+```
+
+These should be understood as different interfaces and automation layers over AWS service APIs.
+
+## 3. IAM and Security Foundations
+
+File:
+
+```text
+iam-security-foundations-lab.md
+```
+
+Current topics include:
+
+```text
+Shared Responsibility Model
+Security OF the Cloud
+Security IN the Cloud
+IAM
+Root User
+IAM User
+IAM Group
+IAM Policy
+IAM Role
+MFA
+AWS Organizations
+Organizational Units
+Service Control Policies
+Least Privilege
+AWS Security Services
+```
+
+Core IAM model:
+
+```text
+Principal
+   ↓
+Authentication
+   ↓
+Permissions
+   ↓
+AWS API Action
+   ↓
+AWS Resource
+```
+
+AWS Organizations adds a higher-level multi-account governance layer:
+
+```text
+Organization
+   ↓
+OU
+   ↓
+Accounts
+   ↓
+SCP Guardrails
+```
+
+SCPs should be understood as permission boundaries and not as direct permission grants.
+
+## 4. EC2 Compute Foundations
+
+File:
+
+```text
+ec2-compute-foundations-lab.md
+```
+
+Current topics include:
+
+```text
+EC2
+Virtual Machines
+Hypervisor
+Multi-Tenancy
+AMI
+AWS Marketplace
+Instance Families
+Pricing Models
+Instance Lifecycle
+Elastic IP
+Key Pair
+Windows RDP
+Linux SSH
+AMI Backup
+Cross-Region AMI Copy
+```
+
+Core compute model:
+
+```text
+AMI
+ ↓
+EC2 Instance
+ ↓
+Operating System
+ ↓
+Application
+```
+
+Instance selection should be driven by workload characteristics:
+
+```text
+CPU
+Memory
+Storage I/O
+Networking
+Accelerators
+```
+
+EC2 access and troubleshooting also depend on:
+
+```text
+Credentials
+Security Groups
+Network Paths
+Operating-System Services
+```
+
 ## Relationship to Previous Study
 
 AWS concepts build directly on previous repository topics.
@@ -325,15 +499,18 @@ Actual evidence must come from an authorized AWS account and lab environment.
 Completed:
 
 ```text
-PDF p.1-p.14
+PDF p.1-p.53
 Module 1: Amazon Web Services Introduction
+Module 2: Global Infrastructure
+Module 3: Security (IAM)
+Module 4: Computing
 ```
 
 Next:
 
 ```text
-Module 2: Global Infrastructure
-Starting at p.15
+Module 5: Storage
+Starting at p.54
 ```
 
 ## What This Directory Demonstrates
