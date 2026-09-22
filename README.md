@@ -45,7 +45,10 @@ cloud-infrastructure-labs/
 │   └── api-security-rbac-foundations-lab.md
 └── aws/
     ├── README.md
-    └── cloud-computing-foundations-lab.md
+    ├── cloud-computing-foundations-lab.md
+    ├── global-infrastructure-foundations-lab.md
+    ├── iam-security-foundations-lab.md
+    └── ec2-compute-foundations-lab.md
 ```
 
 Future top-level areas should be created only after actual study exists.
@@ -369,18 +372,51 @@ SaaS
 Public Cloud
 Hybrid Cloud
 Private Cloud
+Region
+Availability Zone
+Multi-AZ Architecture
+Edge Location
+CloudFront
+Outposts
+AWS Management Console
+AWS CLI
+AWS SDK
+CloudFormation Introduction
+Shared Responsibility Model
+AWS Security Services
+IAM
+Root User
+IAM User
+IAM Group
+IAM Policy
+IAM Role
+MFA
+AWS Organizations
+Organizational Units
+Service Control Policies
+Least Privilege
+Amazon EC2
+AMI
+Instance Families
+EC2 Pricing Models
+Instance Lifecycle
+Elastic IP
+Key Pair
+Windows EC2
+Linux EC2
+AMI Backup
 ```
 
 Current AWS course position:
 
 ```text
-Completed through p.14
+Completed through p.53
 ```
 
 Next topic:
 
 ```text
-Global Infrastructure
+Storage
 ```
 
 The AWS directory is:
@@ -388,7 +424,10 @@ The AWS directory is:
 ```text
 aws/
 ├── README.md
-└── cloud-computing-foundations-lab.md
+├── cloud-computing-foundations-lab.md
+├── global-infrastructure-foundations-lab.md
+├── iam-security-foundations-lab.md
+└── ec2-compute-foundations-lab.md
 ```
 
 The repository should continue to separate course examples from actual lab evidence. AWS account IDs, access keys, ARNs, public IP addresses, resource IDs, billing values, and command output must not be fabricated.
@@ -595,13 +634,13 @@ AWS
 AWS course position:
 
 ```text
-Completed through p.14
+Completed through p.53
 ```
 
 Next topic:
 
 ```text
-AWS Global Infrastructure
+AWS Storage
 ```
 
 ## Planned Expansion
