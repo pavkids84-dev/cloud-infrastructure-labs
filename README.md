@@ -12,6 +12,8 @@ Network Fundamentals and Troubleshooting
 Containers and Docker
         ↓
 Kubernetes
+        ↓
+AWS Cloud Infrastructure
 ```
 
 The repository emphasizes architecture, runtime observation, troubleshooting, verification, reproducible configuration, and security.
@@ -27,20 +29,23 @@ cloud-infrastructure-labs/
 │   └── ...
 ├── docker/
 │   └── ...
-└── kubernetes/
+├── kubernetes/
+│   ├── README.md
+│   ├── kubernetes-architecture-foundations-lab.md
+│   ├── minikube-local-cluster-lab.md
+│   ├── kubeadm-cluster-bootstrap-lab.md
+│   ├── kubectl-basic-control-lab.md
+│   ├── pod-fundamentals-lab.md
+│   ├── resource-object-template-lab.md
+│   ├── controller-fundamentals-lab.md
+│   ├── service-fundamentals-lab.md
+│   ├── label-selector-scheduling-lab.md
+│   ├── deployment-rolling-update-lab.md
+│   ├── monitoring-dashboard-foundations-lab.md
+│   └── api-security-rbac-foundations-lab.md
+└── aws/
     ├── README.md
-    ├── kubernetes-architecture-foundations-lab.md
-    ├── minikube-local-cluster-lab.md
-    ├── kubeadm-cluster-bootstrap-lab.md
-    ├── kubectl-basic-control-lab.md
-    ├── pod-fundamentals-lab.md
-    ├── resource-object-template-lab.md
-    ├── controller-fundamentals-lab.md
-    ├── service-fundamentals-lab.md
-    ├── label-selector-scheduling-lab.md
-    ├── deployment-rolling-update-lab.md
-    ├── monitoring-dashboard-foundations-lab.md
-    └── api-security-rbac-foundations-lab.md
+    └── cloud-computing-foundations-lab.md
 ```
 
 Future top-level areas should be created only after actual study exists.
@@ -340,6 +345,54 @@ kubectl top / Autoscaling Consumers
 
 Current resource snapshots and long-term observability should be treated as different capabilities.
 
+## AWS Cloud Infrastructure
+
+AWS study has started as the next major infrastructure layer.
+
+The current AWS course begins with cloud-computing foundations before moving into global infrastructure, IAM, computing, storage, networking, scaling, infrastructure as code, serverless computing, databases, and migration.
+
+Current AWS topics include:
+
+```text
+Cloud Computing
+On-Premises vs Cloud
+Virtualization
+On-Demand Self-Service
+Broad Network Access
+Resource Pooling
+Multi-Tenancy
+Rapid Elasticity
+Measured Service
+IaaS
+PaaS
+SaaS
+Public Cloud
+Hybrid Cloud
+Private Cloud
+```
+
+Current AWS course position:
+
+```text
+Completed through p.14
+```
+
+Next topic:
+
+```text
+Global Infrastructure
+```
+
+The AWS directory is:
+
+```text
+aws/
+├── README.md
+└── cloud-computing-foundations-lab.md
+```
+
+The repository should continue to separate course examples from actual lab evidence. AWS account IDs, access keys, ARNs, public IP addresses, resource IDs, billing values, and command output must not be fabricated.
+
 ## Troubleshooting Method
 
 ```text
@@ -526,16 +579,29 @@ Rollback
 Blue/Green Introduction
 ```
 
+Kubernetes course checkpoint:
+
+```text
+Completed through p.116
+Helm begins at p.117 and is intentionally paused for later study.
+```
+
 Current learning area:
 
 ```text
-Kubernetes
+AWS
+```
+
+AWS course position:
+
+```text
+Completed through p.14
 ```
 
 Next topic:
 
 ```text
-Helm
+AWS Global Infrastructure
 ```
 
 ## Planned Expansion
@@ -543,7 +609,6 @@ Helm
 Potential later top-level areas include:
 
 ```text
-aws/
 terraform/
 ```
 
