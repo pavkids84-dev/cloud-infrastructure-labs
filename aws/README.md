@@ -40,7 +40,10 @@ aws/
 ├── cloud-computing-foundations-lab.md
 ├── global-infrastructure-foundations-lab.md
 ├── iam-security-foundations-lab.md
-└── ec2-compute-foundations-lab.md
+├── ec2-compute-foundations-lab.md
+├── block-storage-ebs-foundations-lab.md
+├── s3-cloudfront-foundations-lab.md
+└── efs-cloud-storage-comparison-lab.md
 ```
 
 Additional files should be added only after the corresponding AWS topics are actually studied.
@@ -404,6 +407,36 @@ Network Paths
 Operating-System Services
 ```
 
+## 5. Storage Foundations
+
+Files:
+
+```text
+block-storage-ebs-foundations-lab.md
+s3-cloudfront-foundations-lab.md
+efs-cloud-storage-comparison-lab.md
+```
+
+The module introduces three fundamental storage models:
+
+```text
+Block → EBS / Instance Store
+Object → S3
+File → EFS
+```
+
+Current topics include EBS volumes and snapshots, S3 storage classes and lifecycle, CloudFront caching, and EFS shared file storage.
+
+A useful selection model is:
+
+```text
+Required Access Semantics
+      ↓
+Block / File / Object
+      ↓
+Sharing / Availability / Performance / Lifecycle / Cost
+```
+
 ## Relationship to Previous Study
 
 AWS concepts build directly on previous repository topics.
@@ -499,18 +532,19 @@ Actual evidence must come from an authorized AWS account and lab environment.
 Completed:
 
 ```text
-PDF p.1-p.53
+PDF p.1-p.88
 Module 1: Amazon Web Services Introduction
 Module 2: Global Infrastructure
 Module 3: Security (IAM)
 Module 4: Computing
+Module 5: Storage
 ```
 
 Next:
 
 ```text
-Module 5: Storage
-Starting at p.54
+Module 6: Network
+Starting at p.89
 ```
 
 ## What This Directory Demonstrates
