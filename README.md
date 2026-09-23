@@ -48,7 +48,10 @@ cloud-infrastructure-labs/
     ├── cloud-computing-foundations-lab.md
     ├── global-infrastructure-foundations-lab.md
     ├── iam-security-foundations-lab.md
-    └── ec2-compute-foundations-lab.md
+    ├── ec2-compute-foundations-lab.md
+    ├── block-storage-ebs-foundations-lab.md
+    ├── s3-cloudfront-foundations-lab.md
+    └── efs-cloud-storage-comparison-lab.md
 ```
 
 Future top-level areas should be created only after actual study exists.
@@ -405,18 +408,29 @@ Key Pair
 Windows EC2
 Linux EC2
 AMI Backup
+Block Storage
+Instance Store
+Amazon EBS
+EBS Snapshots
+Amazon S3
+S3 Storage Classes
+Versioning
+Lifecycle
+CloudFront
+Amazon EFS
+File / Object / Block Storage
 ```
 
 Current AWS course position:
 
 ```text
-Completed through p.53
+Completed through p.88
 ```
 
 Next topic:
 
 ```text
-Storage
+Network / VPC
 ```
 
 The AWS directory is:
@@ -427,7 +441,10 @@ aws/
 ├── cloud-computing-foundations-lab.md
 ├── global-infrastructure-foundations-lab.md
 ├── iam-security-foundations-lab.md
-└── ec2-compute-foundations-lab.md
+├── ec2-compute-foundations-lab.md
+├── block-storage-ebs-foundations-lab.md
+├── s3-cloudfront-foundations-lab.md
+└── efs-cloud-storage-comparison-lab.md
 ```
 
 The repository should continue to separate course examples from actual lab evidence. AWS account IDs, access keys, ARNs, public IP addresses, resource IDs, billing values, and command output must not be fabricated.
@@ -634,13 +651,13 @@ AWS
 AWS course position:
 
 ```text
-Completed through p.53
+Completed through p.88
 ```
 
 Next topic:
 
 ```text
-AWS Storage
+AWS Network / VPC
 ```
 
 ## Planned Expansion
