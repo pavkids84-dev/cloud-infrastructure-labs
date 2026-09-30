@@ -51,7 +51,11 @@ cloud-infrastructure-labs/
     ├── ec2-compute-foundations-lab.md
     ├── block-storage-ebs-foundations-lab.md
     ├── s3-cloudfront-foundations-lab.md
-    └── efs-cloud-storage-comparison-lab.md
+    ├── efs-cloud-storage-comparison-lab.md
+    ├── vpc-networking-foundations-lab.md
+    ├── route53-dns-foundations-lab.md
+    ├── elastic-load-balancing-foundations-lab.md
+    └── auto-scaling-cloudwatch-foundations-lab.md
 ```
 
 Future top-level areas should be created only after actual study exists.
@@ -419,18 +423,45 @@ Lifecycle
 CloudFront
 Amazon EFS
 File / Object / Block Storage
+VPC
+CIDR and Subnets
+Route Tables
+Internet Gateway
+NAT Gateway
+Security Groups
+Network ACLs
+VPC Peering
+VPC Endpoints
+VPN / Direct Connect
+Route 53
+Elastic Load Balancing
+ALB / NLB / GWLB / CLB
+Target Groups and Health Checks
+Multi-AZ Load Balancing
+Auto Scaling Groups
+Minimum / Desired / Maximum Capacity
+Launch Templates
+Scaling Policies
+Health Replacement
+Scaling Cooldown
+Lifecycle Hooks
+CloudWatch Metrics
+CloudWatch Alarms
+CloudWatch Agent
+CloudWatch Logs
+Event-Driven Automation
 ```
 
 Current AWS course position:
 
 ```text
-Completed through p.88
+Completed through p.157
 ```
 
 Next topic:
 
 ```text
-Network / VPC
+CloudFormation
 ```
 
 The AWS directory is:
@@ -444,7 +475,11 @@ aws/
 ├── ec2-compute-foundations-lab.md
 ├── block-storage-ebs-foundations-lab.md
 ├── s3-cloudfront-foundations-lab.md
-└── efs-cloud-storage-comparison-lab.md
+├── efs-cloud-storage-comparison-lab.md
+├── vpc-networking-foundations-lab.md
+├── route53-dns-foundations-lab.md
+├── elastic-load-balancing-foundations-lab.md
+└── auto-scaling-cloudwatch-foundations-lab.md
 ```
 
 The repository should continue to separate course examples from actual lab evidence. AWS account IDs, access keys, ARNs, public IP addresses, resource IDs, billing values, and command output must not be fabricated.
@@ -651,13 +686,13 @@ AWS
 AWS course position:
 
 ```text
-Completed through p.88
+Completed through p.144
 ```
 
 Next topic:
 
 ```text
-AWS Network / VPC
+AWS Auto Scaling
 ```
 
 ## Planned Expansion
