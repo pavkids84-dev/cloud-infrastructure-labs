@@ -43,7 +43,11 @@ aws/
 ├── ec2-compute-foundations-lab.md
 ├── block-storage-ebs-foundations-lab.md
 ├── s3-cloudfront-foundations-lab.md
-└── efs-cloud-storage-comparison-lab.md
+├── efs-cloud-storage-comparison-lab.md
+├── vpc-networking-foundations-lab.md
+├── route53-dns-foundations-lab.md
+├── elastic-load-balancing-foundations-lab.md
+└── auto-scaling-cloudwatch-foundations-lab.md
 ```
 
 Additional files should be added only after the corresponding AWS topics are actually studied.
@@ -437,6 +441,130 @@ Block / File / Object
 Sharing / Availability / Performance / Lifecycle / Cost
 ```
 
+## 6. Network Foundations
+
+Files:
+
+```text
+vpc-networking-foundations-lab.md
+route53-dns-foundations-lab.md
+elastic-load-balancing-foundations-lab.md
+```
+
+Current topics include:
+
+```text
+VPC
+CIDR
+Subnet
+ENI
+Route Table
+Internet Gateway
+NAT Gateway
+Security Group
+Network ACL
+VPC Peering
+VPC Endpoint
+VPN
+Direct Connect
+Route 53
+DNS Routing Policies
+Alias Records
+Elastic Load Balancing
+ALB
+NLB
+GWLB
+CLB
+Target Groups
+Health Checks
+Sticky Sessions
+Cross-Zone Concepts
+Multi-AZ Load Balancing
+```
+
+Core VPC model:
+
+```text
+Region
+   ↓
+VPC
+├── Public Subnets
+│   └── Internet Gateway Path
+└── Private Subnets
+    └── NAT Egress Path
+```
+
+Core traffic-management model:
+
+```text
+DNS
+ ↓
+Route 53
+ ↓
+Load Balancer
+ ↓
+Healthy Targets
+```
+
+
+## 7. Auto Scaling and CloudWatch Foundations
+
+File:
+
+```text
+auto-scaling-cloudwatch-foundations-lab.md
+```
+
+Current topics include:
+
+```text
+Auto Scaling Group
+Minimum / Desired / Maximum Capacity
+Launch Template
+Launch Configuration Historical Context
+Target Tracking Scaling
+Simple Scaling
+Step Scaling
+Scheduled Scaling
+Health Replacement
+ELB Integration
+Scaling Cooldown
+Lifecycle Hook
+CloudWatch Metrics
+CloudWatch Alarms
+CloudWatch Agent
+CloudWatch Logs
+CloudWatch Logs Insights
+Event-Driven Automation
+Amazon EventBridge Current Context
+```
+
+Core feedback loop:
+
+```text
+Workload Demand
+      ↓
+CloudWatch Metric
+      ↓
+Scaling Policy
+      ↓
+Auto Scaling Group
+      ↓
+EC2 Capacity
+```
+
+Auto Scaling also maintains desired state:
+
+```text
+Desired Capacity
+      ↓
+Current Capacity / Health
+      ↓
+Launch / Terminate / Replace
+      ↓
+Desired Capacity Restored
+```
+
 ## Relationship to Previous Study
 
 AWS concepts build directly on previous repository topics.
@@ -532,19 +660,21 @@ Actual evidence must come from an authorized AWS account and lab environment.
 Completed:
 
 ```text
-PDF p.1-p.88
+PDF p.1-p.157
 Module 1: Amazon Web Services Introduction
 Module 2: Global Infrastructure
 Module 3: Security (IAM)
 Module 4: Computing
 Module 5: Storage
+Module 6: Network
+Module 7: Auto Scaling
 ```
 
 Next:
 
 ```text
-Module 6: Network
-Starting at p.89
+Module 8: CloudFormation
+Starting at p.158
 ```
 
 ## What This Directory Demonstrates
