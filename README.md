@@ -58,7 +58,7 @@ cloud-infrastructure-labs/
     ├── auto-scaling-cloudwatch-foundations-lab.md
     ├── cloudformation-foundations-lab.md
     ├── rds-database-foundations-lab.md
-    └── dynamodb-foundations-lab.md
+    └── dynamodb-nosql-foundations-lab.md
 ```
 
 Future top-level areas should be created only after actual study exists.
@@ -464,34 +464,38 @@ Drift Detection
 Stack Updates
 Stack Deletion
 Amazon RDS
-Multi-AZ
+RDS Multi-AZ
 Read Replicas
-Database Backup / Snapshot
+Automated Backups
+DB Snapshots
+Enhanced Monitoring
+RDS vs Database on EC2
 Amazon Aurora
 Amazon DynamoDB
 Partition Keys
 Sort Keys
-Read Consistency
+Consistency Models
 ```
 
 Current AWS course position:
 
 ```text
-Completed through p.177
-Database module p.182-p.198 completed
+Modules 1-8 completed through p.177
+Module 10 Database core completed through p.198
 ```
 
 Deferred:
 
 ```text
-AWS Lambda p.178-p.181
-Serverless design p.199-p.202
+Module 9 Lambda: p.178-p.181
+Serverless design pages: p.199-p.202
 ```
 
-Next topic:
+Next active topic:
 
 ```text
-Migration p.203
+Module 11 Migration
+Starting at p.203
 ```
 
 The AWS directory is:
@@ -509,7 +513,10 @@ aws/
 ├── vpc-networking-foundations-lab.md
 ├── route53-dns-foundations-lab.md
 ├── elastic-load-balancing-foundations-lab.md
-└── auto-scaling-cloudwatch-foundations-lab.md
+├── auto-scaling-cloudwatch-foundations-lab.md
+├── cloudformation-foundations-lab.md
+├── rds-database-foundations-lab.md
+└── dynamodb-nosql-foundations-lab.md
 ```
 
 The repository should continue to separate course examples from actual lab evidence. AWS account IDs, access keys, ARNs, public IP addresses, resource IDs, billing values, and command output must not be fabricated.
