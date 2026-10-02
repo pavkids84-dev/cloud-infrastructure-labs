@@ -55,7 +55,10 @@ cloud-infrastructure-labs/
     ├── vpc-networking-foundations-lab.md
     ├── route53-dns-foundations-lab.md
     ├── elastic-load-balancing-foundations-lab.md
-    └── auto-scaling-cloudwatch-foundations-lab.md
+    ├── auto-scaling-cloudwatch-foundations-lab.md
+    ├── cloudformation-foundations-lab.md
+    ├── rds-database-foundations-lab.md
+    └── dynamodb-foundations-lab.md
 ```
 
 Future top-level areas should be created only after actual study exists.
@@ -450,18 +453,45 @@ CloudWatch Alarms
 CloudWatch Agent
 CloudWatch Logs
 Event-Driven Automation
+Infrastructure as Code
+AWS CloudFormation
+Templates
+Stacks
+Parameters / Conditions / Resources
+Change Sets
+Automatic Rollback
+Drift Detection
+Stack Updates
+Stack Deletion
+Amazon RDS
+Multi-AZ
+Read Replicas
+Database Backup / Snapshot
+Amazon Aurora
+Amazon DynamoDB
+Partition Keys
+Sort Keys
+Read Consistency
 ```
 
 Current AWS course position:
 
 ```text
-Completed through p.157
+Completed through p.177
+Database module p.182-p.198 completed
+```
+
+Deferred:
+
+```text
+AWS Lambda p.178-p.181
+Serverless design p.199-p.202
 ```
 
 Next topic:
 
 ```text
-CloudFormation
+Migration p.203
 ```
 
 The AWS directory is:
