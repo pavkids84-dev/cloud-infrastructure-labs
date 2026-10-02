@@ -2,46 +2,68 @@
 
 ## Objective
 
-Understand managed relational databases on AWS through Amazon RDS, including database engines, DB instances, storage, Multi-AZ, read replicas, automated backups, snapshots, enhanced monitoring, Aurora, and the difference between managed RDS and a database installed directly on EC2.
+Understand relational database concepts in AWS and the operational differences between running a database on Amazon EC2 and using Amazon RDS.
 
 ## Scope
 
 ```text
-Relational Database
+Relational Databases
+SQL and Schema
 Amazon RDS
-DB Instance
-DB Instance Class
-DB Storage
+DB Instances
+DB Instance Classes
+RDS Storage
 Multi-AZ
-Read Replica
-Automated Backup
+Read Replicas
+Automated Backups
+DB Snapshots
 Point-in-Time Recovery
-Manual Snapshot
 Enhanced Monitoring
 RDS vs Database on EC2
 Amazon Aurora
-MySQL Client Connectivity
-Security Group Access
-Cleanup
+RDS Connectivity
+Database Security
+RDS Troubleshooting
 ```
 
 ---
 
-# Relational Database Context
+# Relational Database Foundation
 
-Relational databases organize data through structured schemas and relationships.
+A relational database stores structured data in tables and uses defined relationships between data.
 
-Typical characteristics include:
+Typical concepts include:
+
+```text
+Table
+Row
+Column
+Primary Key
+Foreign Key
+Schema
+SQL
+```
+
+A relational model is useful when data integrity and relationships between records are important.
+
+---
+
+# SQL and Schema
+
+The course contrasts relational databases with NoSQL databases.
+
+Relational databases generally emphasize:
 
 ```text
 Defined Schema
 Data Integrity
 Relationships
-SQL Queries
-JOIN Operations
+Structured Queries
 ```
 
-They are useful when consistency, relationships, and structured transactions are important.
+A schema describes the expected structure of the data.
+
+This structure can improve consistency but can also require more planning before major changes.
 
 ---
 
@@ -49,32 +71,42 @@ They are useful when consistency, relationships, and structured transactions are
 
 Amazon Relational Database Service is a managed relational database service.
 
-AWS manages parts of the database infrastructure lifecycle such as:
+Conceptually:
 
 ```text
-Underlying Host Management
-Operating System Access
-Backup Automation
-Software Patching
-Failure Detection
-Recovery Operations
+Application
+    ↓
+RDS Endpoint
+    ↓
+Managed Database Engine
 ```
 
-Customers continue to manage database-level concerns such as:
+AWS manages significant parts of the underlying database infrastructure, including supported maintenance operations, backups, and failure handling.
 
-```text
-Schema
-Users
-Queries
-Application Connectivity
-Parameter Choices
-Network Access
-Data Lifecycle
-```
+The customer still remains responsible for database design, users, credentials, query behavior, application integration, and many database configuration choices.
 
 ---
 
-# Supported Engine Concept
+# Managed Service Boundary
+
+RDS is not the same as installing MySQL or PostgreSQL directly on an EC2 instance.
+
+With RDS:
+
+```text
+AWS
+→ Underlying Host
+→ Managed Database Infrastructure
+→ Supported Maintenance Operations
+```
+
+The customer does not receive normal operating-system shell access to the managed database host.
+
+This reduced host-level control is one of the main tradeoffs of using a managed database service.
+
+---
+
+# Supported Database Engines
 
 The course introduces engines such as:
 
@@ -87,194 +119,256 @@ Microsoft SQL Server
 Amazon Aurora
 ```
 
-Engine availability, versions, and pricing should be checked in current AWS documentation when implementing a real environment.
+Engine availability, versions, features, and pricing can change over time.
+
+Actual implementation should verify current AWS documentation.
 
 ---
 
 # DB Instance
 
-An RDS DB instance is an isolated managed database environment.
+A DB instance is an isolated database environment managed by Amazon RDS.
 
 Conceptually:
 
 ```text
-Application
-    ↓
-RDS Endpoint
-    ↓
-DB Instance
-    ↓
-Managed Storage
+RDS DB Instance
+├── Database Engine
+├── Compute Capacity
+├── Memory
+├── Storage
+└── Network Endpoint
 ```
 
-The instance class determines compute and memory characteristics.
+Applications connect through the RDS endpoint rather than by logging into the underlying host operating system.
+
+---
+
+# DB Instance Class
+
+RDS provides DB instance classes with different compute and memory characteristics.
+
+The course uses examples such as:
+
+```text
+db.m5
+db.r5
+```
+
+These are course-era examples.
+
+Instance families and available sizes should be checked when building a current environment.
 
 ---
 
 # RDS Storage
 
-The course introduces general-purpose SSD and provisioned-IOPS storage concepts.
-
-The reusable design question is:
+The course introduces storage categories such as:
 
 ```text
-What I/O Pattern Does the Database Need?
+General Purpose SSD
+Provisioned IOPS
+Magnetic
 ```
 
-Consider:
+The reusable selection principle is:
 
 ```text
-Latency
+Capacity
 IOPS
 Throughput
-Consistency
-Storage Growth
+Latency
 Cost
 ```
 
-Do not select storage only by capacity.
+Storage should be selected according to workload behavior rather than only database size.
+
+---
+
+# Storage Auto Scaling
+
+RDS can increase allocated storage automatically when configured for storage autoscaling.
+
+Conceptually:
+
+```text
+Database Growth
+      ↓
+Free Storage Falls
+      ↓
+Storage Auto Scaling
+      ↓
+Allocated Capacity Increases
+```
+
+This should not be confused with automatically changing database compute capacity.
 
 ---
 
 # Multi-AZ
 
-Multi-AZ is primarily a high-availability design.
+The course presents Multi-AZ as a high-availability design.
 
 Conceptually:
 
 ```text
+AZ A
 Primary DB
-   ↓ synchronous replication
-Standby DB in another AZ
+   ⇅
+Synchronous Replication
+   ⇅
+Standby DB
+AZ B
 ```
 
-When the primary becomes unavailable, failover can move service to a standby.
+If the primary database becomes unavailable under supported failover conditions, RDS can fail over to a standby.
 
-The key idea is:
+---
+
+# Multi-AZ Purpose
+
+The main purpose of Multi-AZ is:
 
 ```text
-Multi-AZ
-→ Availability / Failover
+High Availability
+Failure Recovery
 ```
 
-not read scaling.
+It should not be treated as the same feature as read scaling.
+
+A standby used for high availability is conceptually different from a read replica used to serve read traffic.
+
+---
+
+# Multi-AZ Course Numbers
+
+The course includes specific failover-time examples.
+
+Treat those values as course examples rather than guaranteed service-level timing.
+
+Actual failover duration depends on configuration, failure mode, workload, DNS behavior, and current AWS implementation.
 
 ---
 
 # Read Replica
 
-A read replica is primarily used to offload read traffic.
+A read replica is designed to offload read traffic from the primary database.
 
 Conceptually:
 
 ```text
-Primary
-├── Read / Write
-└── Asynchronous Replication
-        ↓
-    Read Replica
-        ↓
-      Read
-```
-
-The key idea is:
-
-```text
+Primary DB
+Read + Write
+    ↓
+Asynchronous Replication
+    ↓
 Read Replica
-→ Read Scaling
+Read Workload
 ```
 
-This must not be confused with the Multi-AZ standby role.
+This can reduce read pressure on the primary.
 
 ---
 
-# Multi-AZ vs Read Replica
+# Read Replica and Multi-AZ Are Different
 
 ```text
 Multi-AZ
-→ High Availability
+→ Availability
 → Failover
-→ Synchronous or service-managed HA replication context
 ```
 
 ```text
 Read Replica
-→ Read Performance
 → Read Scaling
-→ Asynchronous replication context
+→ Read Workload Distribution
 ```
 
-These features solve different problems.
+Do not use these terms interchangeably.
 
 ---
 
-# Automated Backup
+# Replication Lag
 
-The course introduces automated backup of the DB instance and point-in-time recovery.
+Because read-replica replication can be asynchronous, an application should consider replication lag.
 
 Conceptually:
 
 ```text
-DB Changes Over Time
+Write to Primary
       ↓
-Automated Backup
+Replication Delay
       ↓
-Recovery Window
-      ↓
-Restore to Selected Point
+Replica Receives Update
 ```
 
-Retention periods and current service-specific limits should be verified at implementation time.
+A read immediately after a write can therefore require careful application design if the newest value must always be returned.
 
 ---
 
-# Manual Snapshot
+# Automated Backups
 
-A snapshot represents a database state at a specific point in time.
+The course introduces RDS automated backups and point-in-time recovery.
+
+Conceptually:
+
+```text
+RDS Instance
+    ↓
+Automated Backup Data
+    ↓
+Recovery Window
+    ↓
+Restore to Selected Time
+```
+
+Backup-retention defaults and limits are configuration- and service-dependent and should be verified in the current AWS console or documentation.
+
+---
+
+# DB Snapshots
+
+A DB snapshot represents a database instance at a particular point in time.
 
 Conceptually:
 
 ```text
 DB Instance
-   ↓
+    ↓
 Snapshot
-   ↓
+    ↓
 Restore
-   ↓
+    ↓
 New DB Instance
 ```
 
-A restore does not simply overwrite the existing DB instance in place.
-
-This distinction is important for recovery planning.
+A key operational point is that restoring a snapshot creates another DB instance rather than overwriting the existing DB instance in place.
 
 ---
 
-# Recovery Perspective
+# Backup vs Snapshot
 
-A backup is useful only when it can actually be restored.
-
-A useful validation workflow is:
+A useful conceptual distinction is:
 
 ```text
-Create Backup
-      ↓
-Restore
-      ↓
-Connect
-      ↓
-Verify Schema / Data
-      ↓
-Confirm Application Access
+Automated Backups
+→ Managed backup history
+→ Point-in-time recovery capability
 ```
 
-This is more meaningful than checking only whether a snapshot exists.
+```text
+Manual Snapshot
+→ Explicit recovery point
+→ Retained until intentionally removed
+```
+
+Exact retention and feature behavior should be verified for the selected database engine.
 
 ---
 
 # Enhanced Monitoring
 
-The course introduces enhanced monitoring as a way to collect more detailed operating-system-level metrics for RDS.
+The course introduces Enhanced Monitoring as additional operating-system-level visibility for RDS.
 
 Conceptually:
 
@@ -286,83 +380,168 @@ Enhanced Monitoring
 Operational Visibility
 ```
 
-The collection interval, retention behavior, and available metrics should be verified for the selected engine and current service configuration.
+This is different from ordinary service-level CloudWatch metrics.
+
+---
+
+# RDS Monitoring Layers
+
+Useful database monitoring can include:
+
+```text
+CPU
+Memory
+Storage
+Connections
+Read / Write Activity
+Latency
+Database Logs
+Application Errors
+```
+
+A healthy RDS resource does not automatically mean the application is healthy.
 
 ---
 
 # RDS vs Database on EC2
 
-## RDS
+The major tradeoff is operational control versus management responsibility.
 
 ```text
-AWS Manages More Infrastructure
-No SSH to the Managed Database Host
-Managed Backup / Patching Features
-Parameter Groups for Supported Configuration
-Less OS-Level Control
+Amazon RDS
+→ More Managed Operations
+→ Less Host-Level Control
 ```
-
-## Database on EC2
 
 ```text
-Full OS Access
-More Customization
-Customer Manages Patching
-Customer Manages Backup
-Customer Manages Database Availability Design
+Database on EC2
+→ More Host-Level Control
+→ More Operational Responsibility
 ```
 
-The decision is a tradeoff between management convenience and control.
+With EC2, the team is responsible for more tasks such as:
+
+```text
+Operating System
+Database Installation
+Patching
+Backups
+High Availability Design
+Monitoring
+Recovery
+```
+
+---
+
+# Service-Model Clarification
+
+The course labels RDS as SaaS.
+
+For infrastructure study, it is more useful to understand RDS as a managed database service rather than equating it with a typical end-user SaaS application.
+
+The important boundary is operational responsibility, not the label itself.
 
 ---
 
 # Amazon Aurora
 
-The course introduces Aurora as an AWS relational database compatible with MySQL and PostgreSQL ecosystems.
+The course introduces Amazon Aurora as a relational database service compatible with MySQL and PostgreSQL.
 
-Core ideas:
+The reusable concepts are:
 
 ```text
 Managed Relational Database
-Distributed Storage Architecture
+Distributed Storage Design
 High Availability
 Read Scaling
-Backup Integration
+MySQL / PostgreSQL Compatibility
 ```
 
-Exact performance claims, replica limits, and internal implementation details are time-sensitive and should be verified when designing a real production system.
+Specific performance multipliers, replica limits, and storage implementation numbers in course material should be treated as time-sensitive service details.
 
 ---
 
-# Course Practice Flow
+# RDS Practice Workflow
 
-The course practice uses MySQL on RDS.
-
-The workflow is:
+The course practice follows this sequence:
 
 ```text
-Create RDS MySQL DB Instance
+Create MySQL RDS Instance
       ↓
 Configure Storage
       ↓
-Configure VPC and Security Group
+Configure Network Access
       ↓
-Obtain Endpoint
+Connect with SQL Client
       ↓
-Connect with MySQL Workbench
-      ↓
-Run Basic SQL
+Run SQL Queries
       ↓
 Delete DB Instance
 ```
 
+This sequence is useful for understanding the database lifecycle.
+
 ---
 
-# Connectivity Model
+# Security Warning About Course Credentials
 
-A database connection requires more than a valid username and password.
+The course includes an example database password.
 
-Check:
+Do not reuse or publish course passwords in real environments.
+
+Never commit actual database passwords, secrets, endpoints tied to private environments, or access credentials to Git.
+
+Use a secure secret-management method for real projects.
+
+---
+
+# Public Accessibility Warning
+
+The course enables public accessibility for the training RDS instance.
+
+That setting is appropriate only when intentionally required for the lab architecture.
+
+For production-oriented architecture, a common pattern is:
+
+```text
+Internet
+   ↓
+Public Application Tier
+   ↓
+Private Database Tier
+```
+
+The database should not be made publicly reachable merely for convenience.
+
+---
+
+# RDS Network Path
+
+A database connection depends on multiple layers.
+
+```text
+Client
+  ↓
+DNS / RDS Endpoint
+  ↓
+Route
+  ↓
+Security Group
+  ↓
+Database Listener Port
+  ↓
+Database Authentication
+  ↓
+Database Authorization
+```
+
+A database connection failure should be investigated in this order instead of changing all security rules at once.
+
+---
+
+# RDS Connectivity Troubleshooting
+
+Example workflow:
 
 ```text
 DB Instance Available?
@@ -371,146 +550,56 @@ Correct Endpoint?
       ↓
 Correct Port?
       ↓
-Network Route?
+Client Has Network Route?
       ↓
-Security Group?
+RDS Security Group Allows Client?
       ↓
-Public or Private Reachability?
+Database User Correct?
       ↓
-Database Authentication?
+Password / Authentication Correct?
+      ↓
+Database Exists?
 ```
 
 ---
 
-# Security Warning for the Course Practice
+# RDS Deletion
 
-The course practice uses a publicly accessible RDS configuration and a sample master password.
+The course deletes the training DB instance and disables the final snapshot.
 
-These settings must be treated as training examples only.
+That is a cleanup choice for a disposable training environment.
 
-For a stronger architecture:
+In a real environment, deleting a database without a final recovery point can cause permanent data loss.
 
-```text
-Application in Private Network
-      ↓
-Security Group Reference
-      ↓
-RDS in Private Subnet
-```
-
-Avoid exposing a production database directly to the public Internet.
-
-Never commit:
+Deletion planning should explicitly consider:
 
 ```text
-Database Passwords
-RDS Endpoints from Real Accounts
-Security Group IDs
-Account IDs
-Connection Strings with Credentials
+Final Snapshot
+Backup Retention
+Recovery Requirement
+Data Classification
+Cost
 ```
 
 ---
 
-# Basic SQL Verification
+# Recovery Perspective
 
-The course uses simple SQL statements such as:
-
-```sql
-SHOW DATABASES;
-SHOW TABLES;
-```
-
-The purpose is to confirm that:
+Database resilience requires more than one feature.
 
 ```text
-Network Access
+High Availability
 +
-Authentication
+Backup
 +
-Database Session
+Restore
++
+Recovery Verification
 ```
 
-all work.
+Multi-AZ does not replace backups, and backups do not replace high availability.
 
-Actual database contents and user-created records should come from a real authorized lab environment.
-
----
-
-# RDS Troubleshooting Workflow
-
-```text
-Cannot Connect
-      ↓
-DB Status
-      ↓
-Endpoint / Port
-      ↓
-Security Group
-      ↓
-Subnet / Route
-      ↓
-Public or Private Reachability
-      ↓
-Credentials
-      ↓
-Database User Permission
-```
-
-For application failures, continue with:
-
-```text
-Connection Pool
-TLS Settings
-DNS Resolution
-Parameter Group
-Engine Logs
-Application Logs
-```
-
----
-
-# Multi-AZ Troubleshooting Perspective
-
-A running standby does not mean every application failure automatically disappears.
-
-Check:
-
-```text
-Database Failover
-      ↓
-Endpoint Behavior
-      ↓
-Application Reconnection
-      ↓
-Connection Pool Recovery
-      ↓
-Application Verification
-```
-
-Availability must be verified at the application layer.
-
----
-
-# Backup and Restore Troubleshooting
-
-```text
-Snapshot Exists?
-      ↓
-Correct Recovery Point?
-      ↓
-Restore New DB Instance
-      ↓
-Security / Network Access
-      ↓
-Connect
-      ↓
-Verify Data
-      ↓
-Redirect Application if Needed
-```
-
-Do not treat backup existence as proof of recoverability.
+They solve different failure scenarios.
 
 ---
 
@@ -519,41 +608,42 @@ Do not treat backup existence as proof of recoverability.
 Do not fabricate or publish:
 
 ```text
-RDS Endpoint
-DB Instance Identifier
-Security Group ID
-Subnet Group ID
-Account ID
-Master Password
-Snapshot Identifier
-Actual SQL Output
-Actual Restore Timing
+RDS Endpoints
+DB Instance Identifiers
+DB Passwords
+Security Group IDs
+Subnet IDs
+Snapshot IDs
+Account IDs
+CloudWatch Output
+Query Output
 Billing Values
 ```
 
-Use actual evidence only from an authorized AWS environment.
+Actual evidence must come from an authorized AWS environment.
 
 ---
 
 # Verification Checklist
 
-- RDS was understood as a managed relational database service.
-- DB instance and instance class concepts were introduced.
-- Storage choices were connected to workload I/O needs.
+- SQL and NoSQL were distinguished at a high level.
+- Amazon RDS was understood as a managed relational database service.
+- DB instances and DB instance classes were introduced.
+- RDS storage choices were connected to workload characteristics.
 - Multi-AZ was connected to availability and failover.
 - Read replicas were connected to read scaling.
-- Automated backup and point-in-time recovery were distinguished from manual snapshots.
+- Automated backups and DB snapshots were distinguished.
 - Snapshot restore was understood to create a new DB instance.
-- Enhanced monitoring was introduced.
-- RDS and a database on EC2 were compared.
+- Enhanced Monitoring was introduced.
+- RDS and database-on-EC2 responsibilities were compared.
 - Aurora was introduced.
-- Public database exposure in the course practice was treated as training-only.
-- Backup existence was separated from successful restore verification.
+- Public database exposure was treated as a deliberate architecture choice rather than a default recommendation.
+- Course passwords and endpoints were not treated as reusable credentials.
 
 ## What I Learned
 
-- Managed databases reduce operating-system and platform-management responsibilities.
+- Managed database services reduce operating-system and database-infrastructure management work.
 - Multi-AZ and read replicas solve different problems.
-- Database availability depends on both database infrastructure and application reconnection behavior.
-- A backup strategy is incomplete until restore is tested.
-- Database network exposure should be minimized.
+- Database availability, backup, and recovery should be designed separately.
+- Database connectivity troubleshooting requires checking the full path from network reachability to authentication.
+- Recovery capability must be verified instead of assuming that a backup alone is sufficient.
