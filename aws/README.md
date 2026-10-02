@@ -47,7 +47,10 @@ aws/
 ├── vpc-networking-foundations-lab.md
 ├── route53-dns-foundations-lab.md
 ├── elastic-load-balancing-foundations-lab.md
-└── auto-scaling-cloudwatch-foundations-lab.md
+├── auto-scaling-cloudwatch-foundations-lab.md
+├── cloudformation-foundations-lab.md
+├── rds-database-foundations-lab.md
+└── dynamodb-foundations-lab.md
 ```
 
 Additional files should be added only after the corresponding AWS topics are actually studied.
@@ -565,6 +568,111 @@ Launch / Terminate / Replace
 Desired Capacity Restored
 ```
 
+## 8. CloudFormation Foundations
+
+File:
+
+```text
+cloudformation-foundations-lab.md
+```
+
+Current topics include:
+
+```text
+Infrastructure as Code
+CloudFormation
+Template
+Stack
+Parameters
+Conditions
+Resources
+Metadata
+Mappings
+Change Sets
+Automatic Rollback
+Stack Events
+Outputs
+Drift Detection
+Stack Update
+Stack Deletion
+```
+
+Core model:
+
+```text
+Git / Template
+      ↓
+CloudFormation
+      ↓
+Stack
+      ↓
+AWS Resources
+```
+
+Drift management follows:
+
+```text
+Expected State
+      ↕
+Actual State
+      ↓
+Drift Detection
+      ↓
+Reconcile Through Code and Stack Update
+```
+
+## 10. Database Foundations
+
+Files:
+
+```text
+rds-database-foundations-lab.md
+dynamodb-foundations-lab.md
+```
+
+Current topics include:
+
+```text
+Relational vs NoSQL
+Amazon RDS
+DB Instances
+RDS Storage
+Multi-AZ
+Read Replicas
+Automated Backup
+Point-in-Time Recovery
+Manual Snapshots
+Enhanced Monitoring
+RDS vs Database on EC2
+Amazon Aurora
+Amazon DynamoDB
+Tables / Items / Attributes
+Partition Keys
+Sort Keys
+Read Consistency
+Access-Pattern-Driven Data Modeling
+```
+
+Core RDS distinction:
+
+```text
+Multi-AZ
+→ Availability / Failover
+
+Read Replica
+→ Read Scaling
+```
+
+Core DynamoDB model:
+
+```text
+Access Pattern
+      ↓
+Partition Key / Sort Key Design
+      ↓
+Efficient Item Access
+```
+
 ## Relationship to Previous Study
 
 AWS concepts build directly on previous repository topics.
@@ -660,7 +768,7 @@ Actual evidence must come from an authorized AWS account and lab environment.
 Completed:
 
 ```text
-PDF p.1-p.157
+PDF p.1-p.177
 Module 1: Amazon Web Services Introduction
 Module 2: Global Infrastructure
 Module 3: Security (IAM)
@@ -668,13 +776,28 @@ Module 4: Computing
 Module 5: Storage
 Module 6: Network
 Module 7: Auto Scaling
+Module 8: CloudFormation
+
+Database study completed:
+PDF p.182-p.198
+Module 10: Database
 ```
 
-Next:
+Deferred:
 
 ```text
-Module 8: CloudFormation
-Starting at p.158
+Module 9: Lambda
+PDF p.178-p.181
+
+Serverless design pages
+PDF p.199-p.202
+```
+
+Next planned topic:
+
+```text
+Module 11: Migration
+Starting at p.203
 ```
 
 ## What This Directory Demonstrates
