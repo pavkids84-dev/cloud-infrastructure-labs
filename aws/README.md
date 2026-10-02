@@ -50,7 +50,7 @@ aws/
 ├── auto-scaling-cloudwatch-foundations-lab.md
 ├── cloudformation-foundations-lab.md
 ├── rds-database-foundations-lab.md
-└── dynamodb-foundations-lab.md
+└── dynamodb-nosql-foundations-lab.md
 ```
 
 Additional files should be added only after the corresponding AWS topics are actually studied.
@@ -627,50 +627,49 @@ Files:
 
 ```text
 rds-database-foundations-lab.md
-dynamodb-foundations-lab.md
+dynamodb-nosql-foundations-lab.md
 ```
 
 Current topics include:
 
 ```text
-Relational vs NoSQL
+SQL vs NoSQL
 Amazon RDS
 DB Instances
 RDS Storage
 Multi-AZ
 Read Replicas
-Automated Backup
-Point-in-Time Recovery
-Manual Snapshots
+Automated Backups
+DB Snapshots
 Enhanced Monitoring
 RDS vs Database on EC2
 Amazon Aurora
 Amazon DynamoDB
-Tables / Items / Attributes
+Items and Attributes
 Partition Keys
 Sort Keys
-Read Consistency
-Access-Pattern-Driven Data Modeling
+Consistency Models
+Access-Pattern-Oriented Design
 ```
 
-Core RDS distinction:
+Relational availability and scaling concepts:
 
 ```text
-Multi-AZ
-→ Availability / Failover
-
-Read Replica
-→ Read Scaling
+RDS Primary
+├── Multi-AZ Standby → Availability / Failover
+└── Read Replica     → Read Scaling
 ```
 
-Core DynamoDB model:
+DynamoDB key-design concept:
 
 ```text
 Access Pattern
       ↓
-Partition Key / Sort Key Design
+Partition Key
+      +
+Optional Sort Key
       ↓
-Efficient Item Access
+Efficient Data Access
 ```
 
 ## Relationship to Previous Study
@@ -768,35 +767,21 @@ Actual evidence must come from an authorized AWS account and lab environment.
 Completed:
 
 ```text
-PDF p.1-p.177
-Module 1: Amazon Web Services Introduction
-Module 2: Global Infrastructure
-Module 3: Security (IAM)
-Module 4: Computing
-Module 5: Storage
-Module 6: Network
-Module 7: Auto Scaling
-Module 8: CloudFormation
-
-Database study completed:
-PDF p.182-p.198
-Module 10: Database
+Modules 1-8 through p.177
+Module 10 Database core: p.182-p.198
 ```
 
 Deferred:
 
 ```text
-Module 9: Lambda
-PDF p.178-p.181
-
-Serverless design pages
-PDF p.199-p.202
+Module 9 Lambda: p.178-p.181
+Module 10 serverless design: p.199-p.202
 ```
 
-Next planned topic:
+Next active topic:
 
 ```text
-Module 11: Migration
+Module 11 Migration
 Starting at p.203
 ```
 
