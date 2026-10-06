@@ -42,7 +42,8 @@ cloud-infrastructure-labs/
 │   ├── label-selector-scheduling-lab.md
 │   ├── deployment-rolling-update-lab.md
 │   ├── monitoring-dashboard-foundations-lab.md
-│   └── api-security-rbac-foundations-lab.md
+│   ├── api-security-rbac-foundations-lab.md
+│   └── helm-package-management-foundations-lab.md
 └── aws/
     ├── README.md
     ├── cloud-computing-foundations-lab.md
@@ -56,9 +57,7 @@ cloud-infrastructure-labs/
     ├── route53-dns-foundations-lab.md
     ├── elastic-load-balancing-foundations-lab.md
     ├── auto-scaling-cloudwatch-foundations-lab.md
-    ├── cloudformation-foundations-lab.md
-    ├── rds-database-foundations-lab.md
-    └── dynamodb-nosql-foundations-lab.md
+    └── cloudformation-foundations-lab.md
 ```
 
 Future top-level areas should be created only after actual study exists.
@@ -177,18 +176,27 @@ RBAC
 Role / RoleBinding
 ClusterRole / ClusterRoleBinding
 Least Privilege
+Helm
+Charts
+Releases
+Helm Repositories
+Artifact Hub
+values.yaml
+Template Rendering
+Helm Install / Upgrade
 ```
 
 Current course position:
 
 ```text
-Completed through p.116
+Completed through p.131
 ```
 
 Next:
 
 ```text
-Helm
+Volumes
+Starting at p.132
 ```
 
 ## Kubernetes Desired-State Model
@@ -463,39 +471,18 @@ Automatic Rollback
 Drift Detection
 Stack Updates
 Stack Deletion
-Amazon RDS
-RDS Multi-AZ
-Read Replicas
-Automated Backups
-DB Snapshots
-Enhanced Monitoring
-RDS vs Database on EC2
-Amazon Aurora
-Amazon DynamoDB
-Partition Keys
-Sort Keys
-Consistency Models
 ```
 
 Current AWS course position:
 
 ```text
-Modules 1-8 completed through p.177
-Module 10 Database core completed through p.198
+Completed through p.177
 ```
 
-Deferred:
+Next topic:
 
 ```text
-Module 9 Lambda: p.178-p.181
-Serverless design pages: p.199-p.202
-```
-
-Next active topic:
-
-```text
-Module 11 Migration
-Starting at p.203
+AWS Lambda
 ```
 
 The AWS directory is:
@@ -513,10 +500,7 @@ aws/
 ├── vpc-networking-foundations-lab.md
 ├── route53-dns-foundations-lab.md
 ├── elastic-load-balancing-foundations-lab.md
-├── auto-scaling-cloudwatch-foundations-lab.md
-├── cloudformation-foundations-lab.md
-├── rds-database-foundations-lab.md
-└── dynamodb-nosql-foundations-lab.md
+└── auto-scaling-cloudwatch-foundations-lab.md
 ```
 
 The repository should continue to separate course examples from actual lab evidence. AWS account IDs, access keys, ARNs, public IP addresses, resource IDs, billing values, and command output must not be fabricated.
@@ -705,13 +689,18 @@ Deployment Updates
 Rolling Updates
 Rollback
 Blue/Green Introduction
+Helm
+Charts and Releases
+Repository Management
+Values and Template Customization
 ```
 
 Kubernetes course checkpoint:
 
 ```text
-Completed through p.116
-Helm begins at p.117 and is intentionally paused for later study.
+Completed through p.131
+Helm completed.
+Volumes begin at p.132.
 ```
 
 Current learning area:
