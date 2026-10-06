@@ -2,47 +2,47 @@
 
 This directory documents my Kubernetes learning path as part of my cloud infrastructure engineering studies.
 
-The focus is on understanding Kubernetes as an API-driven desired-state platform built on Linux, networking, container runtimes, declarative resources, reconciliation, service networking, scheduling metadata, and controlled application rollouts.
+The focus is not only on `kubectl` commands, but on understanding Kubernetes as an API-driven desired-state platform built on Linux, networking, container runtimes, distributed control-plane components, declarative resources, and observable workload state.
 
-## Learning Path
+The current learning path is:
 
 ```text
-Containers
-   ↓
+Docker and Containers
+        ↓
+Container Clustering
+        ↓
 Kubernetes Architecture
-   ↓
+        ↓
 Minikube
-   ↓
-kubeadm
-   ↓
+        ↓
+kubeadm Cluster Bootstrap
+        ↓
 kubectl
-   ↓
+        ↓
 Pods
-   ↓
+        ↓
 Object Templates
-   ↓
+        ↓
 Controllers
-   ↓
+        ↓
 Services
-   ↓
-Labels and Selectors
-   ↓
-Deployment Updates
-   ↓
-Rolling Updates
-   ↓
-Monitoring
-   ↓
-Security / RBAC
-   ↓
+        ↓
+Deployments
+        ↓
+Security
+        ↓
 Helm
-   ↓
+        ↓
 Storage
-   ↓
+        ↓
 High Availability
 ```
 
-## Directory Structure
+---
+
+# Directory Structure
+
+Current files:
 
 ```text
 kubernetes/
@@ -58,151 +58,316 @@ kubernetes/
 ├── label-selector-scheduling-lab.md
 ├── deployment-rolling-update-lab.md
 ├── monitoring-dashboard-foundations-lab.md
-└── api-security-rbac-foundations-lab.md
+├── api-security-rbac-foundations-lab.md
+└── helm-package-management-foundations-lab.md
 ```
 
-Additional files should be added only after the related topics are actually studied.
+Files are added as the corresponding Kubernetes topics are studied. The current documented checkpoint is Helm through PDF p.131.
 
-## Kubernetes Architecture
+---
 
-Architecture topics include:
+# 1. Kubernetes Architecture Foundations
+
+File:
 
 ```text
+kubernetes-architecture-foundations-lab.md
+```
+
+Topics include:
+
+```text
+Kubernetes
+Container Orchestration
+Desired State
 Control Plane
 Worker Nodes
 kube-apiserver
 etcd
-Scheduler
-Controller Manager
+kube-scheduler
+kube-controller-manager
 kubelet
 kube-proxy
+Container Runtime
 CRI
-CNI
+containerd
+CRI-O
+runc
+OCI
 Cluster DNS
+CNI
+Ingress
+High Availability
 ```
 
-## Cluster Bootstrap
-
-The repository covers both:
+Core architecture:
 
 ```text
+User
+ ↓
+Kubernetes API
+ ↓
+Control Plane
+ ↓
+Scheduling / Reconciliation
+ ↓
+Worker Nodes
+ ↓
+Container Runtime
+ ↓
+Containers
+```
+
+---
+
+# 2. Minikube Local Cluster
+
+File:
+
+```text
+minikube-local-cluster-lab.md
+```
+
+Topics include:
+
+```text
+Kubernetes Installation Methods
 Minikube
-→ local learning environment
+Local Cluster
+minikube start
+minikube status
+kubectl
+kubeconfig
+API Connectivity
+Node Ready State
+System Components
+Kubernetes Dashboard
+Local Cluster Troubleshooting
 ```
 
-and:
+Minikube provides a local environment for Kubernetes learning.
+
+---
+
+# 3. kubeadm Cluster Bootstrap
+
+File:
 
 ```text
+kubeadm-cluster-bootstrap-lab.md
+```
+
+Topics include:
+
+```text
+Linux Node Preparation
+Control Plane Bootstrap
+Worker Node Preparation
 kubeadm
-→ multi-node cluster bootstrap
+kubelet
+kubectl
+kubeconfig
+Pod Network CIDR
+CNI
+Calico Course Example
+kubeadm init
+kubeadm join
+Bootstrap Trust
+Node Registration
+Node Ready State
+kube-system
+System Component Inspection
+Linux Process Inspection
 ```
 
-## kubectl and Pod Fundamentals
-
-Current operational observation includes:
+The bootstrap workflow is:
 
 ```text
+Prepare Nodes
+      ↓
+kubeadm init
+      ↓
+Configure kubeconfig
+      ↓
+Install CNI
+      ↓
+Verify Control Plane
+      ↓
+kubeadm join
+      ↓
+Verify Worker
+```
+
+---
+
+# 4. kubectl Basic Control
+
+File:
+
+```text
+kubectl-basic-control-lab.md
+```
+
+Topics include:
+
+```text
+kubectl
+Kubernetes API Client
+API Resources
+API Versions
+Resource Short Names
+Resource Scope
+Bash Completion
+Imperative Pod Creation
 kubectl get
 kubectl describe
 Kubernetes Events
 kubectl logs
-kubectl exec
-kubectl get -o yaml
+Basic Troubleshooting
 ```
 
-Pod topics include:
+The operational observation flow is:
 
 ```text
+kubectl get
+      ↓
+Summary State
+      ↓
+kubectl describe
+      ↓
+Conditions / Events
+      ↓
+kubectl logs
+      ↓
+Application Evidence
+```
+
+Different commands expose different evidence and should not be treated as interchangeable.
+
+---
+
+# 5. Pod Fundamentals
+
+File:
+
+```text
+pod-fundamentals-lab.md
+```
+
+Topics include:
+
+```text
+Pod
 Scheduling Unit
 Pod IP
+Namespace
+Multi-Container Pods
 Shared Network Namespace
+Pause / Sandbox Container
 CNI
+Pod Networking
+Pod Storage
 Volumes
+PersistentVolume
+PersistentVolumeClaim
+ConfigMap
+Secret
+CSI
 YAML
-Conditions
-Events
-Logs
-Container Execution
-spec vs status
+Pod Manifests
+Pod Events
+Pod Inspection
 ```
 
-## Resource Object Templates
-
-Resource templates can be prepared from:
+The Pod model is:
 
 ```text
-Existing Object
-→ kubectl get -o yaml
+Pod
+├── Shared Network Environment
+├── Volume Definitions
+├── Container A
+└── Container B
 ```
 
-or generated through:
+The Pod is the basic Kubernetes scheduling unit.
+
+---
+
+# 6. Resource Object Templates
+
+File:
 
 ```text
---dry-run=client -o yaml
+resource-object-template-lab.md
 ```
 
-Live runtime objects and reusable desired-state manifests should not be treated as identical.
-
-## Controller Fundamentals
-
-Core model:
+Topics include:
 
 ```text
-spec
- ↓
-Controller
- ↓
-Observed State
- ↓
-Reconciliation
- ↓
-status
+kubectl get -o yaml
+Manifest Inspection
+Reusable Object Templates
+dry-run
+Generated YAML
+Desired Configuration
 ```
 
-Controller topics include:
+---
+
+# 7. Controller Fundamentals
+
+File:
 
 ```text
+controller-fundamentals-lab.md
+```
+
+Topics include:
+
+```text
+Desired State Reconciliation
 ReplicaSet
-Deployment
+Deployment Controller
 StatefulSet
 DaemonSet
 Job
+Node Controller
+Service Controller
+PersistentVolume Controller
 Scaling
-Owner References
-Cascading Deletion
-Namespaces
+Namespace Lifecycle
 ```
 
-## Service Fundamentals
+---
 
-Service networking covers:
+# 8. Service Fundamentals
+
+File:
 
 ```text
+service-fundamentals-lab.md
+```
+
+Topics include:
+
+```text
+Service
 ClusterIP
 NodePort
 LoadBalancer
 ExternalName
-Service Selectors
-Backend Endpoints
-Cluster DNS
+Selectors
+Endpoints
 kube-proxy
 iptables
 IPVS
+Internal Service Access
+External Service Access
 ```
 
-Core model:
+---
 
-```text
-Client
-   ↓
-Service
-   ↓
-Selected Backends
-   ↓
-Pods
-```
-
-## Labels, Selectors, and Node Scheduling
+# 9. Labels, Selectors, and Scheduling
 
 File:
 
@@ -210,42 +375,22 @@ File:
 label-selector-scheduling-lab.md
 ```
 
-Labels are operational metadata used to connect Kubernetes objects.
+Topics include:
 
 ```text
-Label
-   ↓
-Selector
-   ↓
-Matching Resource Set
-```
-
-Current relationships include:
-
-```text
-ReplicaSet selector
-→ Pod labels
-
-Service selector
-→ Pod labels
-
+Labels
+Selectors
+Resource Filtering
+Service Selection
+ReplicaSet Membership
+Node Labels
 nodeSelector
-→ Node labels
+Scheduling Constraints
 ```
 
-The course introduces node labeling and `nodeSelector` as a simple scheduling constraint.
+---
 
-```text
-Pod Requirement
-      ↓
-nodeSelector
-      ↓
-Matching Node Label
-      ↓
-Scheduler Candidate
-```
-
-## Deployment and Rolling Update
+# 10. Deployment and Rolling Update
 
 File:
 
@@ -253,91 +398,468 @@ File:
 deployment-rolling-update-lab.md
 ```
 
-Deployment updates include:
-
-```text
-kubectl set image
-kubectl edit
-kubectl apply
-```
-
-A Pod-template change can create a new ReplicaSet revision.
+Topics include:
 
 ```text
 Deployment
-     ↓
-Old ReplicaSet
-     ↓
-Pod Revision A
-
-Deployment Update
-     ↓
-New ReplicaSet
-     ↓
-Pod Revision B
+ReplicaSet Revisions
+RollingUpdate
+Recreate
+Image Update
+Rollout History
+Rollback
+Pause / Resume
+Blue-Green Introduction
 ```
 
-## RollingUpdate
+---
+
+# 11. Monitoring and Dashboard Foundations
+
+File:
+
+```text
+monitoring-dashboard-foundations-lab.md
+```
+
+Topics include:
+
+```text
+Resource Requests
+Resource Limits
+Metrics Server
+kubectl top
+Long-Term Monitoring
+Grafana
+Prometheus
+Kubernetes Dashboard
+```
+
+---
+
+# 12. API Security and RBAC Foundations
+
+File:
+
+```text
+api-security-rbac-foundations-lab.md
+```
+
+Topics include:
+
+```text
+Authentication
+Authorization
+Admission
+ServiceAccount
+RBAC
+Role
+RoleBinding
+ClusterRole
+ClusterRoleBinding
+Namespace Scope
+Cluster Scope
+Least Privilege
+```
+
+---
+
+# 13. Helm Package Management
+
+File:
+
+```text
+helm-package-management-foundations-lab.md
+```
+
+Topics include:
+
+```text
+Helm
+Helm v2 Historical Architecture
+Helm v3
+Chart
+Release
+Chart.yaml
+values.yaml
+templates/
+Repository Management
+Artifact Hub
+helm install
+helm list
+helm status
+helm pull
+helm upgrade
+Namespace Selection
+Persistence
+Helm Troubleshooting
+```
+
+Core model:
+
+```text
+Chart + Values
+      ↓
+Helm Rendering
+      ↓
+Kubernetes Manifests
+      ↓
+Kubernetes API
+      ↓
+Release Resources
+```
+
+Helm manages package and release lifecycle, while Kubernetes controllers continue to reconcile the resulting resources.
+
+---
+
+# Pod Networking
+
+The course introduces four communication categories:
+
+```text
+Container-to-Container
+Pod-to-Pod
+Pod-to-Service
+External-to-Service
+```
+
+Pod networking connects Kubernetes directly to earlier Linux and network studies.
+
+```text
+Linux Network Namespace
+       ↓
+Pod Network Namespace
+       ↓
+CNI
+       ↓
+Cluster Network
+```
+
+---
+
+# Pod Storage
+
+Pods can define volumes and mount them into containers.
+
+```text
+Pod
+ ↓
+Volume
+ ↓
+Container Mount
+```
+
+Storage concepts include:
+
+```text
+Ephemeral Volumes
+PersistentVolume
+PersistentVolumeClaim
+ConfigMap
+Secret
+CSI
+```
+
+Detailed persistent-storage behavior is studied later.
+
+---
+
+# Kubernetes Object Model
+
+Kubernetes manifests use API objects.
+
+A common object skeleton is:
+
+```yaml
+apiVersion:
+kind:
+metadata:
+spec:
+```
 
 Conceptually:
 
 ```text
-Old Pods
-   ↓
-Gradual Replacement
-   ↓
-New Pods
-```
+apiVersion
+→ API schema
 
-The course also introduces:
+kind
+→ Resource type
 
-```text
-Recreate
-Blue/Green
-Rollout History
-Rollback
-Rollout Status
-Pause
-Resume
-Restart
-```
+metadata
+→ Resource identity
 
-## Desired State and Runtime State
-
-A recurring Kubernetes distinction is:
-
-```text
 spec
-→ Desired State
+→ Desired configuration
 ```
 
+This structure becomes reusable across Pods, Deployments, Services, and other Kubernetes resources.
+
+---
+
+# YAML
+
+Kubernetes manifests commonly use YAML.
+
+Important concepts include:
+
 ```text
-status
-→ Observed State
+Mappings
+Lists
+Indentation
+Comments
+Multi-Line Text
+Nested Objects
 ```
 
-Controllers reconcile differences between the two.
+YAML indentation represents data structure and should be treated as syntax rather than visual formatting.
 
-## Controller, Scheduler, and kubelet
+---
+
+# API-Driven Architecture
+
+Kubernetes infrastructure is managed through API objects.
 
 ```text
-Controller
-→ What should exist?
+kubectl
+Controllers
+Automation
+     ↓
+kube-apiserver
+     ↓
+Kubernetes Objects
 ```
 
+The API server remains the central interface for cluster state management.
+
+---
+
+# Desired State and Reconciliation
+
+A fundamental Kubernetes principle is:
+
 ```text
+Desired State
+!=
+Current State
+```
+
+A manifest expresses desired configuration.
+
+Cluster components work to make runtime state converge toward that configuration.
+
+---
+
+# Workload Creation Flow
+
+The workload path can now be represented as:
+
+```text
+YAML / kubectl
+      ↓
+Kubernetes API
+      ↓
+Pod Object
+      ↓
 Scheduler
-→ Where should a new Pod run?
+      ↓
+Worker Node
+      ↓
+kubelet
+      ↓
+Container Runtime
+      ↓
+Container
 ```
+
+Creating the API object and obtaining a healthy workload are separate verification stages.
+
+---
+
+# Kubernetes Events
+
+Pod startup can generate lifecycle evidence such as:
+
+```text
+Scheduled
+Pulling
+Pulled
+Created
+Started
+```
+
+Events help locate the stage at which workload startup failed.
+
+They should be correlated with resource state and application logs.
+
+---
+
+# Runtime Observation
+
+A useful first-level workload investigation is:
+
+```text
+get
+ ↓
+describe
+ ↓
+events
+ ↓
+logs
+```
+
+If the evidence points below the Pod layer, continue into:
+
+```text
+Node
+kubelet
+Container Runtime
+CNI
+Linux
+```
+
+---
+
+# Container Runtime Architecture
+
+The conceptual execution path remains:
 
 ```text
 kubelet
-→ How is the Pod executed on the selected node?
+   ↓
+CRI
+   ↓
+containerd / CRI-O
+   ↓
+OCI Runtime
+   ↓
+Linux Container
 ```
 
-Labels can influence both controller relationships and scheduler eligibility, but these component responsibilities remain distinct.
+Kubernetes abstractions ultimately result in real container and Linux process activity.
 
-## Troubleshooting Method
+---
+
+# Kubernetes Networking Foundation
+
+Cluster networking includes multiple domains.
+
+```text
+Node Network
+Pod Network
+Service Network
+```
+
+Pod networking is provided through the CNI architecture.
+
+Service networking is studied later.
+
+---
+
+# Linux Foundations
+
+Relevant Linux studies are documented under:
+
+```text
+../linux/
+```
+
+Important relationships include:
+
+```text
+Processes
+Namespaces
+systemd
+Users and Permissions
+Networking
+Routing
+Storage
+Filesystems
+Firewall
+SELinux
+Logs
+```
+
+---
+
+# Network Foundations
+
+Networking fundamentals are documented under:
+
+```text
+../network/
+```
+
+Important Kubernetes relationships include:
+
+```text
+IP Addressing
+Subnetting
+Routing
+DNS
+Ports
+Packet Analysis
+Node Connectivity
+Pod Networking
+Service Connectivity
+```
+
+---
+
+# Docker Foundations
+
+Container concepts are documented under:
+
+```text
+../docker/
+```
+
+Important relationships include:
+
+```text
+Container Images
+Container Runtime
+Registry
+Container Networking
+Volumes
+Multi-Container Applications
+Container Clustering
+```
+
+Kubernetes extends these concepts into API-driven cluster orchestration.
+
+---
+
+# Learning Method
+
+Each Kubernetes topic should progress through:
+
+```text
+Concept
+   ↓
+Architecture
+   ↓
+Object Definition
+   ↓
+API Interaction
+   ↓
+Runtime Observation
+   ↓
+Failure Scenario
+   ↓
+Troubleshooting
+   ↓
+Verification
+```
+
+Commands alone are not considered sufficient evidence of understanding.
+
+---
+
+# Troubleshooting Method
+
+Kubernetes troubleshooting follows:
 
 ```text
 Symptom
@@ -353,298 +875,220 @@ Resolution
 Verification
 ```
 
-## Scheduling Troubleshooting
+Potential layers include:
 
 ```text
-Pod Pending?
-      ↓
-Inspect nodeSelector
-      ↓
-Inspect node labels
-      ↓
-Check scheduler events
-      ↓
-Correct requirement or labels
-      ↓
-Verify placement
+Client Configuration
+Kubernetes API
+Controller
+Scheduler
+Pod
+Container
+Worker Node
+kubelet
+Container Runtime
+CNI
+Network
+Storage
+Application
 ```
 
-## Deployment Rollout Troubleshooting
+---
+
+# Pod Troubleshooting
+
+A practical starting workflow is:
 
 ```text
-Deployment updated?
+kubectl get pod
       ↓
-New ReplicaSet created?
+kubectl describe pod
       ↓
-New Pods created?
+Events
       ↓
-Scheduled?
-      ↓
-Image pulled?
-      ↓
-Container started?
-      ↓
-Ready?
-      ↓
-Application healthy?
+kubectl logs
 ```
 
-## Monitoring and Dashboard
-
-File:
+Potential evidence then determines whether investigation should continue into:
 
 ```text
-monitoring-dashboard-foundations-lab.md
+Image / Registry
+Scheduler
+Node
+Runtime
+CNI
+Application
 ```
 
-The course introduces Kubernetes resource monitoring through:
+---
+
+# Runtime vs Desired State
+
+Kubernetes distinguishes:
 
 ```text
-kubelet resource metrics
-      ↓
-Metrics Server
-      ↓
-Resource Metrics API
-      ↓
-kubectl top
+Desired State
+vs
+Observed Runtime State
 ```
 
-Current topics include:
+A YAML object describes intent.
 
-```text
-Resource Requests
-Resource Limits
-Node Metrics
-Pod Metrics
-Container Metrics
-Metrics Server
-kubectl top
-HPA Context
-Long-Term Monitoring
-Grafana
-Prometheus
-ELK / EFK Context
-Kubernetes Dashboard
-```
+Runtime evidence shows what actually happened.
 
-`kubectl top` should be treated as current resource observation rather than a historical monitoring database.
+This distinction is central to reliable Kubernetes administration.
 
-The course also contains historical Heapster context, which should not be treated as a current default Kubernetes monitoring component.
+---
 
-## Monitoring Troubleshooting
+# Security Approach
 
-```text
-Metrics Missing?
-      ↓
-Metrics Server Running?
-      ↓
-Node Metrics Reachable?
-      ↓
-Resource Metrics API Available?
-      ↓
-RBAC / TLS / Network Evidence
-```
-
-Resource metrics should be correlated with Pod state, events, logs, and application behavior rather than used as isolated proof of root cause.
-
-## Security Principles
+Security should be treated as part of Kubernetes architecture.
 
 Current principles include:
 
 ```text
-Use least privilege.
-Do not publish kubeconfig credentials.
 Do not publish bootstrap tokens.
+Do not commit kubeconfig credentials.
 Do not commit real application secrets.
-Review exported API objects before publishing them.
-Do not disable host security controls as a generic fix.
+Do not broadly disable host security controls as a generic fix.
+Use least privilege.
+Protect Kubernetes API credentials.
 ```
 
-## API Security and RBAC
-
-File:
+Future topics include:
 
 ```text
-api-security-rbac-foundations-lab.md
-```
-
-The Kubernetes API security flow is:
-
-```text
-Client Request
-      ↓
 Authentication
-      ↓
 Authorization
-      ↓
-Admission Control
-      ↓
-API Operation
-```
-
-Current security topics include:
-
-```text
-ServiceAccount
 RBAC
-Role
-RoleBinding
-ClusterRole
-ClusterRoleBinding
-Subjects
-Verbs
-Namespace Scope
-Cluster Scope
-Least Privilege
-Predefined ClusterRoles
+Service Accounts
+Secrets
+Workload Security
 ```
 
-A core distinction is:
+---
 
-```text
-Authentication
-→ Who are you?
-```
+# Evidence Policy
 
-```text
-Authorization
-→ What are you allowed to do?
-```
-
-```text
-Admission
-→ Is the authorized request acceptable under cluster policy?
-```
-
-Namespace and cluster scopes should be kept explicit to avoid unnecessarily broad permissions.
-
-## RBAC Troubleshooting
-
-```text
-Identity Correct?
-      ↓
-Authentication Successful?
-      ↓
-Role Rules Correct?
-      ↓
-Binding Correct?
-      ↓
-Namespace / Cluster Scope Correct?
-      ↓
-Verb and Resource Correct?
-      ↓
-Admission Policy?
-```
-
-Authorization problems should not be solved by automatically granting `cluster-admin`.
-
-## Evidence Policy
-
-Course screenshots and example values are educational examples.
+Course screenshots and sample command output are educational examples.
 
 Do not fabricate:
 
 ```text
+Cluster IDs
 Node Names
-Labels
+Node Addresses
 Pod Names
-ReplicaSet Names
-Deployment Names
-Revision Numbers
-Image Versions
+Pod Addresses
+Container IDs
+API Server Addresses
 Events
-Rollout Results
+Runtime IDs
+Scheduler Decisions
+Node Status
+Application Logs
 Command Output
 ```
 
 Actual evidence must come from an authorized lab environment.
 
-## Historical Material Policy
+---
 
-Historical course material is preserved with clear context.
+# Historical Material Policy
 
-Examples encountered include:
+The Kubernetes course contains historical installation procedures, runtime assumptions, API versions, and networking implementation details.
+
+Examples include:
 
 ```text
-Legacy Kubernetes package repositories
+Older Kubernetes repositories
+Older Ubuntu / CentOS releases
 Historical Docker runtime integration
+docker0-based Pod diagrams
+Historical kubelet CNI flags
+Older Calico manifests
 Heapster
 rkt
-docker0-based networking diagrams
-Historical CNI flags
-Older Calico manifests
-apps/v1beta1 examples
-Endpoints-focused Service material
-kubectl --record
+Legacy Kubernetes API versions
 ```
 
-## Current Learning Progress
+These are preserved as course context while reusable Kubernetes architecture is documented separately.
 
-Completed through:
+---
 
-```text
-p.116
-```
+# Current Learning Progress
 
-Current completed topics include:
+Completed Kubernetes areas:
 
 ```text
-Kubernetes Architecture
+Kubernetes Introduction
+Architecture
 Minikube
 kubeadm
 kubectl
 Pods
 CNI
+Pod Storage Introduction
 YAML
-Object Inspection
-Resource Templates
-Controller Reconciliation
+Runtime Inspection
+Object Templates
+Controllers
 ReplicaSet
 Scaling
 Namespaces
 Services
-Service Types
 kube-proxy
-iptables
-IPVS
 Labels
 Selectors
 nodeSelector
-Deployment Image Updates
-RollingUpdate
-Recreate
-Blue/Green Introduction
-Rollout History
+Deployment Updates
+Rolling Updates
 Rollback
+Blue/Green Introduction
 Monitoring Foundations
 Metrics Server
 kubectl top
-Resource Metrics
-Dashboard Introduction
+Kubernetes Dashboard Introduction
 API Server Security
 Authentication
 Authorization
-Admission Control
+Admission
 ServiceAccount
 RBAC
 Role / RoleBinding
 ClusterRole / ClusterRoleBinding
 Least Privilege
-```
-
-Next topic:
-
-```text
 Helm
+Charts
+Releases
+Chart Structure
+values.yaml
+Template Customization
+Repository Management
+Artifact Hub
+Chart Installation
+Chart Pull and Local Customization
+Release Upgrade
+Namespace Selection
+Persistence Considerations
 ```
 
-The course continues from:
+Current course checkpoint:
 
 ```text
-p.117
+Completed through p.131
 ```
 
-## Long-Term Infrastructure Path
+Next major topic:
+
+```text
+Volumes
+Starting at p.132
+```
+
+---
+
+# Long-Term Infrastructure Path
 
 ```text
 Linux
@@ -663,3 +1107,5 @@ Infrastructure as Code
    ↓
 Cloud Security
 ```
+
+The objective is to understand Kubernetes as a distributed infrastructure platform rather than only memorize resource commands.
