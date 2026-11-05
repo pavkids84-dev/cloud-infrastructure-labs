@@ -30,34 +30,9 @@ cloud-infrastructure-labs/
 ├── docker/
 │   └── ...
 ├── kubernetes/
-│   ├── README.md
-│   ├── kubernetes-architecture-foundations-lab.md
-│   ├── minikube-local-cluster-lab.md
-│   ├── kubeadm-cluster-bootstrap-lab.md
-│   ├── kubectl-basic-control-lab.md
-│   ├── pod-fundamentals-lab.md
-│   ├── resource-object-template-lab.md
-│   ├── controller-fundamentals-lab.md
-│   ├── service-fundamentals-lab.md
-│   ├── label-selector-scheduling-lab.md
-│   ├── deployment-rolling-update-lab.md
-│   ├── monitoring-dashboard-foundations-lab.md
-│   ├── api-security-rbac-foundations-lab.md
-│   └── helm-package-management-foundations-lab.md
+│   └── ...
 └── aws/
-    ├── README.md
-    ├── cloud-computing-foundations-lab.md
-    ├── global-infrastructure-foundations-lab.md
-    ├── iam-security-foundations-lab.md
-    ├── ec2-compute-foundations-lab.md
-    ├── block-storage-ebs-foundations-lab.md
-    ├── s3-cloudfront-foundations-lab.md
-    ├── efs-cloud-storage-comparison-lab.md
-    ├── vpc-networking-foundations-lab.md
-    ├── route53-dns-foundations-lab.md
-    ├── elastic-load-balancing-foundations-lab.md
-    ├── auto-scaling-cloudwatch-foundations-lab.md
-    └── cloudformation-foundations-lab.md
+    └── ...
 ```
 
 Future top-level areas should be created only after actual study exists.
@@ -184,19 +159,24 @@ Artifact Hub
 values.yaml
 Template Rendering
 Helm Install / Upgrade
+PersistentVolumes / PersistentVolumeClaims
+StorageClass / CSI
+ConfigMaps / Secrets
+High Availability / etcd Quorum
+Stacked and External etcd
 ```
 
 Current course position:
 
 ```text
-Completed through p.131
+Completed through p.158
+Kubernetes PDF study completed.
 ```
 
 Next:
 
 ```text
-Volumes
-Starting at p.132
+AWS Cloud Infrastructure
 ```
 
 ## Kubernetes Desired-State Model
@@ -471,18 +451,27 @@ Automatic Rollback
 Drift Detection
 Stack Updates
 Stack Deletion
+AWS Lambda
+Serverless Computing
+API Gateway / EventBridge / SQS
+AWS SAM
+Cloud Migration / AWS CAF
+Migration Strategies (6R / 7R)
+Online / Offline Data Transfer
+AWS Well-Architected Framework
 ```
 
 Current AWS course position:
 
 ```text
-Completed through p.177
+Completed through p.212
+AWS PDF study completed.
 ```
 
 Next topic:
 
 ```text
-AWS Lambda
+No remaining sections in this AWS course PDF.
 ```
 
 The AWS directory is:
@@ -500,7 +489,13 @@ aws/
 ├── vpc-networking-foundations-lab.md
 ├── route53-dns-foundations-lab.md
 ├── elastic-load-balancing-foundations-lab.md
-└── auto-scaling-cloudwatch-foundations-lab.md
+├── auto-scaling-cloudwatch-foundations-lab.md
+├── cloudformation-foundations-lab.md
+├── rds-database-foundations-lab.md
+├── dynamodb-nosql-foundations-lab.md
+├── lambda-serverless-foundations-lab.md
+├── serverless-architecture-foundations-lab.md
+└── migration-foundations-lab.md
 ```
 
 The repository should continue to separate course examples from actual lab evidence. AWS account IDs, access keys, ARNs, public IP addresses, resource IDs, billing values, and command output must not be fabricated.
@@ -693,32 +688,38 @@ Helm
 Charts and Releases
 Repository Management
 Values and Template Customization
+Kubernetes Persistent Storage / PV / PVC / StorageClass
+ConfigMaps and Secrets
+Control Plane High Availability / etcd
+AWS IAM / EC2 / Storage / VPC / Auto Scaling
+CloudFormation / Lambda / Serverless Architecture
+RDS / DynamoDB / Migration
 ```
 
 Kubernetes course checkpoint:
 
 ```text
-Completed through p.131
-Helm completed.
-Volumes begin at p.132.
+Completed through p.158
+Helm, Volumes, and High Availability completed in course study.
 ```
 
 Current learning area:
 
 ```text
-AWS
+Completed the supplied Kubernetes and AWS course PDFs.
 ```
 
 AWS course position:
 
 ```text
-Completed through p.144
+Completed through p.212
+Lambda, Serverless Architecture, and Migration completed in course study.
 ```
 
 Next topic:
 
 ```text
-AWS Auto Scaling
+No remaining sections in the supplied AWS course PDF.
 ```
 
 ## Planned Expansion
