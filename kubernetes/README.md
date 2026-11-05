@@ -59,10 +59,12 @@ kubernetes/
 ├── deployment-rolling-update-lab.md
 ├── monitoring-dashboard-foundations-lab.md
 ├── api-security-rbac-foundations-lab.md
-└── helm-package-management-foundations-lab.md
+├── helm-package-management-foundations-lab.md
+├── storage-volumes-foundations-lab.md
+└── high-availability-foundations-lab.md
 ```
 
-Files are added as the corresponding Kubernetes topics are studied. The current documented checkpoint is Helm through PDF p.131.
+Files are added as the corresponding Kubernetes topics are studied. The current documented checkpoint is completion of the Kubernetes PDF through p.158, including storage and high availability.
 
 ---
 
@@ -510,6 +512,85 @@ Release Resources
 ```
 
 Helm manages package and release lifecycle, while Kubernetes controllers continue to reconcile the resulting resources.
+
+---
+
+# 14. Kubernetes Storage and Volumes Foundations
+
+File:
+
+```text
+storage-volumes-foundations-lab.md
+```
+
+Topics include:
+
+```text
+Container Writable Layer vs Volumes
+emptyDir
+hostPath
+NFS / Cloud Storage
+PersistentVolume (PV)
+PersistentVolumeClaim (PVC)
+Binding / StorageClass / Dynamic Provisioning
+Container Storage Interface (CSI)
+Access Modes / Reclaim Policies
+ConfigMap / Secret
+Storage Troubleshooting
+```
+
+Core model:
+
+```text
+Pod
+ ↓
+PVC
+ ↓
+PV
+ ↓
+Storage Backend
+```
+
+A claim being bound does not by itself prove that a Pod can successfully mount and use the volume.
+
+---
+
+# 15. Kubernetes High Availability Foundations
+
+File:
+
+```text
+high-availability-foundations-lab.md
+```
+
+Topics include:
+
+```text
+High Availability / Single Point of Failure
+Application Replicas
+Pod Distribution
+Control Plane Availability
+kube-apiserver / Scheduler / Controller Manager
+etcd / Raft / Quorum
+Leader Election
+Stacked etcd
+External etcd
+API Load Balancer
+Failure Domains
+HA Troubleshooting / Verification
+```
+
+Core control-plane pattern:
+
+```text
+API Load Balancer
+        ↓
+Multiple API Servers
+        ↓
+etcd Cluster with Quorum
+```
+
+A replicated topology does not replace failure testing, application health checks, or recovery validation.
 
 ---
 
@@ -1071,19 +1152,25 @@ Chart Pull and Local Customization
 Release Upgrade
 Namespace Selection
 Persistence Considerations
+Volumes / emptyDir / hostPath
+PersistentVolumes / PersistentVolumeClaims
+StorageClass / CSI / Dynamic Provisioning
+ConfigMap / Secret
+High Availability / etcd Quorum
+Stacked and External etcd
 ```
 
 Current course checkpoint:
 
 ```text
-Completed through p.131
+Completed through p.158
+The Kubernetes course PDF is complete.
 ```
 
 Next major topic:
 
 ```text
-Volumes
-Starting at p.132
+AWS Cloud Infrastructure
 ```
 
 ---
