@@ -50,7 +50,10 @@ aws/
 ├── auto-scaling-cloudwatch-foundations-lab.md
 ├── cloudformation-foundations-lab.md
 ├── rds-database-foundations-lab.md
-└── dynamodb-nosql-foundations-lab.md
+├── dynamodb-nosql-foundations-lab.md
+├── lambda-serverless-foundations-lab.md
+├── serverless-architecture-foundations-lab.md
+└── migration-foundations-lab.md
 ```
 
 Additional files should be added only after the corresponding AWS topics are actually studied.
@@ -621,6 +624,42 @@ Drift Detection
 Reconcile Through Code and Stack Update
 ```
 
+## 9. Lambda and Serverless Foundations
+
+File:
+
+```text
+lambda-serverless-foundations-lab.md
+```
+
+Current topics include:
+
+```text
+Serverless Computing
+AWS Lambda
+Functions / Handlers / Runtimes
+Event Sources and Triggers
+Execution Environment
+Cold Start / Warm Reuse
+Concurrency / Scaling / Throttling
+Memory and CPU
+IAM Execution Roles / Invoke Permissions
+CloudWatch Metrics and Logs
+Troubleshooting
+```
+
+Core model:
+
+```text
+Event Source
+      ↓
+Lambda Invocation
+      ↓
+Execution Environment
+      ↓
+Application Logic
+```
+
 ## 10. Database Foundations
 
 Files:
@@ -671,6 +710,67 @@ Optional Sort Key
       ↓
 Efficient Data Access
 ```
+
+## Serverless Architecture Foundations (Module 10)
+
+File:
+
+```text
+serverless-architecture-foundations-lab.md
+```
+
+Current topics include:
+
+```text
+API Gateway / Lambda / DynamoDB
+Synchronous vs Asynchronous Integration
+EventBridge Rules and Routing
+Fan-out / SQS / Lambda Consumers
+Retries / Dead-Letter Queues
+Idempotency and Event Acceptance
+API Authorizers / IAM Boundaries
+CloudWatch / X-Ray
+AWS SAM / CloudFormation
+```
+
+Core model:
+
+```text
+Client → API Gateway → EventBridge → SQS → Lambda → DynamoDB
+```
+
+---
+
+## 11. Migration Foundations
+
+File:
+
+```text
+migration-foundations-lab.md
+```
+
+Current topics include:
+
+```text
+Cloud Migration
+AWS Cloud Adoption Framework (CAF)
+Migration Strategies (6R / 7R)
+Rehosting / Replatforming / Refactoring
+Repurchasing / Retaining / Retiring / Relocate
+Storage Gateway / DataSync / Transfer Family
+Historical AWS Snow Family Context
+AWS Well-Architected Framework
+Cutover / Data Consistency / Rollback
+Troubleshooting and Verification
+```
+
+Core model:
+
+```text
+Assessment → Strategy → Preparation → Data Transfer → Cutover → Verification
+```
+
+---
 
 ## Relationship to Previous Study
 
@@ -764,25 +864,27 @@ Actual evidence must come from an authorized AWS account and lab environment.
 
 ## Current Learning Progress
 
-Completed:
+Completed in the course study:
 
 ```text
 Modules 1-8 through p.177
-Module 10 Database core: p.182-p.198
-```
-
-Deferred:
-
-```text
 Module 9 Lambda: p.178-p.181
+Module 10 Database core: p.182-p.198
 Module 10 serverless design: p.199-p.202
+Module 11 Migration: p.203-p.212
 ```
 
-Next active topic:
+Course checkpoint:
 
 ```text
-Module 11 Migration
-Starting at p.203
+AWS PDF completed through p.212.
+```
+
+Evidence note:
+
+```text
+Documented course examples do not imply execution in a live AWS account.
+Actual lab output and deployed-resource verification require environment evidence.
 ```
 
 ## What This Directory Demonstrates
